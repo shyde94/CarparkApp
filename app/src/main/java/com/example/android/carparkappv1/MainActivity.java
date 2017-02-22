@@ -1,54 +1,72 @@
 package com.example.android.carparkappv1;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
-public class MainActivity extends AppCompatActivity  {
+
+
+public class MainActivity extends AppCompatActivity {
     Button button;
     EditText mInputLocation;
     TextView mLocationDisplay;
     MyCustomMap myMap;
     MapFragment mapFragment;
 
+
+    private static final String TAG = "MainActivityClass";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        button = (Button)findViewById(R.id.search_button);
+        button = (Button) findViewById(R.id.search_button);
         mInputLocation = (EditText) findViewById(R.id.Search_location);
         mLocationDisplay = (TextView) findViewById(R.id.location_input);
-        mapFragment = (MapFragment)getFragmentManager().findFragmentById(R.id.mapFragment);
+        mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.mapFragment);
         myMap = new MyCustomMap(this, mapFragment);
 
-        if(myMap.googleServicesAvailable()){
+
+        if (myMap.googleServicesAvailable()) {
             myMap.initMap();
         }
+
+
         button.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         String location = mInputLocation.getText().toString();
-                       LatLng ll = myMap.searchLocation(location);
+                        if (!location.equals("")) {
+                            LatLng ll = myMap.searchLocation(location);
+                            myMap.gotoLocationZoom(ll, 15);
+                            myMap.setMarker(location, ll);
+                        }
 
+
+                        //Hide keyboard
+                        InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        mgr.hideSoftInputFromWindow(mInputLocation.getWindowToken(), 0);
                     }
                 }
         );
+    }
         /*if(googleServicesAvailable()){
             Toast.makeText(this,"Great", Toast.LENGTH_SHORT);
             initMap();
         }*/
 
-    }
+
     /*
     private void initMap(){
         MapFragment mapFragment = (MapFragment)getFragmentManager().findFragmentById(R.id.mapFragment);
