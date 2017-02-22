@@ -96,7 +96,7 @@ public class MyCustomMap implements OnMapReadyCallback {
         }
         return ll;
     }
-
+    /*
     public void geoLocate(String location) throws IOException {
         Log.i(TAG, "Enter geoLocate");
         Log.i(TAG, location);
@@ -116,6 +116,30 @@ public class MyCustomMap implements OnMapReadyCallback {
         Log.i(TAG, "Lng:");
         Log.i(TAG, Double.toString(lng));
         gotoLocationZoom(lat,lng,15);
+    }*/
+
+    public LatLng geoLocate(String location) throws IOException {
+        Log.i(TAG, "Enter geoLocate");
+        Log.i(TAG, location);
+        double lat, lng;
+        Geocoder gc = new Geocoder(context);
+        List<Address> tempList = gc.getFromLocationName(location, 5);
+        Address tempAddress = tempList.get(0);
+        String locality = tempAddress.getLocality();
+
+        Log.i(TAG,"Locality: "+locality);
+        Toast.makeText(context, locality, Toast.LENGTH_SHORT).show();
+
+        lat = tempAddress.getLatitude();
+        lng = tempAddress.getLongitude();
+        Log.i(TAG, "Lat:");
+        Log.i(TAG, Double.toString(lat));
+        Log.i(TAG, "Lng:");
+        Log.i(TAG, Double.toString(lng));
+        gotoLocationZoom(lat,lng,15);
+        LatLng ll = new LatLng(lat,lng);
+        setMarker(locality, ll);
+        return ll;
     }
 
     //This is the problem!! This function!
@@ -125,6 +149,20 @@ public class MyCustomMap implements OnMapReadyCallback {
         CameraUpdate camUpdate = CameraUpdateFactory.newLatLngZoom(ll,zoom);
         //This is the lind causing all the problem.
         mGoogleMap.animateCamera(camUpdate);
+    }
+
+    public void gotoLocationZoom(LatLng ll){
+        Log.i(TAG, "Enter gotoLocationZoom");
+        CameraUpdate camUpdate = CameraUpdateFactory.newLatLngZoom(ll,1);
+        //This is the lind causing all the problem.
+        mGoogleMap.animateCamera(camUpdate);
+    }
+
+    public void setMarker(String location, LatLng ll){
+        MarkerOptions options = new MarkerOptions()
+                .title(location)
+                .position(ll);
+        mGoogleMap.addMarker(options);
     }
 
 }

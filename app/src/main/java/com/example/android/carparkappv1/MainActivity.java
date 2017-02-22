@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.LatLng;
 
 public class MainActivity extends AppCompatActivity  {
     Button button;
@@ -36,7 +37,9 @@ public class MainActivity extends AppCompatActivity  {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        myMap.searchLocation(mInputLocation.getText().toString());
+                        String location = mInputLocation.getText().toString();
+                       LatLng ll = myMap.searchLocation(location);
+
                     }
                 }
         );
