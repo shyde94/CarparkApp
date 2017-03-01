@@ -14,13 +14,14 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class CarparkDBController extends SQLiteOpenHelper {
 
     private static final String TAG = "CarparkDBControllerClass";
 
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "Carpark.db";
+    public static final String DATABASE_NAME = "Carpark.db";
     private static final String TABLE_CARPARKS = "Carparks";
     private static final String COLUMN_ID = "_id";
     private static final String COLUMN_CARPARKNUM = "Carpark_num";
@@ -33,10 +34,11 @@ public class CarparkDBController extends SQLiteOpenHelper {
     private static final String COLUMN_FP = "free_parking";
     private static final String COLUMN_NP ="night_parking";
 
-
+    private Context context;
 
     public CarparkDBController(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.context = context;
     }
 
 
@@ -59,12 +61,11 @@ public class CarparkDBController extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(query);
         Log.i(TAG, "created table_carparks");
         try {
-            Log.i(TAG, "adding csv information...");
-            addCSVintoDB("assets/hdb-carpark-information.csv");
-            Log.i(TAG, "adding csv information success");
+            addCSVintoDB(sqLiteDatabase);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
 
     }
 
@@ -77,10 +78,11 @@ public class CarparkDBController extends SQLiteOpenHelper {
     public void onOpen(SQLiteDatabase db) {
         super.onOpen(db);
         Log.i(TAG, "onOpen database!");
+
     }
 
     //Add new row into temp table
-    public void addRow(){
+    /*public void addRow(){
 
         SQLiteDatabase db = getWritableDatabase();
 
@@ -93,18 +95,18 @@ public class CarparkDBController extends SQLiteOpenHelper {
         db.insert(TABLE_CARPARKS, null, values);
         db.close();
 
-    }
+    }*/
 
 
     //load values from csv file.
-    public void addCSVintoDB(String filename) throws IOException {
+    public void addCSVintoDB(SQLiteDatabase db) throws IOException {
         Log.i(TAG,  "addCSVintoDB method");
-        Log.i(TAG, "filename");
-        SQLiteDatabase db = getWritableDatabase();
-
-        FileReader file = new FileReader(filename);
-        BufferedReader buffer = new BufferedReader(file);
+        String filename = "hdb-carpark-information.csv";
+        AssetManager am = context.getAssets();
+        InputStream inputStream = null;
+        inputStream = am.open(filename);
         String line = "";
+        BufferedReader buffer = new BufferedReader(new InputStreamReader(inputStream));
 
         //INSERT INTO Carparks (COLUMN_CARPARKNUM, COLUMN_Xcoord, COLUMN_Ycoord) VALUES (... ... ...)
         while((line = buffer.readLine()) != null){
@@ -122,7 +124,6 @@ public class CarparkDBController extends SQLiteOpenHelper {
             cv.put(COLUMN_NP, columns[8]);
             db.insert(TABLE_CARPARKS, null, cv);
         }
-        db.close();
     }
 
     public String dbToString(){
@@ -132,10 +133,13 @@ public class CarparkDBController extends SQLiteOpenHelper {
         String query = "SELECT * FROM " + TABLE_CARPARKS + " WHERE 1;";
         Cursor c = db.rawQuery(query,null);
         c.moveToFirst();
-        dbString += c.getString(c.getColumnIndex(COLUMN_CARPARKNUM));
-        dbString += c.getString(c.getColumnIndex(COLUMN_address));
-        dbString += c.getString(c.getColumnIndex(COLUMN_Xcoord));
-        dbString += c.getString(c.getColumnIndex(COLUMN_Ycoord));
+        if(c.getCount()!=0){
+            dbString += c.getString(c.getColumnIndex(COLUMN_CARPARKNUM));
+            dbString += c.getString(c.getColumnIndex(COLUMN_address));
+            dbString += c.getString(c.getColumnIndex(COLUMN_Xcoord));
+            dbString += c.getString(c.getColumnIndex(COLUMN_Ycoord));
+        }
+
         /*while(!c.isAfterLast()){
             i++;
             Log.i(TAG, "inside while loop of dbToString, i: " + i);
@@ -151,4 +155,5 @@ public class CarparkDBController extends SQLiteOpenHelper {
         return dbString;
 
     }
+
 }

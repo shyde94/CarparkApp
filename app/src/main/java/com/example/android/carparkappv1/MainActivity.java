@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.IOException;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -31,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        this.deleteDatabase(CarparkDBController.DATABASE_NAME);
         button = (Button) findViewById(R.id.search_button);
         mInputLocation = (EditText) findViewById(R.id.Search_location);
         mLocationDisplay = (TextView) findViewById(R.id.location_input);
@@ -39,7 +40,6 @@ public class MainActivity extends AppCompatActivity {
         myMap = new MyCustomMap(this, mapFragment);
 
         cpController = new CarparkDBController(this);
-        cpController.addRow();
         String temp = cpController.dbToString();
         mLocationDisplay.setText(temp);
 
