@@ -34,7 +34,6 @@ import java.io.IOException;
 import java.util.List;
 
 
-
 public class MyCustomMap implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener {
 
     private static final String TAG = "MyCustomMapClass";
@@ -42,7 +41,11 @@ public class MyCustomMap implements OnMapReadyCallback, GoogleApiClient.OnConnec
     private GoogleApiClient mGoogleApiClient;
     private Context context;
     private MapFragment mapFragment;
+    private Location mCurrentLocation;
 
+    public Location getmCurrentLocation() {
+        return mCurrentLocation;
+    }
 
     public GoogleMap getmGoogleMap() {
         return mGoogleMap;
@@ -104,27 +107,7 @@ public class MyCustomMap implements OnMapReadyCallback, GoogleApiClient.OnConnec
         }
         return ll;
     }
-    /*
-    public void geoLocate(String location) throws IOException {
-        Log.i(TAG, "Enter geoLocate");
-        Log.i(TAG, location);
-        double lat, lng;
-        Geocoder gc = new Geocoder(context);
-        List<Address> tempList = gc.getFromLocationName(location, 5);
-        Address tempAddress = tempList.get(0);
-        String locality = tempAddress.getLocality();
 
-        Log.i(TAG,"Locality: "+locality);
-        Toast.makeText(context, locality, Toast.LENGTH_SHORT).show();
-
-        lat = tempAddress.getLatitude();
-        lng = tempAddress.getLongitude();
-        Log.i(TAG, "Lat:");
-        Log.i(TAG, Double.toString(lat));
-        Log.i(TAG, "Lng:");
-        Log.i(TAG, Double.toString(lng));
-        gotoLocationZoom(lat,lng,15);
-    }*/
 
     public LatLng geoLocate(String location) throws IOException {
         Log.i(TAG, "Enter geoLocate");
@@ -150,7 +133,7 @@ public class MyCustomMap implements OnMapReadyCallback, GoogleApiClient.OnConnec
         return ll;
     }
 
-    //This is the problem!! This function!
+
     public void gotoLocationZoom(double lat, double lng, int zoom) {
         Log.i(TAG, "Enter gotoLocationZoom");
         LatLng ll = new LatLng(lat, lng);
@@ -173,7 +156,7 @@ public class MyCustomMap implements OnMapReadyCallback, GoogleApiClient.OnConnec
         mGoogleMap.addMarker(options);
     }
 
-    public void setMarker(LatLng ll){
+    public void setMarker(LatLng ll) {
         MarkerOptions options = new MarkerOptions()
                 .position(ll);
         mGoogleMap.addMarker(options);
@@ -182,24 +165,6 @@ public class MyCustomMap implements OnMapReadyCallback, GoogleApiClient.OnConnec
 
     public void setCurrentLocation() {
         Log.i(TAG, "setCurrentLocation");
-        /*
-        if (ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            String[] mPermission = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-            ActivityCompat.requestPermissions((Activity) context, mPermission, 1);
-            mGoogleMap.setMyLocationEnabled(true);
-            Log.i(TAG, "gg");
-            return;
-        }
-        mGoogleMap.setMyLocationEnabled(true);
-        Log.i(TAG, "Setting current location");*/
-
         mGoogleApiClient = new GoogleApiClient.Builder(context)
                 .addApi(LocationServices.API).addConnectionCallbacks(this).addOnConnectionFailedListener(this).build();
         mGoogleApiClient.connect();
@@ -225,6 +190,10 @@ public class MyCustomMap implements OnMapReadyCallback, GoogleApiClient.OnConnec
             Log.i(TAG, "Ask for permission");
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mlocationRequest, this);
+        mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        Log.i(TAG, "Current lat: " + mCurrentLocation.getLatitude());
+        Log.i(TAG, "Current long: "+ mCurrentLocation.getLongitude());
+
     }
 
     @Override
@@ -247,5 +216,14 @@ public class MyCustomMap implements OnMapReadyCallback, GoogleApiClient.OnConnec
             gotoLocationZoom(ll, 15);
             setMarker(ll);
         }
+
     }
+
+    //this function decides how much to zoom the camera by. centering destination and accomodating all carparks within vicinity.
+    public int zoomFactor(){
+        int zoomFactor = 0;
+
+        return zoomFactor;
+    }
+
 }

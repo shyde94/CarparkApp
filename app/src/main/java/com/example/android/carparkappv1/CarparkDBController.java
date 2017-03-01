@@ -17,23 +17,25 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import MapProjectionConverter.SVY21Coordinate;
+
 public class CarparkDBController extends SQLiteOpenHelper {
 
     private static final String TAG = "CarparkDBControllerClass";
 
     private static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "Carpark.db";
-    private static final String TABLE_CARPARKS = "Carparks";
-    private static final String COLUMN_ID = "_id";
-    private static final String COLUMN_CARPARKNUM = "Carpark_num";
-    private static final String COLUMN_address = "Address";
-    private static final String COLUMN_Xcoord = "X_Coord";
-    private static final String COLUMN_Ycoord = "Y_Coord";
-    private static final String COLUMN_CPTYPE = "Carpark_type";
-    private static final String COLUMN_TYPE_PARKING_SYS = "Type_Of_Parking_System";
-    private static final String COLUMN_STP = "short_term_parking";
-    private static final String COLUMN_FP = "free_parking";
-    private static final String COLUMN_NP ="night_parking";
+    public static final String TABLE_CARPARKS = "Carparks";
+    public static final String COLUMN_ID = "_id";
+    public static final String COLUMN_CARPARKNUM = "Carpark_num";
+    public static final String COLUMN_address = "Address";
+    public static final String COLUMN_Xcoord = "X_Coord";
+    public static final String COLUMN_Ycoord = "Y_Coord";
+    public static final String COLUMN_CPTYPE = "Carpark_type";
+    public static final String COLUMN_TYPE_PARKING_SYS = "Type_Of_Parking_System";
+    public static final String COLUMN_STP = "short_term_parking";
+    public static final String COLUMN_FP = "free_parking";
+    public static final String COLUMN_NP ="night_parking";
 
     private Context context;
 
@@ -138,10 +140,13 @@ public class CarparkDBController extends SQLiteOpenHelper {
 
 
     //This method queries the database to get carparks with coordinates within vicinity of destination
-    public ArrayList<Cursor> queryRetrieveNearbyCarparks(double xcoord, double ycoord){
+    public ArrayList<Cursor> queryRetrieveNearbyCarparks(SVY21Coordinate svy21C){
+        double easting = svy21C.getEasting();
+        double northing = svy21C.getNorthing();
         ArrayList<Cursor> cpListInfo = new ArrayList<Cursor>();
 
         return cpListInfo;
     }
+
 
 }

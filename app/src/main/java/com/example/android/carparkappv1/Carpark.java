@@ -15,6 +15,8 @@ public class Carpark {
     private String freeParking;
     private String nightParking;
 
+    public Carpark(){
+    }
 
     public Carpark(SVY21Coordinate svyCoord, LatLonCoordinate latLonCoord, String cpNum, String cpType, String typeOfParkingSystem, String shortTermParking, String freeParking, String nightParking) {
         this.svyCoord = svyCoord;

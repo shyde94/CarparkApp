@@ -2,6 +2,7 @@ package com.example.android.carparkappv1;
 
 
 import android.content.Context;
+import android.database.Cursor;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -45,9 +46,18 @@ public class CarparkFinder {
     }
 
 
-
+    /**
+     * Take destination, convert into SVYCoordinate, call database query method, converts strings to give objects.
+     * @return Arraylist<Carpark>
+     */
     public ArrayList<Carpark> retrieveCarparks(){
         ArrayList<Carpark> cpObjectArray = new ArrayList<Carpark>();
+        SVY21Coordinate temp = getSVY21Coord(destination);
+        ArrayList<Cursor> cursorList = cpController.queryRetrieveNearbyCarparks(temp);
+        //1. Define box to search for carparks within...
+        // meaning you get 4 points as markers and search for any 2 points whose
+        // coordinates fall inside this boundary.
+        // Take first 2 digits of Easting and Northing? +5 -5?
 
         return cpObjectArray;
     }
@@ -59,7 +69,7 @@ public class CarparkFinder {
 
     //Convert WSG84 (destination coordinates) to SVY21 to query database which is in SVY21
     public SVY21Coordinate getSVY21Coord(LatLng d){
-        SVY21Coordinate svyC = SVY21.computeSVY21(destination.latitude, destination.longitude);
+        SVY21Coordinate svyC = SVY21.computeSVY21(d.latitude, d.longitude);
         return svyC;
     }
 
@@ -70,5 +80,15 @@ public class CarparkFinder {
         return llC;
     }
 
+
+    public Carpark cursorToCarpark(Cursor c){
+        Carpark cp = new Carpark();
+        SVY21Coordinate svy21C = new SVY21Coordinate(c.getDouble(c.getColumnIndex(CarparkDBController.COLUMN_Xcoord)), c.getDouble(c.getColumnIndex(CarparkDBController.COLUMN_Ycoord)));
+        cp.setCpNum(c.getString(c.getColumnIndex(CarparkDBController.COLUMN_CARPARKNUM)));
+        cp.setSvyCoord(svy21C);
+
+
+        return cp;
+    }
 
 }
