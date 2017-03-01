@@ -110,10 +110,6 @@ public class CarparkDBController extends SQLiteOpenHelper {
         while((line = buffer.readLine()) != null){
             Log.i(TAG, "inside while loop");
             String [] columns = line.split(",");
-            if(columns[0].length() >8){
-                Log.i(TAG, "Bad column, skipping csv row");
-                continue;
-            }
             ContentValues cv = new ContentValues();
             cv.put(COLUMN_CARPARKNUM, columns[0]);
             cv.put(COLUMN_address, columns[1]);
