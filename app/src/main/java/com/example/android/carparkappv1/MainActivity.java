@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        this.deleteDatabase(CarparkDBController.DATABASE_NAME);
+        //this.deleteDatabase(CarparkDBController.DATABASE_NAME);
         button = (Button) findViewById(R.id.search_button);
         mInputLocation = (EditText) findViewById(R.id.Search_location);
         mLocationDisplay = (TextView) findViewById(R.id.location_input);
