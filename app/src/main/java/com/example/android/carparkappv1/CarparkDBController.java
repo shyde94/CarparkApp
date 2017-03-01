@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 public class CarparkDBController extends SQLiteOpenHelper {
 
@@ -41,7 +42,12 @@ public class CarparkDBController extends SQLiteOpenHelper {
         this.context = context;
     }
 
-
+    /**
+     * This method creates database if no database exists.
+     * Table for hdb carparks created
+     * CSV file containing hdb information is populated into table TABLE_CARPARK
+     * @param sqLiteDatabase
+     */
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         Log.i(TAG, "onCreate database!");
@@ -81,23 +87,6 @@ public class CarparkDBController extends SQLiteOpenHelper {
 
     }
 
-    //Add new row into temp table
-    /*public void addRow(){
-
-        SQLiteDatabase db = getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put(COLUMN_CARPARKNUM, "ACB");
-        values.put(COLUMN_Xcoord, 30314.7936);
-        values.put(COLUMN_Ycoord, 31490.4942);
-
-
-        db.insert(TABLE_CARPARKS, null, values);
-        db.close();
-
-    }*/
-
-
     //load values from csv file.
     public void addCSVintoDB(SQLiteDatabase db) throws IOException {
         Log.i(TAG,  "addCSVintoDB method");
@@ -126,6 +115,7 @@ public class CarparkDBController extends SQLiteOpenHelper {
         }
     }
 
+
     public String dbToString(){
         Log.i(TAG, "enter dbToString");
         String dbString = "";
@@ -139,21 +129,19 @@ public class CarparkDBController extends SQLiteOpenHelper {
             dbString += c.getString(c.getColumnIndex(COLUMN_Xcoord));
             dbString += c.getString(c.getColumnIndex(COLUMN_Ycoord));
         }
-
-        /*while(!c.isAfterLast()){
-            i++;
-            Log.i(TAG, "inside while loop of dbToString, i: " + i);
-            if(c.getString(c.getColumnIndex(COLUMN_CARPARKNUM)) !=null){
-                dbString += c.getString(c.getColumnIndex(COLUMN_CARPARKNUM));
-                dbString += "\n";
-            }
-        }*/
-
         db.close();
         c.close();
         Log.i(TAG, "dbString: " + dbString);
         return dbString;
 
+    }
+
+
+    //This method queries the database to get carparks with coordinates within vicinity of destination
+    public ArrayList<Cursor> queryRetrieveNearbyCarparks(double xcoord, double ycoord){
+        ArrayList<Cursor> cpListInfo = new ArrayList<Cursor>();
+
+        return cpListInfo;
     }
 
 }

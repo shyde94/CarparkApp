@@ -1,8 +1,13 @@
 package com.example.android.carparkappv1;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import MapProjectionConverter.LatLonCoordinate;
+import MapProjectionConverter.SVY21Coordinate;
+
 public class Carpark {
-    private double xCoord;
-    private double yCoord;
+    private SVY21Coordinate svyCoord;
+    private LatLonCoordinate latLonCoord;
     private String cpNum;
     private String cpType;
     private String typeOfParkingSystem;
@@ -10,20 +15,32 @@ public class Carpark {
     private String freeParking;
     private String nightParking;
 
-    public double getxCoord() {
-        return xCoord;
+
+    public Carpark(SVY21Coordinate svyCoord, LatLonCoordinate latLonCoord, String cpNum, String cpType, String typeOfParkingSystem, String shortTermParking, String freeParking, String nightParking) {
+        this.svyCoord = svyCoord;
+        this.latLonCoord = latLonCoord;
+        this.cpNum = cpNum;
+        this.cpType = cpType;
+        this.typeOfParkingSystem = typeOfParkingSystem;
+        this.shortTermParking = shortTermParking;
+        this.freeParking = freeParking;
+        this.nightParking = nightParking;
     }
 
-    public void setxCoord(double xCoord) {
-        this.xCoord = xCoord;
+    public SVY21Coordinate getSvyCoord() {
+        return svyCoord;
     }
 
-    public double getyCoord() {
-        return yCoord;
+    public void setSvyCoord(SVY21Coordinate svyCoord) {
+        this.svyCoord = svyCoord;
     }
 
-    public void setyCoord(double yCoord) {
-        this.yCoord = yCoord;
+    public LatLonCoordinate getLatLonCoord() {
+        return latLonCoord;
+    }
+
+    public void setLatLonCoord(LatLonCoordinate latLonCoord) {
+        this.latLonCoord = latLonCoord;
     }
 
     public String getCpNum() {

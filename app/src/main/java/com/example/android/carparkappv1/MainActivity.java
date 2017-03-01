@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     TextView mLocationDisplay;
     MyCustomMap myMap;
     MapFragment mapFragment;
-    CarparkDBController cpController;
+
 
 
     private static final String TAG = "MainActivityClass";
@@ -39,9 +39,8 @@ public class MainActivity extends AppCompatActivity {
         mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.mapFragment);
         myMap = new MyCustomMap(this, mapFragment);
 
-        cpController = new CarparkDBController(this);
-        String temp = cpController.dbToString();
-        mLocationDisplay.setText(temp);
+
+
 
         if (myMap.googleServicesAvailable()) {
             myMap.initMap();
