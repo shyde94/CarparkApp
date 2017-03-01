@@ -2,6 +2,7 @@ package com.example.android.carparkappv1;
 
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     TextView mLocationDisplay;
     MyCustomMap myMap;
     MapFragment mapFragment;
+    CarparkDBController cpController;
 
 
     private static final String TAG = "MainActivityClass";
@@ -36,6 +38,10 @@ public class MainActivity extends AppCompatActivity {
         mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.mapFragment);
         myMap = new MyCustomMap(this, mapFragment);
 
+        cpController = new CarparkDBController(this);
+        cpController.addRow();
+        String temp = cpController.dbToString();
+        mLocationDisplay.setText(temp);
 
         if (myMap.googleServicesAvailable()) {
             myMap.initMap();
