@@ -2,8 +2,6 @@ package com.example.android.carparkappv1;
 
 
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,8 +13,6 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
-
-import java.io.IOException;
 
 import MapProjectionConverter.LatLonCoordinate;
 import MapProjectionConverter.SVY21;
@@ -55,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
                             LatLng ll = myMap.searchLocation(location);
                             myMap.gotoLocationZoom(ll, 15);
                             myMap.setMarker(location, ll);
+
+                            //To test to find boundary box of carparks.
                             SVY21Coordinate destSVY21 = SVY21.computeSVY21(ll.latitude, ll.longitude);
                             Log.i(TAG, "Lat: " + ll.latitude);
                             Log.i(TAG, "Lng: " + ll.longitude);
@@ -81,75 +79,5 @@ public class MainActivity extends AppCompatActivity {
                 }
         );
     }
-        /*if(googleServicesAvailable()){
-            Toast.makeText(this,"Great", Toast.LENGTH_SHORT);
-            initMap();
-        }*/
 
-
-    /*
-    private void initMap(){
-        MapFragment mapFragment = (MapFragment)getFragmentManager().findFragmentById(R.id.mapFragment);
-        mapFragment.getMapAsync(this);
-    }
-
-    private void gotoLocationZoom(double lat, double lng, float zoom){
-        LatLng ll = new LatLng(lat,lng);
-        CameraUpdate camUpdate = CameraUpdateFactory.newLatLngZoom(ll,zoom);
-        mGoogleMap.animateCamera(camUpdate);
-    }
-
-    public boolean googleServicesAvailable(){
-        GoogleApiAvailability api = GoogleApiAvailability.getInstance();
-        int apiAvailable = api.isGooglePlayServicesAvailable(this);
-        if(apiAvailable == ConnectionResult.SUCCESS){
-            return true;
-        }
-        else if(api.isUserResolvableError(apiAvailable)){
-            Dialog dialog = api.getErrorDialog(this, apiAvailable, 0);
-            dialog.show();
-        }
-        else{
-            Toast.makeText(this, "Can't connect to play services", Toast.LENGTH_SHORT).show();
-        }
-        return false;
-    }
-
-
-    public void searchLocation(View v){
-        String location = null;
-        location = mInputLocation.getText().toString();
-        mLocationDisplay.setText(location);
-        if(!location.equals("")){
-            try{
-                geoLocate(location);
-            }catch(IOException e){
-                e.printStackTrace();
-            }
-        }
-
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        mGoogleMap = googleMap;
-    }
-
-    public void geoLocate(String location) throws IOException {
-        double lat, lng;
-        Geocoder gc = new Geocoder(this);
-        List<Address> list = gc.getFromLocationName(location,5);
-        Address address = list.get(0);
-        String locality = address.getLocality();
-        //Log.i("Debug",locality);
-        Toast.makeText(this, locality, Toast.LENGTH_LONG).show();
-        lat = address.getLatitude();
-        lng = address.getLongitude();
-
-        gotoLocationZoom(lat,lng,15);
-
-
-
-;
-    }*/
 }

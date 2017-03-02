@@ -59,6 +59,9 @@ public class CarparkFinder {
         // coordinates fall inside this boundary.
         // Take first 2 digits of Easting and Northing? +5 -5?
 
+        //TODO 1. How to determine the boundary box?
+        //TODO 2. How to query for data based on the boundary box? THINKKKKKKK
+
         return cpObjectArray;
     }
 
