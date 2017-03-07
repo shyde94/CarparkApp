@@ -123,6 +123,7 @@ public class CarparkDBController extends SQLiteOpenHelper {
         String dbString = "";
         SQLiteDatabase db = getWritableDatabase();
         String query = "SELECT * FROM " + TABLE_CARPARKS + " WHERE 1;";
+
         Cursor c = db.rawQuery(query,null);
         c.moveToFirst();
         if(c.getCount()!=0){
@@ -140,13 +141,37 @@ public class CarparkDBController extends SQLiteOpenHelper {
 
 
     //This method queries the database to get carparks with coordinates within vicinity of destination
-    public ArrayList<Cursor> queryRetrieveNearbyCarparks(SVY21Coordinate svy21C){
+    public Cursor queryRetrieveNearbyCarparks(SVY21Coordinate svy21C){
         double easting = svy21C.getEasting();
         double northing = svy21C.getNorthing();
-        ArrayList<Cursor> cpListInfo = new ArrayList<Cursor>();
+        Cursor cpListInfo = null;
+
+
 
         return cpListInfo;
     }
+
+    public Cursor querySomething(){
+        SQLiteDatabase db = getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_CARPARKS + " WHERE " + COLUMN_address + " = 'BLK 390A TAMPINES AVENUE 7';";
+        //String query =  "SELECT * FROM " + TABLE_CARPARKS + " WHERE 1;";
+        Cursor c = db.rawQuery(query,null);
+        c.moveToFirst();
+        if(c.getCount() != 0){
+            Log.i(TAG, "cursor has stuff");
+            String x = c.getString(c.getColumnIndex(COLUMN_Xcoord));
+            Log.i(TAG, "value of x: " + x);
+        }
+        else{
+            Log.i(TAG, "cursor empty");
+        }
+
+
+
+         return c;
+    }
+
+
 
 
 }

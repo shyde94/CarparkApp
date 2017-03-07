@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
+
 import MapProjectionConverter.LatLonCoordinate;
 import MapProjectionConverter.SVY21;
 import MapProjectionConverter.SVY21Coordinate;
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     TextView mLocationDisplay;
     MyCustomMap myMap;
     MapFragment mapFragment;
+    private CarparkFinder cpFinder;
 
     private static final String TAG = "MainActivityClass";
 
@@ -59,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.i(TAG, "Easting: " + destSVY21.getEasting());
                             Log.i(TAG, "Northing: " + destSVY21.getNorthing());
 
-
+                            /*
                             //for testing purposes
                             double x = 27576.755922097967;
                             double y = 28018.944427629576;
@@ -69,7 +72,13 @@ public class MainActivity extends AppCompatActivity {
 
 
                             Log.i(TAG, "test lat: " + llC.getLatitude());
-                            Log.i(TAG, "test long: " + llC.getLongitude());
+                            Log.i(TAG, "test long: " + llC.getLongitude());*/
+
+                            //cpFinder = new CarparkFinder(ll, MainActivity.this);
+                            //String testing = cpFinder.getCpController().dbToString();
+                            //mLocationDisplay.setText(testing);
+                            //showCarparks(cpFinder);
+
 
                         }
                         //Hide keyboard
@@ -80,4 +89,15 @@ public class MainActivity extends AppCompatActivity {
         );
     }
 
+
+    public void showCarparks(CarparkFinder cpFinder){
+        ArrayList<LatLonCoordinate> llcList = cpFinder.handleQuery();
+        int i;
+        for(i=0;i<llcList.size();i++){
+            LatLonCoordinate temp = llcList.get(i);
+            LatLng tempLL = new LatLng(temp.getLatitude(), temp.getLongitude());
+            myMap.setMarker(tempLL);
+            Log.i(TAG, "LOOK: " + tempLL.toString());
+        }
+    }
 }

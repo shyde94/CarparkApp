@@ -3,6 +3,7 @@ package com.example.android.carparkappv1;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -13,11 +14,18 @@ import MapProjectionConverter.SVY21;
 import MapProjectionConverter.SVY21Coordinate;
 
 public class CarparkFinder {
+    private static final String TAG = "CarparkFinderClass";
+
     private ArrayList<Carpark> cpList;
     private LatLng destination;
     private CarparkDBController cpController;
+
+
     private Context context;
 
+    public CarparkDBController getCpController() {
+        return cpController;
+    }
 
     //Getters and setters
     public LatLng getDestination() {
@@ -38,7 +46,7 @@ public class CarparkFinder {
 
 
     //Constructor
-    public CarparkFinder(LatLng ll, CarparkDBController cpController, Context context){
+    public CarparkFinder(LatLng ll, Context context){
         destination = ll;
         this.context = context;
         this.cpController = new CarparkDBController(context);
@@ -53,7 +61,7 @@ public class CarparkFinder {
     public ArrayList<Carpark> retrieveCarparks(){
         ArrayList<Carpark> cpObjectArray = new ArrayList<Carpark>();
         SVY21Coordinate temp = getSVY21Coord(destination);
-        ArrayList<Cursor> cursorList = cpController.queryRetrieveNearbyCarparks(temp);
+        Cursor cursorList = cpController.queryRetrieveNearbyCarparks(temp);
         //1. Define box to search for carparks within...
         // meaning you get 4 points as markers and search for any 2 points whose
         // coordinates fall inside this boundary.
@@ -93,5 +101,35 @@ public class CarparkFinder {
 
         return cp;
     }
+
+    public ArrayList<LatLonCoordinate> handleQuery(){
+        ArrayList<LatLonCoordinate> tempList = new ArrayList<LatLonCoordinate>();
+        Cursor c = cpController.querySomething();
+        c.moveToFirst();
+        if (c.getCount() == 0) {
+            Log.i(TAG, "c count = 0");
+            return null;
+        } else {
+            while (c.moveToNext()) {
+                Log.i(TAG, "enter while loop");
+                String xCoordS = c.getString(c.getColumnIndex(CarparkDBController.COLUMN_Xcoord));
+                String yCoordS = c.getString(c.getColumnIndex(CarparkDBController.COLUMN_Ycoord));
+                Log.i(TAG, "xCoord: " + xCoordS + "yCoord: " + yCoordS);
+                xCoordS = xCoordS.substring(1,xCoordS.length()-1);
+                yCoordS = yCoordS.substring(1,yCoordS.length()-1);
+                double xCoord = Double.parseDouble(xCoordS);
+                double yCoord = Double.parseDouble(yCoordS);
+                LatLonCoordinate llc = SVY21.computeLatLon(yCoord, xCoord);
+                tempList.add(llc);
+            }
+        }
+        c.close();
+
+
+        return tempList;
+
+    }
+
+
 
 }
