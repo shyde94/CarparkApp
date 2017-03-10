@@ -15,7 +15,7 @@ public class MapFragmentHolder extends MapFragment {
 
     MapFragment mapFragment;
     MyCustomMap myMap;
-    MapController mapController;
+    public static MapController mapController;
 
     @Override
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
@@ -32,4 +32,6 @@ public class MapFragmentHolder extends MapFragment {
 
         return view;
     }
+
+
 }

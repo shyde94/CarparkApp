@@ -12,7 +12,7 @@
     android:orientation="vertical"
     android:weightSum="1">
 
-    <EditText
+    <!--<EditText
         android:id="@+id/Search_location"
         android:textSize="15sp"
         android:hint="@string/search_location_hint"
@@ -32,13 +32,23 @@
         android:id="@+id/location_input"
         android:textSize="15dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content" />-->
 
     <!--<fragment xmlns:android="http://schemas.android.com/apk/res/android"
         android:name="com.google.android.gms.maps.MapFragment"
         android:id="@+id/mapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>-->
+    <FrameLayout
+        android:id="@+id/search_fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </FrameLayout>
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+    </FrameLayout>
 
 </LinearLayout>
 

@@ -226,4 +226,6 @@ public class MyCustomMap implements OnMapReadyCallback, GoogleApiClient.OnConnec
         return zoomFactor;
     }
 
+
+
 }
