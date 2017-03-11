@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.android.carparkappv1.MyCustomMap;
 import com.example.android.carparkappv1.R;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -34,12 +33,20 @@ public class MapFragmentHolder extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
-        View view = layoutInflater.inflate(R.layout.map_fragment, viewGroup, false);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         mapFragment = (MapFragment) getChildFragmentManager().findFragmentById(R.id.mapFragment);
-        myMap = new MyCustomMap(getActivity(), mapFragment);
-        mapController = new MapController(myMap);
+        myMap = new MyCustomMap();
+        myMap.initMap();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
+        Log.i(TAG, "Create MapFragmentHolder");
+        View view = layoutInflater.inflate(R.layout.map_fragment, viewGroup, false);
+        //mapController = new MapController(myMap);
         test = (TextView) view.findViewById(R.id.testing);
+
 
 
 
@@ -47,11 +54,18 @@ public class MapFragmentHolder extends Fragment {
     }
 
 
+
     //Carry out all functions of the map!
     public void start(){
-        if(mapController.initMap()){
-            LatLng ll = mapController.searchLocation(location);
+        Log.i(TAG, "inside MapHolderFragment start method");
+        if(myMap != null){
+            if(myMap.googleServicesAvailable()){
+                myMap.initMap();
+                LatLng ll = myMap.searchLocation(location);
+                myMap.gotoLocationZoom(ll,15);
+            }
         }
+
 
     }
 

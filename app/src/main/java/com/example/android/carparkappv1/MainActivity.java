@@ -6,9 +6,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import java.io.IOException;
+
 import Controllers.ScreenController;
 import Fragments.MapFragmentHolder;
 import Fragments.MenuFragment;
+import Fragments.MyCustomMap;
 
 import static Controllers.ScreenController.Screen.MFH;
 
@@ -42,22 +45,11 @@ public class MainActivity extends AppCompatActivity implements MenuFragment.OnSe
 
     //This gets called by searchLocationFragment when search button is clicked
     @Override
-    public void onSearchedButtonClicked(String location) {
+    public void onSearchedButtonClicked(String location) throws IOException {
         screenController.openScreen(MFH);
         Log.i(TAG, "Location? : " + location);
-        MapFragmentHolder mfh = new MapFragmentHolder();
-        if(mfh!=null){
-            Log.i(TAG, "mfh okay!");
-            //Still facing the same problem. null pointer exception on the map object...
-            mfh.setLocation(location);
-            //mfh.start();
-        }
-        else{
-            Log.i(TAG, "mfh null..");
-        }
-
-
-
+        MyCustomMap myMap = new MyCustomMap();
+        myMap.setDestination(location);
         //screenController.openScreen(ScreenController.Screen.TEST);
 
     }

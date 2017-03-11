@@ -1,10 +1,9 @@
-package com.example.android.carparkappv1;
+package Fragments;
 
 
-import android.*;
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
+import android.app.Fragment;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -14,8 +13,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.android.carparkappv1.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -34,14 +37,22 @@ import java.io.IOException;
 import java.util.List;
 
 
-public class MyCustomMap implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener {
+public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener {
 
     private static final String TAG = "MyCustomMapClass";
     private static GoogleMap mGoogleMap;
     private GoogleApiClient mGoogleApiClient;
-    private Context context;
     private MapFragment mapFragment;
     private Location mCurrentLocation;
+    private String destination = "pasir ris";
+
+    public String getDestination() {
+        return destination;
+    }
+
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
 
     public Location getmCurrentLocation() {
         return mCurrentLocation;
@@ -51,19 +62,34 @@ public class MyCustomMap implements OnMapReadyCallback, GoogleApiClient.OnConnec
         return mGoogleMap;
     }
 
-    public Context getContext() {
-        return context;
-    }
+
 
     public MapFragment getMapFragment() {
         return mapFragment;
     }
 
 
-    public MyCustomMap(Context context, MapFragment mapFragment) {
-        this.context = context;
-        this.mapFragment = mapFragment;
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(com.example.android.carparkappv1.R.layout.map_fragment, container, false);
+        mapFragment = (MapFragment) getChildFragmentManager().findFragmentById(R.id.mapFragment);
+        try {
+            start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
+
+        return view;
+    }
+
+    public void start() throws IOException {
+        if(googleServicesAvailable()){
+            initMap();
+            LatLng ll = searchLocation(destination);
+            //gotoLocationZoom(ll, 15);
+        }
     }
 
     @Override
@@ -77,7 +103,7 @@ public class MyCustomMap implements OnMapReadyCallback, GoogleApiClient.OnConnec
 
     public boolean googleServicesAvailable() {
         GoogleApiAvailability api = GoogleApiAvailability.getInstance();
-        int apiAvailable = api.isGooglePlayServicesAvailable(context);
+        int apiAvailable = api.isGooglePlayServicesAvailable(getActivity());
         if (apiAvailable == ConnectionResult.SUCCESS) {
             Log.i(TAG, "google services available");
             return true;
@@ -86,12 +112,13 @@ public class MyCustomMap implements OnMapReadyCallback, GoogleApiClient.OnConnec
             //dialog.show();
         } else {
             Log.i(TAG, "error occurred.");
-            Toast.makeText(context, "An error occurred", Toast.LENGTH_LONG).show();
+            Toast.makeText(getActivity(), "An error occurred", Toast.LENGTH_LONG).show();
         }
         return false;
     }
 
     public void initMap() {
+        Log.i("MapFragmentHolderClass", "enter init map" );
         mapFragment.getMapAsync(this);
         Log.i(TAG, "InitMap success");
     }
@@ -113,13 +140,13 @@ public class MyCustomMap implements OnMapReadyCallback, GoogleApiClient.OnConnec
         Log.i(TAG, "Enter geoLocate");
         Log.i(TAG, location);
         double lat, lng;
-        Geocoder gc = new Geocoder(context);
+        Geocoder gc = new Geocoder(getActivity());
         List<Address> tempList = gc.getFromLocationName(location, 5);
         Address tempAddress = tempList.get(0);
         String locality = tempAddress.getLocality();
 
         Log.i(TAG, "Locality: " + locality);
-        Toast.makeText(context, locality, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), locality, Toast.LENGTH_SHORT).show();
 
         lat = tempAddress.getLatitude();
         lng = tempAddress.getLongitude();
@@ -165,7 +192,7 @@ public class MyCustomMap implements OnMapReadyCallback, GoogleApiClient.OnConnec
 
     public void setCurrentLocation() {
         Log.i(TAG, "setCurrentLocation");
-        mGoogleApiClient = new GoogleApiClient.Builder(context)
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addApi(LocationServices.API).addConnectionCallbacks(this).addOnConnectionFailedListener(this).build();
         mGoogleApiClient.connect();
     }
@@ -177,7 +204,7 @@ public class MyCustomMap implements OnMapReadyCallback, GoogleApiClient.OnConnec
         mlocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
 
 
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -186,7 +213,7 @@ public class MyCustomMap implements OnMapReadyCallback, GoogleApiClient.OnConnec
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
             String[] mPermission = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-            ActivityCompat.requestPermissions((Activity) context, mPermission, 1);
+            ActivityCompat.requestPermissions((Activity) getActivity(), mPermission, 1);
             Log.i(TAG, "Ask for permission");
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mlocationRequest, this);
@@ -209,7 +236,7 @@ public class MyCustomMap implements OnMapReadyCallback, GoogleApiClient.OnConnec
     @Override
     public void onLocationChanged(Location location) {
         if(location == null){
-            Toast.makeText(context, "Can't get current location", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Can't get current location", Toast.LENGTH_SHORT).show();
         }
         else{
             LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());

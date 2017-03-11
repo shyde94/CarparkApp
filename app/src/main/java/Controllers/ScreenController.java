@@ -14,6 +14,7 @@ import java.util.List;
 
 import Fragments.MapFragmentHolder;
 import Fragments.MenuFragment;
+import Fragments.MyCustomMap;
 import Fragments.TestFrag;
 
 
@@ -78,7 +79,7 @@ public class ScreenController {
                 frag = new MenuFragment();
                 break;
             case MFH:
-                frag = new MapFragmentHolder();
+                frag = new MyCustomMap();
                 break;
             case TEST:
                 frag = new TestFrag();

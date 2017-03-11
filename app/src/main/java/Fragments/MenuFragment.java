@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.example.android.carparkappv1.R;
 
+import java.io.IOException;
+
 /**
  * Created by Shide on 11/3/17.
  */
@@ -36,7 +38,11 @@ public class MenuFragment extends Fragment {
                 new View.OnClickListener(){
                     @Override
                     public void onClick(View view) {
-                        buttonClicked(view);
+                        try {
+                            buttonClicked(view);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
 
                     }
                 }
@@ -45,14 +51,14 @@ public class MenuFragment extends Fragment {
 
         return view;
     }
-    public void buttonClicked(View v){
+    public void buttonClicked(View v) throws IOException {
         String location = mInputLocation.getText().toString();
         mListener.onSearchedButtonClicked(mInputLocation.getText().toString());
 
     }
 
     public interface OnSearchButtonClickedListener {
-        public void onSearchedButtonClicked(String location);
+        public void onSearchedButtonClicked(String location) throws IOException;
     }
 
     @Override

@@ -1,11 +1,10 @@
 package Controllers;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.example.android.carparkappv1.CarparkFinder;
-import com.example.android.carparkappv1.MyCustomMap;
-import com.google.android.gms.maps.MapFragment;
+import Fragments.MyCustomMap;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
