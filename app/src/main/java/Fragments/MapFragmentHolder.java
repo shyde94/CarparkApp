@@ -36,7 +36,7 @@ public class MapFragmentHolder extends Fragment {
     @Override
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
         View view = layoutInflater.inflate(R.layout.map_fragment, viewGroup, false);
-        mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.mapFragment);
+        mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.mapFragmentTEST);
         myMap = new MyCustomMap(getActivity(), mapFragment);
         mapController = new MapController(myMap);
         test = (TextView) view.findViewById(R.id.testing);
@@ -48,7 +48,7 @@ public class MapFragmentHolder extends Fragment {
             myMap.setMarker(location, ll);
         }
         else{
-            Log.i(TAG, "See..mapfragment is null here. then whats the view that im seeing? hmmm");
+            Log.i(TAG, "See..mapfragment is null here. map that you see is the inflated view from xml file as xml file contains map fragment! hmmm");
         }
 
         return view;
