@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements MenuFragment.OnSe
         if(mfh!=null){
             Log.i(TAG, "mfh okay!");
             //Still facing the same problem. null pointer exception on the map object...
+            mfh.setLocation(location);
             //mfh.start();
         }
         else{

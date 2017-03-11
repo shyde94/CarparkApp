@@ -23,7 +23,7 @@ public class MapFragmentHolder extends Fragment {
     MapFragment mapFragment;
     MyCustomMap myMap;
     public static MapController mapController;
-    private String location = "pasir ris";
+    private String location;
 
     public String getLocation() {
         return location;
@@ -36,20 +36,12 @@ public class MapFragmentHolder extends Fragment {
     @Override
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle bundle) {
         View view = layoutInflater.inflate(R.layout.map_fragment, viewGroup, false);
-        mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.mapFragmentTEST);
+        mapFragment = (MapFragment) getChildFragmentManager().findFragmentById(R.id.mapFragment);
         myMap = new MyCustomMap(getActivity(), mapFragment);
         mapController = new MapController(myMap);
         test = (TextView) view.findViewById(R.id.testing);
 
-        LatLng ll = myMap.searchLocation(location);
-        if(mapFragment !=null){
-            myMap.initMap();
-            myMap.gotoLocationZoom(ll, 15);
-            myMap.setMarker(location, ll);
-        }
-        else{
-            Log.i(TAG, "See..mapfragment is null here. map that you see is the inflated view from xml file as xml file contains map fragment! hmmm");
-        }
+
 
         return view;
     }
@@ -57,11 +49,10 @@ public class MapFragmentHolder extends Fragment {
 
     //Carry out all functions of the map!
     public void start(){
-        /*if(mapController.initMap()){
+        if(mapController.initMap()){
             LatLng ll = mapController.searchLocation(location);
-        }*/
+        }
 
-        myMap.searchLocation(location);
     }
 
 
