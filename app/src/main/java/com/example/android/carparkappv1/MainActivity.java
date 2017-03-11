@@ -1,21 +1,27 @@
 package com.example.android.carparkappv1;
 
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import Controllers.ScreenController;
 import Fragments.MapFragmentHolder;
 import Fragments.MenuFragment;
 
+import static Controllers.ScreenController.Screen.MFH;
+
 
 public class MainActivity extends AppCompatActivity implements MenuFragment.OnSearchButtonClickedListener {
 
-    ScreenController screenController;
+    public ScreenController screenController = new ScreenController();;
 
     private CarparkFinder cpFinder;
 
     private static final String TAG = "MainActivityClass";
+
+    public Activity activity = this;
 
 
     @Override
@@ -23,16 +29,36 @@ public class MainActivity extends AppCompatActivity implements MenuFragment.OnSe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //this.deleteDatabase(CarparkDBController.DATABASE_NAME);
+        Shared.activity = MainActivity.this;
         screenController.openScreen(ScreenController.Screen.MENU);
+    }
 
-
+    @Override
+    public void onBackPressed() {
+        if (ScreenController.getInstance().onBack()) {
+            super.onBackPressed();
+        }
     }
 
     //This gets called by searchLocationFragment when search button is clicked
     @Override
     public void onSearchedButtonClicked(String location) {
-        screenController.openScreen(ScreenController.Screen.MFH);
-        MapFragmentHolder mfh = (MapFragmentHolder) getFragmentManager().findFragmentById(R.id.mapFragment);
+        screenController.openScreen(MFH);
+        Log.i(TAG, "Location? : " + location);
+        MapFragmentHolder mfh = new MapFragmentHolder();
+        if(mfh!=null){
+            Log.i(TAG, "mfh okay!");
+            //Still facing the same problem. null pointer exception on the map object...
+            //mfh.start();
+        }
+        else{
+            Log.i(TAG, "mfh null..");
+        }
+
+
+
+        //screenController.openScreen(ScreenController.Screen.TEST);
+
     }
 }
 

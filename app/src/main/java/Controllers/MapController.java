@@ -46,7 +46,11 @@ public class MapController {
         }
     }
 
-    public void searchLocation(){
+    public LatLng searchLocation(String location){
 
+        LatLng ll = myMap.searchLocation(location);
+        myMap.gotoLocationZoom(ll, 15);
+        myMap.setMarker(location, ll);
+        return ll;
     }
 }

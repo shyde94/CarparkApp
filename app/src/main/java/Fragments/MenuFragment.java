@@ -47,6 +47,7 @@ public class MenuFragment extends Fragment {
     }
     public void buttonClicked(View v){
         String location = mInputLocation.getText().toString();
+        mListener.onSearchedButtonClicked(mInputLocation.getText().toString());
 
     }
 
