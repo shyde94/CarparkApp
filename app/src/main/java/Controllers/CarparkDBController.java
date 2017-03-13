@@ -133,7 +133,7 @@ public class CarparkDBController extends SQLiteOpenHelper {
             dbString += c.getString(c.getColumnIndex(COLUMN_Ycoord));
         }
         db.close();
-        c.close();
+        //c.close();
         Log.i(TAG, "dbString: " + dbString);
         return dbString;
 

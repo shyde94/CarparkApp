@@ -18,6 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.android.carparkappv1.Carpark;
+import com.example.android.carparkappv1.CarparkFinder;
 import com.example.android.carparkappv1.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -34,17 +36,23 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener {
 
     private static final String TAG = "MyCustomMapClass";
+
+    //Variables essential for mapfragment
     private static GoogleMap mGoogleMap;
     private GoogleApiClient mGoogleApiClient;
     private MapFragment mapFragment;
     private Location mCurrentLocation;
     private String destination = "";
+
+    //Stores array of carpark objects. This should be queried outside before map is displayed.
+    private ArrayList<Carpark> carparkList;
 
     public static MyCustomMap newInstance(String destination){
         MyCustomMap myMap =  new MyCustomMap();
@@ -101,6 +109,9 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         }
     }
 
+
+    //So..I should call all the methods here. basically everything related to the functional requirements of the carpark
+    //search should appear after "Search" is clicked.
     @Override
     public void onMapReady(GoogleMap map) {
         mGoogleMap = map;
@@ -137,7 +148,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         if(!destination.equals("")){
             LatLng ll = searchLocation(destination);
             gotoLocationZoom(ll, 15);
-            setMarker(ll);
+            setMarker(destination,ll);
         }
 
     }
@@ -193,9 +204,9 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         return ll;
     }
 
-    public void setMarker(String location, LatLng ll) {
+    public void setMarker(String title, LatLng ll) {
         MarkerOptions options = new MarkerOptions()
-                .title(location)
+                .title(title)
                 .position(ll);
         mGoogleMap.addMarker(options);
     }
@@ -271,5 +282,16 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     }
 
 
+    //This method will set the markers of the nearby carparks on the map
+    public void displayNearbyCarparks(){
+        for(Carpark cp : carparkList){
+            double lat = cp.getLatLonCoord().getLatitude();
+            double lng = cp.getLatLonCoord().getLongitude();
+
+            String cpNum = cp.getCpNum();
+            LatLng latlng = new LatLng(lat, lng);
+            setMarker(cpNum,latlng);
+        }
+    }
 
 }

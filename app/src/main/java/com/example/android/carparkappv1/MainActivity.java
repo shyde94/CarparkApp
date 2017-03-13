@@ -18,9 +18,7 @@ import static Controllers.ScreenController.Screen.MFH;
 
 public class MainActivity extends AppCompatActivity implements MenuFragment.OnSearchButtonClickedListener {
 
-    public ScreenController screenController = new ScreenController();;
-
-    private CarparkFinder cpFinder;
+    public ScreenController screenController = new ScreenController();
 
     private static final String TAG = "MainActivityClass";
 
@@ -47,17 +45,6 @@ public class MainActivity extends AppCompatActivity implements MenuFragment.OnSe
     @Override
     public void onSearchedButtonClicked(String location) throws IOException {
         screenController.openScreen(MFH, location);
-        Log.i(TAG, "Location? : " + location);
-        MyCustomMap mapFragment = (MyCustomMap) getFragmentManager().findFragmentByTag("CURRENT_FRAG");
-        if(mapFragment != null && mapFragment.isVisible()){
-            Log.i(TAG, "here");
-            //mapFragment.setDestination(location);
-            //mapFragment.searchDestination();
-        }
-        //MyCustomMap myMap = new MyCustomMap();
-        //myMap.setDestination(location);
-        //screenController.openScreen(ScreenController.Screen.TEST);
-
     }
 }
 

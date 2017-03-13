@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -15,9 +16,6 @@ import com.example.android.carparkappv1.R;
 
 import java.io.IOException;
 
-/**
- * Created by Shide on 11/3/17.
- */
 
 public class MenuFragment extends Fragment {
     Button button;
@@ -40,6 +38,7 @@ public class MenuFragment extends Fragment {
                     public void onClick(View view) {
                         try {
                             buttonClicked(view);
+
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
