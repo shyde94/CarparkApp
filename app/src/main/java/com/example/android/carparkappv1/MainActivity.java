@@ -46,10 +46,16 @@ public class MainActivity extends AppCompatActivity implements MenuFragment.OnSe
     //This gets called by searchLocationFragment when search button is clicked
     @Override
     public void onSearchedButtonClicked(String location) throws IOException {
-        screenController.openScreen(MFH);
+        screenController.openScreen(MFH, location);
         Log.i(TAG, "Location? : " + location);
-        MyCustomMap myMap = new MyCustomMap();
-        myMap.setDestination(location);
+        MyCustomMap mapFragment = (MyCustomMap) getFragmentManager().findFragmentByTag("CURRENT_FRAG");
+        if(mapFragment != null && mapFragment.isVisible()){
+            Log.i(TAG, "here");
+            //mapFragment.setDestination(location);
+            //mapFragment.searchDestination();
+        }
+        //MyCustomMap myMap = new MyCustomMap();
+        //myMap.setDestination(location);
         //screenController.openScreen(ScreenController.Screen.TEST);
 
     }

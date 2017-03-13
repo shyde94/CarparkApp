@@ -44,7 +44,15 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     private GoogleApiClient mGoogleApiClient;
     private MapFragment mapFragment;
     private Location mCurrentLocation;
-    private String destination = "pasir ris";
+    private String destination = "";
+
+    public static MyCustomMap newInstance(String destination){
+        MyCustomMap myMap =  new MyCustomMap();
+        Bundle args = new Bundle();
+        args.putString("Destination", destination);
+        myMap.setArguments(args);
+        return myMap;
+    }
 
     public String getDestination() {
         return destination;
@@ -74,6 +82,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(com.example.android.carparkappv1.R.layout.map_fragment, container, false);
         mapFragment = (MapFragment) getChildFragmentManager().findFragmentById(R.id.mapFragment);
+        //destination = mapFragment.getArguments().getString("Destination");
         try {
             start();
         } catch (IOException e) {
@@ -97,6 +106,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         mGoogleMap = map;
         Log.i(TAG, "onMapReady map success");
         setCurrentLocation();
+        searchDestination();
 
     }
 
@@ -123,6 +133,15 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         Log.i(TAG, "InitMap success");
     }
 
+    public void searchDestination(){
+        if(!destination.equals("")){
+            LatLng ll = searchLocation(destination);
+            gotoLocationZoom(ll, 15);
+            setMarker(ll);
+        }
+
+    }
+
     public LatLng searchLocation(String location) {
         Log.i(TAG, "Enter search location");
         Log.i(TAG, location);
@@ -135,6 +154,20 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         return ll;
     }
 
+    public void gotoLocationZoom(double lat, double lng, int zoom) {
+        Log.i(TAG, "Enter gotoLocationZoom");
+        LatLng ll = new LatLng(lat, lng);
+        CameraUpdate camUpdate = CameraUpdateFactory.newLatLngZoom(ll, zoom);
+        //This is the lind causing all the problem.
+        mGoogleMap.animateCamera(camUpdate);
+    }
+
+    public void gotoLocationZoom(LatLng ll, int zoom) {
+        Log.i(TAG, "Enter gotoLocationZoom");
+        CameraUpdate camUpdate = CameraUpdateFactory.newLatLngZoom(ll, zoom);
+        //This is the lind causing all the problem.
+        mGoogleMap.animateCamera(camUpdate);
+    }
 
     public LatLng geoLocate(String location) throws IOException {
         Log.i(TAG, "Enter geoLocate");
@@ -158,22 +191,6 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         LatLng ll = new LatLng(lat, lng);
         //setMarker(locality, ll);
         return ll;
-    }
-
-
-    public void gotoLocationZoom(double lat, double lng, int zoom) {
-        Log.i(TAG, "Enter gotoLocationZoom");
-        LatLng ll = new LatLng(lat, lng);
-        CameraUpdate camUpdate = CameraUpdateFactory.newLatLngZoom(ll, zoom);
-        //This is the lind causing all the problem.
-        mGoogleMap.animateCamera(camUpdate);
-    }
-
-    public void gotoLocationZoom(LatLng ll, int zoom) {
-        Log.i(TAG, "Enter gotoLocationZoom");
-        CameraUpdate camUpdate = CameraUpdateFactory.newLatLngZoom(ll, zoom);
-        //This is the lind causing all the problem.
-        mGoogleMap.animateCamera(camUpdate);
     }
 
     public void setMarker(String location, LatLng ll) {
@@ -240,8 +257,8 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         }
         else{
             LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
-            gotoLocationZoom(ll, 15);
-            setMarker(ll);
+            //gotoLocationZoom(ll, 15);
+            //setMarker(ll);
         }
 
     }

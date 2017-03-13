@@ -65,8 +65,23 @@ public class ScreenController {
         Fragment fragment = getFragment(screen);
         if(fragment!= null){
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container,fragment);
+            fragmentTransaction.replace(R.id.fragment_container,fragment, "CURRENT_FRAG");
             fragmentTransaction.commit();
+            mFragmentManager.executePendingTransactions();
+        }
+        openedScreens.add(screen);
+
+    }
+    //overloaded method to pass in data for mapfragment
+    public void openScreen(Screen screen, String destination){
+        mFragmentManager = Shared.activity.getFragmentManager();
+        MyCustomMap fragment = (MyCustomMap) getFragment(screen);
+        fragment.setDestination(destination);
+        if(fragment!= null){
+            FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container,fragment, "CURRENT_FRAG");
+            fragmentTransaction.commit();
+            mFragmentManager.executePendingTransactions();
         }
         openedScreens.add(screen);
 

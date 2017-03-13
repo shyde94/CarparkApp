@@ -53,7 +53,10 @@ public class MenuFragment extends Fragment {
     }
     public void buttonClicked(View v) throws IOException {
         String location = mInputLocation.getText().toString();
-        mListener.onSearchedButtonClicked(mInputLocation.getText().toString());
+        if(!location.equals("")){
+            mListener.onSearchedButtonClicked(mInputLocation.getText().toString());
+        }
+
 
     }
 
