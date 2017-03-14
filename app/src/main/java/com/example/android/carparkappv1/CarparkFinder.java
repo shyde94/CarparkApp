@@ -71,7 +71,6 @@ public class CarparkFinder {
 
         //TODO 1. How to determine the boundary box?
         //TODO 2. How to query for data based on the boundary box? THINKKKKKKK
-
         return cpObjectArray;
     }
 
@@ -99,8 +98,6 @@ public class CarparkFinder {
         SVY21Coordinate svy21C = new SVY21Coordinate(c.getDouble(c.getColumnIndex(CarparkDBController.COLUMN_Xcoord)), c.getDouble(c.getColumnIndex(CarparkDBController.COLUMN_Ycoord)));
         cp.setCpNum(c.getString(c.getColumnIndex(CarparkDBController.COLUMN_CARPARKNUM)));
         cp.setSvyCoord(svy21C);
-
-
         return cp;
     }
 
@@ -126,8 +123,6 @@ public class CarparkFinder {
             }
         }
         c.close();
-
-
         return tempList;
 
     }

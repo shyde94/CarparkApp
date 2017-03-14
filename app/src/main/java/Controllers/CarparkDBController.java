@@ -103,16 +103,17 @@ public class CarparkDBController extends SQLiteOpenHelper {
         while((line = buffer.readLine()) != null){
             Log.i(TAG, "inside while loop");
             String [] columns = line.split(",");
+
             ContentValues cv = new ContentValues();
-            cv.put(COLUMN_CARPARKNUM, columns[0]);
-            cv.put(COLUMN_address, columns[1]);
-            cv.put(COLUMN_Xcoord, columns[2]);
-            cv.put(COLUMN_Ycoord, columns[3]);
-            cv.put(COLUMN_CPTYPE, columns[4]);
-            cv.put(COLUMN_TYPE_PARKING_SYS, columns[5]);
-            cv.put(COLUMN_STP, columns[6]);
-            cv.put(COLUMN_FP, columns[7]);
-            cv.put(COLUMN_NP, columns[8]);
+            cv.put(COLUMN_CARPARKNUM, columns[0].replace("\"",""));
+            cv.put(COLUMN_address, columns[1].replace("\"",""));
+            cv.put(COLUMN_Xcoord, columns[2].replace("\"",""));
+            cv.put(COLUMN_Ycoord, columns[3].replace("\"",""));
+            cv.put(COLUMN_CPTYPE, columns[4].replace("\"",""));
+            cv.put(COLUMN_TYPE_PARKING_SYS, columns[5].replace("\"",""));
+            cv.put(COLUMN_STP, columns[6].replace("\"",""));
+            cv.put(COLUMN_FP, columns[7].replace("\"",""));
+            cv.put(COLUMN_NP, columns[8].replace("\"",""));
             db.insert(TABLE_CARPARKS, null, cv);
         }
     }
@@ -127,10 +128,10 @@ public class CarparkDBController extends SQLiteOpenHelper {
         Cursor c = db.rawQuery(query,null);
         c.moveToFirst();
         if(c.getCount()!=0){
-            dbString += c.getString(c.getColumnIndex(COLUMN_CARPARKNUM));
-            dbString += c.getString(c.getColumnIndex(COLUMN_address));
-            dbString += c.getString(c.getColumnIndex(COLUMN_Xcoord));
-            dbString += c.getString(c.getColumnIndex(COLUMN_Ycoord));
+            dbString += " " + c.getString(c.getColumnIndex(COLUMN_CARPARKNUM));
+            dbString += " " + c.getString(c.getColumnIndex(COLUMN_address));
+            dbString += " " + c.getString(c.getColumnIndex(COLUMN_Xcoord));
+            dbString += " " + c.getString(c.getColumnIndex(COLUMN_Ycoord));
         }
         db.close();
         //c.close();
@@ -142,18 +143,28 @@ public class CarparkDBController extends SQLiteOpenHelper {
 
     //This method queries the database to get carparks with coordinates within vicinity of destination
     public Cursor queryRetrieveNearbyCarparks(SVY21Coordinate svy21C){
+
+
         double easting = svy21C.getEasting();
         double northing = svy21C.getNorthing();
         Cursor cpListInfo = null;
+        double xBorderMin = easting-10;
+        double xBorderMax = easting+10;
+        double yBorderMin = northing-10;
+        double yBorderMax = northing+10;
+
+        SQLiteDatabase db = getWritableDatabase();
 
 
-
+        //TEST BOX RANGE FOUND...SO CAN USE TO FIND QUERY!
+        String query = "SELECT * FROM " + TABLE_CARPARKS + " WHERE " + COLUMN_Xcoord + " < " + Double.toString(xBorderMax) + " AND " + COLUMN_Xcoord + " > " + Double.toString(xBorderMin) + ";";
+        cpListInfo = db.rawQuery(query, null);
         return cpListInfo;
     }
 
     public Cursor querySomething(){
         SQLiteDatabase db = getWritableDatabase();
-        String query = "SELECT * FROM " + TABLE_CARPARKS + " WHERE " + COLUMN_address + " = 'BLK 390A TAMPINES AVENUE 7';";
+        String query = "SELECT * FROM " + TABLE_CARPARKS + " WHERE " + COLUMN_address + " = 'BLK 270/271 ALBERT CENTRE BASEMENT CAR PARK';";
         //String query =  "SELECT * FROM " + TABLE_CARPARKS + " WHERE 1;";
         Cursor c = db.rawQuery(query,null);
         c.moveToFirst();
@@ -165,9 +176,6 @@ public class CarparkDBController extends SQLiteOpenHelper {
         else{
             Log.i(TAG, "cursor empty");
         }
-
-
-
          return c;
     }
 

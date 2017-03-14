@@ -39,6 +39,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import MapProjectionConverter.LatLonCoordinate;
+import MapProjectionConverter.SVY21;
+import MapProjectionConverter.SVY21Coordinate;
+
 
 public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener {
 
@@ -118,6 +122,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         Log.i(TAG, "onMapReady map success");
         setCurrentLocation();
         searchDestination();
+        bBoxTest(500,500);
 
     }
 
@@ -246,8 +251,11 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mlocationRequest, this);
         mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        Log.i(TAG, "Current lat: " + mCurrentLocation.getLatitude());
-        Log.i(TAG, "Current long: "+ mCurrentLocation.getLongitude());
+        if(mCurrentLocation != null){
+            Log.i(TAG, "Current lat: " + mCurrentLocation.getLatitude());
+            Log.i(TAG, "Current long: "+ mCurrentLocation.getLongitude());
+        }
+
 
     }
 
@@ -292,6 +300,42 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
             LatLng latlng = new LatLng(lat, lng);
             setMarker(cpNum,latlng);
         }
+    }
+
+    /*
+        * For testing, pasir ris lat: 1.3720937, lng: 103.9473728
+        * How to test? Take lat lng, convert to SVY21Coordinate, measure how much to add, convert back, then draw marker
+        *
+    */
+
+    public void bBoxTest(double xRange, double yRange){
+        LatLng ll = new LatLng(1.3720937, 103.9473728);
+        LatLonCoordinate llC = new LatLonCoordinate(ll.latitude, ll.longitude);
+        SVY21Coordinate svy21 = SVY21.computeSVY21(llC);
+        double easting = svy21.getEasting();
+        double northing = svy21.getNorthing();
+
+        double xBoxMin = easting - xRange;
+        double xBoxMax = easting + xRange;
+        double yBoxMin = northing - yRange;
+        double yBoxMax = northing + yRange;
+
+        ArrayList<LatLonCoordinate> llcArrayList = new ArrayList<LatLonCoordinate>();
+
+        llcArrayList.add(SVY21.computeLatLon(northing, xBoxMax));
+        llcArrayList.add(SVY21.computeLatLon(northing, xBoxMin));
+        llcArrayList.add(SVY21.computeLatLon(yBoxMin, easting));
+        llcArrayList.add(SVY21.computeLatLon(yBoxMax, easting));
+
+        for(LatLonCoordinate  llc : llcArrayList){
+            LatLng temp = new LatLng(llc.getLatitude(), llc.getLongitude());
+            setMarker(temp);
+        }
+
+
+
+
+
     }
 
 }
