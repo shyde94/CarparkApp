@@ -322,10 +322,10 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
 
         ArrayList<LatLonCoordinate> llcArrayList = new ArrayList<LatLonCoordinate>();
 
-        llcArrayList.add(SVY21.computeLatLon(northing, xBoxMax));
-        llcArrayList.add(SVY21.computeLatLon(northing, xBoxMin));
-        llcArrayList.add(SVY21.computeLatLon(yBoxMin, easting));
-        llcArrayList.add(SVY21.computeLatLon(yBoxMax, easting));
+        llcArrayList.add(SVY21.computeLatLon(yBoxMax, xBoxMax));
+        llcArrayList.add(SVY21.computeLatLon(yBoxMax, xBoxMin));
+        llcArrayList.add(SVY21.computeLatLon(yBoxMin, xBoxMin));
+        llcArrayList.add(SVY21.computeLatLon(yBoxMin, xBoxMax));
 
         for(LatLonCoordinate  llc : llcArrayList){
             LatLng temp = new LatLng(llc.getLatitude(), llc.getLongitude());

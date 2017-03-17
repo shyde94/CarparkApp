@@ -148,16 +148,23 @@ public class CarparkDBController extends SQLiteOpenHelper {
         double easting = svy21C.getEasting();
         double northing = svy21C.getNorthing();
         Cursor cpListInfo = null;
-        double xBorderMin = easting-10;
-        double xBorderMax = easting+10;
-        double yBorderMin = northing-10;
-        double yBorderMax = northing+10;
+
 
         SQLiteDatabase db = getWritableDatabase();
-
-
+        String query="";
+        double boarderRange = 5;
         //TEST BOX RANGE FOUND...SO CAN USE TO FIND QUERY!
-        String query = "SELECT * FROM " + TABLE_CARPARKS + " WHERE " + COLUMN_Xcoord + " < " + Double.toString(xBorderMax) + " AND " + COLUMN_Xcoord + " > " + Double.toString(xBorderMin) + ";";
+        while(cpListInfo == null){
+            double xBoxMin = easting - boarderRange;
+            double xBoxMax = easting + boarderRange;
+            double yBoxMin = northing - boarderRange;
+            double yBoxMax = northing + boarderRange;
+            query = "SELECT * FROM " + TABLE_CARPARKS +
+                    " WHERE " + COLUMN_Xcoord + " BETWEEN " + xBoxMin + " AND " +  xBoxMax
+                    + " AND " + COLUMN_Ycoord + " BETWEEN " + yBoxMin + " AND " + yBoxMax;
+            boarderRange+=2;
+
+        }
         cpListInfo = db.rawQuery(query, null);
         return cpListInfo;
     }

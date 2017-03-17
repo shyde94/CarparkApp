@@ -63,11 +63,27 @@ public class CarparkFinder {
     public ArrayList<Carpark> retrieveCarparks(){
         ArrayList<Carpark> cpObjectArray = new ArrayList<Carpark>();
         SVY21Coordinate temp = getSVY21Coord(destination);
+
+        //CursorList will contain every row of carpark within the vicinity
         Cursor cursorList = cpController.queryRetrieveNearbyCarparks(temp);
-        //1. Define box to search for carparks within...
-        // meaning you get 4 points as markers and search for any 2 points whose
-        // coordinates fall inside this boundary.
-        // Take first 2 digits of Easting and Northing? +5 -5?
+        cursorList.moveToFirst();
+        while(cursorList.isAfterLast() == false){
+            //Create carpark object containing data from each row!
+            double easting = cursorList.getColumnIndex(CarparkDBController.COLUMN_Xcoord);
+            double northing = cursorList.getColumnIndex(CarparkDBController.COLUMN_Ycoord);
+
+            SVY21Coordinate svy21 = new SVY21Coordinate(northing, easting);
+            LatLonCoordinate latLon = SVY21.computeLatLon(svy21);
+            String cpNum = cursorList.getString(cursorList.getColumnIndex(CarparkDBController.COLUMN_CARPARKNUM));
+            String cpType = cursorList.getString(cursorList.getColumnIndex(CarparkDBController.COLUMN_CPTYPE));
+            String typeOfParkingSystem = cursorList.getString(cursorList.getColumnIndex(CarparkDBController.COLUMN_TYPE_PARKING_SYS));
+            String shortTermParking = cursorList.getString(cursorList.getColumnIndex(CarparkDBController.COLUMN_TYPE_PARKING_SYS));
+            String freeParking = cursorList.getString(cursorList.getColumnIndex(CarparkDBController.COLUMN_FP));
+            String nightParking = cursorList.getString(cursorList.getColumnIndex(CarparkDBController.COLUMN_NP));
+            Carpark carparkTemp = new Carpark(svy21, latLon, cpNum, cpType, typeOfParkingSystem, shortTermParking, freeParking, nightParking);
+            cpObjectArray.add(carparkTemp);
+        }
+
 
         //TODO 1. How to determine the boundary box?
         //TODO 2. How to query for data based on the boundary box? THINKKKKKKK
