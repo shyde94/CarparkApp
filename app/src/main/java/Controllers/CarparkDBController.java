@@ -144,7 +144,7 @@ public class CarparkDBController extends SQLiteOpenHelper {
     //This method queries the database to get carparks with coordinates within vicinity of destination
     public Cursor queryRetrieveNearbyCarparks(SVY21Coordinate svy21C){
 
-
+        Log.i(TAG, "Enter queryRetrieveNearbyCarparks");
         double easting = svy21C.getEasting();
         double northing = svy21C.getNorthing();
         Cursor cpListInfo = null;
@@ -152,9 +152,11 @@ public class CarparkDBController extends SQLiteOpenHelper {
 
         SQLiteDatabase db = getWritableDatabase();
         String query="";
-        double boarderRange = 5;
+        //Set boarder range to get carparks
+        double boarderRange = 200;
+        int count = 0;
         //TEST BOX RANGE FOUND...SO CAN USE TO FIND QUERY!
-        while(cpListInfo == null){
+        do{
             double xBoxMin = easting - boarderRange;
             double xBoxMax = easting + boarderRange;
             double yBoxMin = northing - boarderRange;
@@ -162,10 +164,12 @@ public class CarparkDBController extends SQLiteOpenHelper {
             query = "SELECT * FROM " + TABLE_CARPARKS +
                     " WHERE " + COLUMN_Xcoord + " BETWEEN " + xBoxMin + " AND " +  xBoxMax
                     + " AND " + COLUMN_Ycoord + " BETWEEN " + yBoxMin + " AND " + yBoxMax;
-            boarderRange+=2;
+            cpListInfo = db.rawQuery(query, null);
+            boarderRange+=25;
+            count ++;
 
-        }
-        cpListInfo = db.rawQuery(query, null);
+        }while(cpListInfo.getCount() <=5);
+        String tempString = "";
         return cpListInfo;
     }
 

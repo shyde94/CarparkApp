@@ -92,6 +92,7 @@ public class Carpark {
     public void setNightParking(String nightParking) {
         this.nightParking = nightParking;
     }
+
 }
 
 

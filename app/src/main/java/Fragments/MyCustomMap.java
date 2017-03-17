@@ -55,8 +55,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     private Location mCurrentLocation;
     private String destination = "";
 
-    //Stores array of carpark objects. This should be queried outside before map is displayed.
-    private ArrayList<Carpark> carparkList;
+    private CarparkFinder cpFinder;
 
     public static MyCustomMap newInstance(String destination){
         MyCustomMap myMap =  new MyCustomMap();
@@ -96,7 +95,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         mapFragment = (MapFragment) getChildFragmentManager().findFragmentById(R.id.mapFragment);
         //destination = mapFragment.getArguments().getString("Destination");
         try {
-            start();
+            googleMapStart();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -105,10 +104,13 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         return view;
     }
 
-    public void start() throws IOException {
+    public void googleMapStart() throws IOException {
         if(googleServicesAvailable()){
-            initMap();
+            Log.i(TAG, "Enter googleMapStart");
             LatLng ll = searchLocation(destination);
+            cpFinder = new CarparkFinder(ll, getActivity());
+            cpFinder.retrieveCarparks();
+            initMap();
             //gotoLocationZoom(ll, 15);
         }
     }
@@ -122,7 +124,8 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         Log.i(TAG, "onMapReady map success");
         setCurrentLocation();
         searchDestination();
-        bBoxTest(500,500);
+        displayNearbyCarparks();
+        //bBoxTest(500,500);
 
     }
 
@@ -158,6 +161,8 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
 
     }
 
+
+    //This returns a LatLng object, destination in CarparkFinder class is a LatLng object!
     public LatLng searchLocation(String location) {
         Log.i(TAG, "Enter search location");
         Log.i(TAG, location);
@@ -292,13 +297,15 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
 
     //This method will set the markers of the nearby carparks on the map
     public void displayNearbyCarparks(){
-        for(Carpark cp : carparkList){
+        Log.i(TAG, "Enter displayNearbhyCarparks");
+        for(Carpark cp : cpFinder.getCpList()){
             double lat = cp.getLatLonCoord().getLatitude();
             double lng = cp.getLatLonCoord().getLongitude();
 
             String cpNum = cp.getCpNum();
             LatLng latlng = new LatLng(lat, lng);
             setMarker(cpNum,latlng);
+            Log.i(TAG, "Cp: " + cpNum + "lat: " + lat + "lng: " + lng);
         }
     }
 
@@ -331,11 +338,12 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
             LatLng temp = new LatLng(llc.getLatitude(), llc.getLongitude());
             setMarker(temp);
         }
+    }
 
-
-
-
+    public void searchDisplayCarparkStart(){
 
     }
+
+
 
 }

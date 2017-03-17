@@ -18,7 +18,7 @@ import MapProjectionConverter.SVY21Coordinate;
 public class CarparkFinder {
     private static final String TAG = "CarparkFinderClass";
 
-    private ArrayList<Carpark> cpList;
+    private ArrayList<Carpark> cpList; //this list contains the carparks found from the database base on the destination!
     private LatLng destination;
     private CarparkDBController cpController;
 
@@ -49,6 +49,7 @@ public class CarparkFinder {
 
     //Constructor
     public CarparkFinder(LatLng ll, Context context){
+        Log.i(TAG, "Created new CarparkFinder object");
         destination = ll;
         this.context = context;
         this.cpController = new CarparkDBController(context);
@@ -60,7 +61,8 @@ public class CarparkFinder {
      * Take destination, convert into SVYCoordinate, call database query method, converts strings to give objects.
      * @return Arraylist<Carpark>
      */
-    public ArrayList<Carpark> retrieveCarparks(){
+    public void retrieveCarparks(){
+        Log.i(TAG, "Enter retrieve Carparks");
         ArrayList<Carpark> cpObjectArray = new ArrayList<Carpark>();
         SVY21Coordinate temp = getSVY21Coord(destination);
 
@@ -69,8 +71,8 @@ public class CarparkFinder {
         cursorList.moveToFirst();
         while(cursorList.isAfterLast() == false){
             //Create carpark object containing data from each row!
-            double easting = cursorList.getColumnIndex(CarparkDBController.COLUMN_Xcoord);
-            double northing = cursorList.getColumnIndex(CarparkDBController.COLUMN_Ycoord);
+            double easting = cursorList.getDouble(cursorList.getColumnIndex(CarparkDBController.COLUMN_Xcoord));
+            double northing = cursorList.getDouble(cursorList.getColumnIndex(CarparkDBController.COLUMN_Ycoord));
 
             SVY21Coordinate svy21 = new SVY21Coordinate(northing, easting);
             LatLonCoordinate latLon = SVY21.computeLatLon(svy21);
@@ -82,12 +84,12 @@ public class CarparkFinder {
             String nightParking = cursorList.getString(cursorList.getColumnIndex(CarparkDBController.COLUMN_NP));
             Carpark carparkTemp = new Carpark(svy21, latLon, cpNum, cpType, typeOfParkingSystem, shortTermParking, freeParking, nightParking);
             cpObjectArray.add(carparkTemp);
+
+            cursorList.moveToNext();
+
+            Log.i(TAG, "Carpark: " + cpNum + " " + svy21.getNorthing() + " " + svy21.getEasting());
         }
-
-
-        //TODO 1. How to determine the boundary box?
-        //TODO 2. How to query for data based on the boundary box? THINKKKKKKK
-        return cpObjectArray;
+        cpList = cpObjectArray;
     }
 
 
