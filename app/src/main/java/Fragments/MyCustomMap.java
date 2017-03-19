@@ -4,7 +4,10 @@ package Fragments;
 import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -13,10 +16,14 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
+import android.support.v7.app.AppCompatActivity;
 
 import com.example.android.carparkappv1.Carpark;
 import com.example.android.carparkappv1.CarparkFinder;
@@ -33,6 +40,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
@@ -44,7 +52,7 @@ import MapProjectionConverter.SVY21;
 import MapProjectionConverter.SVY21Coordinate;
 
 
-public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener {
+public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener,GoogleMap.OnInfoWindowClickListener{
 
     private static final String TAG = "MyCustomMapClass";
 
@@ -127,8 +135,45 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         displayNearbyCarparks();
         //bBoxTest(500,500);
 
+        map.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+
+            @Override
+            public View getInfoWindow(Marker arg0) {
+                return null;
+            }
+
+            @Override
+            public View getInfoContents(Marker marker) {/*Edits the layout of the info window*/
+
+
+                LinearLayout info = new LinearLayout(getContext());
+                info.setOrientation(LinearLayout.VERTICAL);
+
+                TextView title = new TextView(getContext());
+                title.setTextColor(Color.RED);
+                title.setGravity(Gravity.CENTER);
+                title.setTypeface(null, Typeface.BOLD);
+                title.setText(marker.getTitle());
+
+                TextView snippet = new TextView(getContext());
+                snippet.setTextColor(Color.BLACK);
+                snippet.setText(marker.getSnippet());
+
+                info.addView(title);
+                info.addView(snippet);
+
+                return info;
+            }
+        });
+
+        map.setOnInfoWindowClickListener(this);/*Recently added. Waits for the marker to be clicked*/
     }
 
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        marker.showInfoWindow();
+        Log.i(TAG, "InfoWin Clicked");
+    }/*Recently added*/
 
     public boolean googleServicesAvailable() {
         GoogleApiAvailability api = GoogleApiAvailability.getInstance();
@@ -217,13 +262,14 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     public void setMarker(String title, LatLng ll) {
         MarkerOptions options = new MarkerOptions()
                 .title(title)
-                .position(ll);
+                .position(ll).snippet("The rates for this carpark is: \n $xx.xx per hour\n xxx Lots are available here");
+        /*Edit Snippet to edit text in the info window*/
         mGoogleMap.addMarker(options);
     }
 
     public void setMarker(LatLng ll) {
         MarkerOptions options = new MarkerOptions()
-                .position(ll);
+                .position(ll).title("Carpark");
         mGoogleMap.addMarker(options);
     }
 
@@ -305,6 +351,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
             String cpNum = cp.getCpNum();
             LatLng latlng = new LatLng(lat, lng);
             setMarker(cpNum,latlng);
+
             Log.i(TAG, "Cp: " + cpNum + "lat: " + lat + "lng: " + lng);
         }
     }
@@ -343,6 +390,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     public void searchDisplayCarparkStart(){
 
     }
+
 
 
 
