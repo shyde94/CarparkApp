@@ -14,11 +14,12 @@ public class Carpark {
     private String shortTermParking;
     private String freeParking;
     private String nightParking;
+    private String address;
 
     public Carpark(){
     }
 
-    public Carpark(SVY21Coordinate svyCoord, LatLonCoordinate latLonCoord, String cpNum, String cpType, String typeOfParkingSystem, String shortTermParking, String freeParking, String nightParking) {
+    public Carpark(SVY21Coordinate svyCoord, LatLonCoordinate latLonCoord, String cpNum, String cpType, String typeOfParkingSystem, String shortTermParking, String freeParking, String nightParking, String address) {
         this.svyCoord = svyCoord;
         this.latLonCoord = latLonCoord;
         this.cpNum = cpNum;
@@ -27,6 +28,7 @@ public class Carpark {
         this.shortTermParking = shortTermParking;
         this.freeParking = freeParking;
         this.nightParking = nightParking;
+        this.address = address;
     }
 
     public SVY21Coordinate getSvyCoord() {
@@ -92,6 +94,10 @@ public class Carpark {
     public void setNightParking(String nightParking) {
         this.nightParking = nightParking;
     }
+
+    public String getAddress(){ return address; }
+
+    public void setAddress(String address){ this.address = address; }
 
 }
 

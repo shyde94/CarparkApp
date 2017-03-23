@@ -6,8 +6,10 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -39,6 +41,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -259,11 +262,25 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         return ll;
     }
 
+    //marker for nearby carpark
+    public void setMarkerForNearbyCp(String title, String type, String freeParking, String nightParking, String address, LatLng ll){
+
+        MarkerOptions options = new MarkerOptions()
+                .title(title + "\n" + address)
+                .position(ll)
+                .snippet("Carpark type: ".toUpperCase() + type +
+                "\n" + "Free Parking: ".toUpperCase() + freeParking + "\n" + "Night Parking: ".toUpperCase() + nightParking)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.car2));
+        /*Edit Snippet to edit text in the info window*/
+        mGoogleMap.addMarker(options);
+    }
+
+    //marker for destination searched
     public void setMarker(String title, LatLng ll) {
         MarkerOptions options = new MarkerOptions()
                 .title(title)
-                .position(ll).snippet("The rates for this carpark is: \n $xx.xx per hour\n xxx Lots are available here");
-        /*Edit Snippet to edit text in the info window*/
+                .position(ll).snippet("This is the location searched.")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         mGoogleMap.addMarker(options);
     }
 
@@ -343,19 +360,35 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
 
     //This method will set the markers of the nearby carparks on the map
     public void displayNearbyCarparks(){
-        Log.i(TAG, "Enter displayNearbhyCarparks");
+        Log.i(TAG, "Enter displayNearbyCarparks");
         for(Carpark cp : cpFinder.getCpList()){
             double lat = cp.getLatLonCoord().getLatitude();
             double lng = cp.getLatLonCoord().getLongitude();
 
             String cpNum = cp.getCpNum();
+            String cpType = cp.getCpType();
+            String cpFreeParking = cp.getFreeParking();
+            String cpNightParking = cp.getNightParking();
+            String cpAddress = cp.getAddress();
             LatLng latlng = new LatLng(lat, lng);
-            setMarker(cpNum,latlng);
+            setMarkerForNearbyCp(cpNum, cpType, cpFreeParking, cpNightParking, cpAddress, latlng);
 
             Log.i(TAG, "Cp: " + cpNum + "lat: " + lat + "lng: " + lng);
         }
     }
-
+//
+//    public void nearbyCarparkInfo() {
+//        for (Carpark cp : cpFinder.getCpList()) {
+//            double lat = cp.getLatLonCoord().getLatitude();
+//            double lng = cp.getLatLonCoord().getLongitude();
+//
+//            String cpNum = cp.getCpNum();
+//            String cpType = cp.getCpType();
+//            LatLng latlng = new LatLng(lat, lng);
+//        }
+//
+//
+//    }
     /*
         * For testing, pasir ris lat: 1.3720937, lng: 103.9473728
         * How to test? Take lat lng, convert to SVY21Coordinate, measure how much to add, convert back, then draw marker
