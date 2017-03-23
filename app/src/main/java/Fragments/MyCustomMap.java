@@ -172,6 +172,8 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         map.setOnInfoWindowClickListener(this);/*Recently added. Waits for the marker to be clicked*/
     }
 
+
+
     @Override
     public void onInfoWindowClick(Marker marker) {
         marker.showInfoWindow();
@@ -228,14 +230,16 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         LatLng ll = new LatLng(lat, lng);
         CameraUpdate camUpdate = CameraUpdateFactory.newLatLngZoom(ll, zoom);
         //This is the lind causing all the problem.
-        mGoogleMap.animateCamera(camUpdate);
+        //mGoogleMap.animateCamera(camUpdate);
+        mGoogleMap.moveCamera(camUpdate);
     }
 
     public void gotoLocationZoom(LatLng ll, int zoom) {
         Log.i(TAG, "Enter gotoLocationZoom");
         CameraUpdate camUpdate = CameraUpdateFactory.newLatLngZoom(ll, zoom);
         //This is the lind causing all the problem.
-        mGoogleMap.animateCamera(camUpdate);
+        //mGoogleMap.animateCamera(camUpdate);
+        mGoogleMap.moveCamera(camUpdate);
     }
 
     public LatLng geoLocate(String location) throws IOException {
