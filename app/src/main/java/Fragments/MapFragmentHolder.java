@@ -1,6 +1,7 @@
 package Fragments;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,7 +38,9 @@ public class MapFragmentHolder extends Fragment {
         super.onCreate(savedInstanceState);
         mapFragment = (MapFragment) getChildFragmentManager().findFragmentById(R.id.mapFragment);
         myMap = new MyCustomMap();
+
         myMap.initMap();
+
     }
 
     @Override
@@ -57,6 +60,7 @@ public class MapFragmentHolder extends Fragment {
 
     //Carry out all functions of the map!
     public void start(){
+
         Log.i(TAG, "inside MapHolderFragment start method");
         if(myMap != null){
             if(myMap.googleServicesAvailable()){
