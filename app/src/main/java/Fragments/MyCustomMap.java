@@ -6,12 +6,9 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -27,7 +24,6 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.support.v7.app.AppCompatActivity;
 
 import com.example.android.carparkappv1.Carpark;
 import com.example.android.carparkappv1.CarparkFinder;
@@ -50,6 +46,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import MapProjectionConverter.LatLonCoordinate;
@@ -68,15 +65,17 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     private Location mCurrentLocation;
     private String destination = "";
 
+    HashMap<Marker, Carpark> markerToCarpark = new HashMap<>();
+
     private CarparkFinder cpFinder;
 
-    public static MyCustomMap newInstance(String destination){
+    /*public static MyCustomMap newInstance(String destination){
         MyCustomMap myMap =  new MyCustomMap();
         Bundle args = new Bundle();
         args.putString("Destination", destination);
         myMap.setArguments(args);
         return myMap;
-    }
+    }*/
 
     public String getDestination() {
         return destination;
@@ -125,6 +124,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
             cpFinder.retrieveCarparks();
             initMap();
             //gotoLocationZoom(ll, 15);
+
         }
     }
 
@@ -172,18 +172,19 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         });
 
         map.setOnInfoWindowClickListener(this);/*Recently added. Waits for the marker to be clicked*/
-        /*FragmentManager fm = getActivity().getFragmentManager();
-        android.app.DialogFragment dialog = new dialog();
-        dialog.show(fm, "Test");//Shows dialog*/
-    }
 
+
+
+    }
 
 
     @Override
     public void onInfoWindowClick(Marker marker) {
         FragmentManager fm = getActivity().getFragmentManager();
-        android.app.DialogFragment dialog = new dialog();
-        dialog.show(fm, "Test");//Shows dialog
+        Carpark cp = markerToCarpark.get(marker);
+        DialogFrag dialog = new DialogFrag();
+        dialog.setCarpark(cp);
+        dialog.show(fm, "Test");//Shows DialogFrag
         marker.showInfoWindow();
 
         Log.i(TAG, "InfoWin Clicked");
@@ -196,8 +197,8 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
             Log.i(TAG, "google services available");
             return true;
         } else if (api.isUserResolvableError(apiAvailable)) {
-            //Dialog dialog = api.getErrorDialog(context, apiAvailable,0);
-            //dialog.show();
+            //Dialog DialogFrag = api.getErrorDialog(context, apiAvailable,0);
+            //DialogFrag.show();
         } else {
             Log.i(TAG, "error occurred.");
             Toast.makeText(getActivity(), "An error occurred", Toast.LENGTH_LONG).show();
@@ -276,16 +277,16 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     }
 
     //marker for nearby carpark
-    public void setMarkerForNearbyCp(String title, String type, String freeParking, String nightParking, String address, LatLng ll){
+    public void setMarkerForNearbyCp(Carpark cp, LatLng ll){
 
         MarkerOptions options = new MarkerOptions()
-                .title(title + "\n" + address)
+                .title(cp.getCpNum() + "\n" + cp.getAddress())
                 .position(ll)
-                .snippet("Carpark type: ".toUpperCase() + type +
-                "\n" + "Free Parking: ".toUpperCase() + freeParking + "\n" + "Night Parking: ".toUpperCase() + nightParking)
+                .snippet("Click for more information..")
                 .icon(BitmapDescriptorFactory.fromResource(R.drawable.car2));
-        /*Edit Snippet to edit text in the info window*/
-        mGoogleMap.addMarker(options);
+        //Edit Snippet to edit text in the info window. This snippet is the same one in infoWindowAdaptor
+        Marker m = mGoogleMap.addMarker(options);
+        markerToCarpark.put(m, cp);
     }
 
     //marker for destination searched
@@ -383,30 +384,15 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
             String cpFreeParking = cp.getFreeParking();
             String cpNightParking = cp.getNightParking();
             String cpAddress = cp.getAddress();
+
             LatLng latlng = new LatLng(lat, lng);
-            setMarkerForNearbyCp(cpNum, cpType, cpFreeParking, cpNightParking, cpAddress, latlng);
+
+            setMarkerForNearbyCp(cp, latlng);
 
             Log.i(TAG, "Cp: " + cpNum + "lat: " + lat + "lng: " + lng);
         }
     }
-//
-//    public void nearbyCarparkInfo() {
-//        for (Carpark cp : cpFinder.getCpList()) {
-//            double lat = cp.getLatLonCoord().getLatitude();
-//            double lng = cp.getLatLonCoord().getLongitude();
-//
-//            String cpNum = cp.getCpNum();
-//            String cpType = cp.getCpType();
-//            LatLng latlng = new LatLng(lat, lng);
-//        }
-//
-//
-//    }
-    /*
-        * For testing, pasir ris lat: 1.3720937, lng: 103.9473728
-        * How to test? Take lat lng, convert to SVY21Coordinate, measure how much to add, convert back, then draw marker
-        *
-    */
+
 
     public void bBoxTest(double xRange, double yRange){
         LatLng ll = new LatLng(1.3720937, 103.9473728);
@@ -431,10 +417,6 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
             LatLng temp = new LatLng(llc.getLatitude(), llc.getLongitude());
             setMarker(temp);
         }
-    }
-
-    public void searchDisplayCarparkStart(){
-
     }
 
 

@@ -1,18 +1,15 @@
 package Controllers;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 
-import com.example.android.carparkappv1.MainActivity;
 import com.example.android.carparkappv1.R;
 import com.example.android.carparkappv1.Shared;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import Fragments.MapFragmentHolder;
 import Fragments.MenuFragment;
 import Fragments.MyCustomMap;
 import Fragments.TestFrag;
