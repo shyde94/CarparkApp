@@ -3,7 +3,9 @@ package Fragments;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -170,11 +172,18 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         });
 
         map.setOnInfoWindowClickListener(this);/*Recently added. Waits for the marker to be clicked*/
+        /*FragmentManager fm = getActivity().getFragmentManager();
+        android.app.DialogFragment dialog = new dialog();
+        dialog.show(fm, "Test");//Shows dialog*/
     }
 
     @Override
     public void onInfoWindowClick(Marker marker) {
+        FragmentManager fm = getActivity().getFragmentManager();
+        android.app.DialogFragment dialog = new dialog();
+        dialog.show(fm, "Test");//Shows dialog
         marker.showInfoWindow();
+
         Log.i(TAG, "InfoWin Clicked");
     }/*Recently added*/
 
