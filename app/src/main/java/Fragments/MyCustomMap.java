@@ -3,7 +3,6 @@ package Fragments;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.DialogFragment;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.pm.PackageManager;
@@ -25,7 +24,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.carparkappv1.Carpark;
+import Carparks.Carpark;
 import com.example.android.carparkappv1.CarparkFinder;
 import com.example.android.carparkappv1.R;
 import com.google.android.gms.common.ConnectionResult;
@@ -49,6 +48,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import Carparks.HdbCarpark;
 import MapProjectionConverter.LatLonCoordinate;
 import MapProjectionConverter.SVY21;
 import MapProjectionConverter.SVY21Coordinate;
@@ -278,22 +278,24 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
 
     //marker for nearby carpark
     public void setMarkerForNearbyCp(Carpark cp, LatLng ll){
+        if(cp instanceof HdbCarpark){
+            MarkerOptions options = new MarkerOptions()
+                    .title(((HdbCarpark)cp).getCpNum() + "\n" + ((HdbCarpark)cp).getAddress())
+                    .position(ll)
+                    .snippet("Click for more information..")
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.car2));
+            //Edit Snippet to edit text in the info window. This snippet is the same one in infoWindowAdaptor
+            Marker m = mGoogleMap.addMarker(options);
+            markerToCarpark.put(m, cp);
+        }
 
-        MarkerOptions options = new MarkerOptions()
-                .title(cp.getCpNum() + "\n" + cp.getAddress())
-                .position(ll)
-                .snippet("Click for more information..")
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.car2));
-        //Edit Snippet to edit text in the info window. This snippet is the same one in infoWindowAdaptor
-        Marker m = mGoogleMap.addMarker(options);
-        markerToCarpark.put(m, cp);
     }
 
     //marker for destination searched
     public void setMarker(String title, LatLng ll) {
         MarkerOptions options = new MarkerOptions()
                 .title(title)
-                .position(ll).snippet("This is the location searched.")
+                .position(ll).snippet("Destination")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         mGoogleMap.addMarker(options);
     }
@@ -378,18 +380,17 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         for(Carpark cp : cpFinder.getCpList()){
             double lat = cp.getLatLonCoord().getLatitude();
             double lng = cp.getLatLonCoord().getLongitude();
-
-            String cpNum = cp.getCpNum();
-            String cpType = cp.getCpType();
-            String cpFreeParking = cp.getFreeParking();
-            String cpNightParking = cp.getNightParking();
-            String cpAddress = cp.getAddress();
+            if(cp instanceof HdbCarpark){
+                String cpNum = ((HdbCarpark)cp).getCpNum();
+                String cpType = ((HdbCarpark)cp).getCpType();
+                String cpFreeParking = ((HdbCarpark)cp).getFreeParking();
+                String cpNightParking = ((HdbCarpark)cp).getNightParking();
+                String cpAddress = ((HdbCarpark)cp).getAddress();
+                Log.i(TAG, "Cp: " + cpNum + "lat: " + lat + "lng: " + lng);
+            }
 
             LatLng latlng = new LatLng(lat, lng);
-
             setMarkerForNearbyCp(cp, latlng);
-
-            Log.i(TAG, "Cp: " + cpNum + "lat: " + lat + "lng: " + lng);
         }
     }
 

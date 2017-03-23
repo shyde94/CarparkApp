@@ -2,4 +2,5 @@
     <string name="app_name">CarparkAppV1</string>
     <string name="search_location_hint">Enter a location</string>
     <string name="search_button">Search!</string>
+    <string name="arrived">Arrived</string>
 </resources>
