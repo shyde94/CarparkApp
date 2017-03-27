@@ -32,6 +32,8 @@ public class MenuFragment extends Fragment {
         mInputLocation = (EditText) view.findViewById(R.id.Search_location);
         mLocationDisplay = (TextView) view.findViewById(R.id.location_input);
 
+
+
         button.setOnClickListener(
                 new View.OnClickListener(){
                     @Override
@@ -39,13 +41,17 @@ public class MenuFragment extends Fragment {
                         try {
                             buttonClicked(view);
 
+
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
 
                     }
                 }
+
         );
+
+
 
 
         return view;
@@ -54,6 +60,7 @@ public class MenuFragment extends Fragment {
         String location = mInputLocation.getText().toString();
         if(!location.equals("")){
             mListener.onSearchedButtonClicked(mInputLocation.getText().toString());
+
         }
 
 
@@ -61,6 +68,7 @@ public class MenuFragment extends Fragment {
 
     public interface OnSearchButtonClickedListener {
         public void onSearchedButtonClicked(String location) throws IOException;
+
     }
 
     @Override

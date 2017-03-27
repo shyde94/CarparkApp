@@ -21,6 +21,8 @@ import MapProjectionConverter.SVY21Coordinate;
 
 public class CarparkDBController extends SQLiteOpenHelper {
 
+    private static CarparkDBController sInstance;
+
     private static final String TAG = "CarparkDBControllerClass";
 
     private static final int DATABASE_VERSION = 1;
@@ -36,6 +38,17 @@ public class CarparkDBController extends SQLiteOpenHelper {
     public static final String COLUMN_STP = "short_term_parking";
     public static final String COLUMN_FP = "free_parking";
     public static final String COLUMN_NP ="night_parking";
+
+    public static synchronized CarparkDBController getInstance(Context context) {
+
+        // Use the application context, which will ensure that you
+        // don't accidentally leak an Activity's context.
+        // See this article for more information: http://bit.ly/6LRzfx
+        if (sInstance == null) {
+            sInstance = new CarparkDBController(context.getApplicationContext());
+        }
+        return sInstance;
+    }
 
     private Context context;
 
@@ -156,19 +169,23 @@ public class CarparkDBController extends SQLiteOpenHelper {
         double boarderRange = 200;
         int count = 0;
         //TEST BOX RANGE FOUND...SO CAN USE TO FIND QUERY!
-        do{
-            double xBoxMin = easting - boarderRange;
-            double xBoxMax = easting + boarderRange;
-            double yBoxMin = northing - boarderRange;
-            double yBoxMax = northing + boarderRange;
-            query = "SELECT * FROM " + TABLE_CARPARKS +
-                    " WHERE " + COLUMN_Xcoord + " BETWEEN " + xBoxMin + " AND " +  xBoxMax
-                    + " AND " + COLUMN_Ycoord + " BETWEEN " + yBoxMin + " AND " + yBoxMax;
-            cpListInfo = db.rawQuery(query, null);
-            boarderRange+=25;
-            count ++;
+        try{
+            do{
+                double xBoxMin = easting - boarderRange;
+                double xBoxMax = easting + boarderRange;
+                double yBoxMin = northing - boarderRange;
+                double yBoxMax = northing + boarderRange;
+                query = "SELECT * FROM " + TABLE_CARPARKS +
+                        " WHERE " + COLUMN_Xcoord + " BETWEEN " + xBoxMin + " AND " +  xBoxMax
+                        + " AND " + COLUMN_Ycoord + " BETWEEN " + yBoxMin + " AND " + yBoxMax;
+                cpListInfo = db.rawQuery(query, null);
+                boarderRange+=25;
+                count ++;
 
-        }while(cpListInfo.getCount() <=5);
+            }while(cpListInfo.getCount() <=5);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         String tempString = "";
         return cpListInfo;
     }

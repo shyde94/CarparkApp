@@ -82,7 +82,8 @@ public class CarparkFinder {
             String shortTermParking = cursorList.getString(cursorList.getColumnIndex(CarparkDBController.COLUMN_TYPE_PARKING_SYS));
             String freeParking = cursorList.getString(cursorList.getColumnIndex(CarparkDBController.COLUMN_FP));
             String nightParking = cursorList.getString(cursorList.getColumnIndex(CarparkDBController.COLUMN_NP));
-            Carpark carparkTemp = new Carpark(svy21, latLon, cpNum, cpType, typeOfParkingSystem, shortTermParking, freeParking, nightParking);
+            String address = cursorList.getString(cursorList.getColumnIndex(CarparkDBController.COLUMN_address));
+            Carpark carparkTemp = new Carpark(svy21, latLon, cpNum, cpType, typeOfParkingSystem, shortTermParking, freeParking, nightParking, address);
             cpObjectArray.add(carparkTemp);
 
             cursorList.moveToNext();
