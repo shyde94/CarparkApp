@@ -12,6 +12,7 @@ import java.util.List;
 
 import Fragments.MenuFragment;
 import Fragments.MyCustomMap;
+import Fragments.SaveLotNumber;
 import Fragments.TestFrag;
 
 
@@ -54,6 +55,7 @@ public class ScreenController {
         MENU,
         MFH,
         TEST,
+        SAVELOT,
 
     }
 
@@ -95,6 +97,9 @@ public class ScreenController {
                 break;
             case TEST:
                 frag = new TestFrag();
+                break;
+            case SAVELOT:
+                frag = new SaveLotNumber();
         }
         return frag;
     }

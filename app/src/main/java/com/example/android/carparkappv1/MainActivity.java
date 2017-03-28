@@ -9,11 +9,13 @@ import java.io.IOException;
 
 import Controllers.ScreenController;
 import Fragments.MenuFragment;
+import Fragments.MyCustomMap;
 
 import static Controllers.ScreenController.Screen.MFH;
+import static Controllers.ScreenController.Screen.SAVELOT;
 
 
-public class MainActivity extends AppCompatActivity implements MenuFragment.OnSearchButtonClickedListener {
+public class MainActivity extends AppCompatActivity implements MenuFragment.OnSearchButtonClickedListener, MyCustomMap.OnArrivedButtonClickedListener {
 
     public ScreenController screenController = new ScreenController();
 
@@ -43,6 +45,10 @@ public class MainActivity extends AppCompatActivity implements MenuFragment.OnSe
     @Override
     public void onSearchedButtonClicked(String location) throws IOException {
         screenController.openScreen(MFH, location);
+    }
+
+    public void onArrivedButtonClicked() throws IOException {
+        screenController.openScreen(SAVELOT);
     }
 }
 
