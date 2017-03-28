@@ -2,6 +2,8 @@ package com.example.android.carparkappv1;
 
 
 import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -11,6 +13,7 @@ import Controllers.ScreenController;
 import Fragments.MenuFragment;
 
 import static Controllers.ScreenController.Screen.MFH;
+import static android.R.attr.tag;
 
 
 public class MainActivity extends AppCompatActivity implements MenuFragment.OnSearchButtonClickedListener {
@@ -21,7 +24,6 @@ public class MainActivity extends AppCompatActivity implements MenuFragment.OnSe
 
     public Activity activity = this;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +32,8 @@ public class MainActivity extends AppCompatActivity implements MenuFragment.OnSe
         Shared.activity = MainActivity.this;
         screenController.openScreen(ScreenController.Screen.MENU);
         //screenController.openScreen(ScreenController.Screen.TEST);
+
+
     }
 
     @Override
@@ -43,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements MenuFragment.OnSe
     @Override
     public void onSearchedButtonClicked(String location) throws IOException {
         screenController.openScreen(MFH, location);
+
     }
 }
 

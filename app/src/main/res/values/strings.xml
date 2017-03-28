@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">CarparkAppV1</string>
-    <string name="search_location_hint">Enter a location</string>
+    <string name="search_location_hint">Enter a destination</string>
     <string name="search_button">Search!</string>
+
+    <string name="GOOGLE_MAPS_DIRECTIONS_API_KEY">AIzaSyBI-j7c-g2h6ROM8_bEDFDAT8r5djAKLnY</string>
 </resources>
