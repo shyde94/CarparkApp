@@ -14,15 +14,27 @@ import com.example.android.carparkappv1.Carpark;
  * Created by jon92 on 23/3/2017.
  */
 
+
 public class DialogFrag extends DialogFragment {
 
         private Carpark carpark;
 
-        public void setCarpark(Carpark cp){
+    /**
+     * Sets the carpark object that is related to the selected carpark
+     * @param cp Carpark object
+     */
+    public void setCarpark(Carpark cp){
             carpark = cp;
         }
 
-        @Override
+    /**
+     *Creates a Dialog object
+     *Uses Carpark object CP to decide the text that will be used for the dialog box
+     *It will then set the text as the mesasge for the dialog box and also create the necessary buttons
+     * @param savedInstanceState
+     * @return Returns created Dialog with the desired information
+     */
+    @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the Builder class for convenient DialogFrag construction
             String carpark_details = "";

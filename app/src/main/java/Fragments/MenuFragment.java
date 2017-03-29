@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -24,6 +23,13 @@ public class MenuFragment extends Fragment {
 
     OnSearchButtonClickedListener mListener;
 
+    /**
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -56,6 +62,12 @@ public class MenuFragment extends Fragment {
 
         return view;
     }
+
+    /**
+     * This method
+     * @param v
+     * @throws IOException
+     */
     public void buttonClicked(View v) throws IOException {
         String location = mInputLocation.getText().toString();
         if(!location.equals("")){
