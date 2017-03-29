@@ -36,6 +36,19 @@ public class CarparkDBController extends SQLiteOpenHelper {
     public static final String COLUMN_FP = "free_parking";
     public static final String COLUMN_NP ="night_parking";
 
+
+    public static final String CREATE_TABLE_HDB_CARPARK = "CREATE TABLE " + TABLE_CARPARKS + " ("
+            + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + COLUMN_CARPARKNUM + " TEXT, "
+            + COLUMN_address + " TEXT, "
+            + COLUMN_Xcoord + " DOUBLE, "
+            + COLUMN_Ycoord + " DOUBLE, "
+            + COLUMN_CPTYPE + " TEXT, "
+            + COLUMN_TYPE_PARKING_SYS + " TEXT, "
+            + COLUMN_STP + " TEXT, "
+            + COLUMN_FP + " TEXT, "
+            + COLUMN_NP + " TEXT "
+            + ");";
     /**
      *Use the application context, which will ensure that user don't accidentally leak an Activity's context.
      * @param context
@@ -72,20 +85,8 @@ public class CarparkDBController extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         Log.i(TAG, "onCreate database!");
-        String query = "CREATE TABLE " + TABLE_CARPARKS + " ("
-                        + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                        + COLUMN_CARPARKNUM + " TEXT, "
-                        + COLUMN_address + " TEXT, "
-                        + COLUMN_Xcoord + " DOUBLE, "
-                        + COLUMN_Ycoord + " DOUBLE, "
-                        + COLUMN_CPTYPE + " TEXT, "
-                        + COLUMN_TYPE_PARKING_SYS + " TEXT, "
-                        + COLUMN_STP + " TEXT, "
-                        + COLUMN_FP + " TEXT, "
-                        + COLUMN_NP + " TEXT "
-                        + ");";
 
-        sqLiteDatabase.execSQL(query);
+        sqLiteDatabase.execSQL(CREATE_TABLE_HDB_CARPARK);
         Log.i(TAG, "created table_carparks");
         try {
             addCSVintoDB(sqLiteDatabase);
@@ -218,22 +219,7 @@ public class CarparkDBController extends SQLiteOpenHelper {
     }
 
 
-    public Cursor querySomething(){// test method
-        SQLiteDatabase db = getWritableDatabase();
-        String query = "SELECT * FROM " + TABLE_CARPARKS + " WHERE " + COLUMN_address + " = 'BLK 270/271 ALBERT CENTRE BASEMENT CAR PARK';";
-        //String query =  "SELECT * FROM " + TABLE_CARPARKS + " WHERE 1;";
-        Cursor c = db.rawQuery(query,null);
-        c.moveToFirst();
-        if(c.getCount() != 0){
-            Log.i(TAG, "cursor has stuff");
-            String x = c.getString(c.getColumnIndex(COLUMN_Xcoord));
-            Log.i(TAG, "value of x: " + x);
-        }
-        else{
-            Log.i(TAG, "cursor empty");
-        }
-         return c;
-    }
+
 
 
 

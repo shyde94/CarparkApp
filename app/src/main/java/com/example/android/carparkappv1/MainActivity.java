@@ -2,8 +2,6 @@ package com.example.android.carparkappv1;
 
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -14,8 +12,6 @@ import Fragments.MenuFragment;
 import Fragments.MyCustomMap;
 
 import static Controllers.ScreenController.Screen.MFH;
-
-import static android.R.attr.tag;
 
 import static Controllers.ScreenController.Screen.SAVELOT;
 
@@ -28,14 +24,17 @@ public class MainActivity extends AppCompatActivity implements MenuFragment.OnSe
 
     public Activity activity = this;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //this.deleteDatabase(CarparkDBController.DATABASE_NAME);
         Shared.activity = MainActivity.this;
+
         screenController.openScreen(ScreenController.Screen.MENU);
         //screenController.openScreen(ScreenController.Screen.TEST);
+
 
 
     }

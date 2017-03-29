@@ -544,9 +544,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
             double lat = cp.getLatLonCoord().getLatitude();
             double lng = cp.getLatLonCoord().getLongitude();
 
-
-            //String cpNum = cp.getCpNum();
-            if(cp instanceof HdbCarpark){
+            /*if(cp instanceof HdbCarpark){
                 String cpNum = ((HdbCarpark)cp).getCpNum();
                 String cpType = ((HdbCarpark)cp).getCpType();
                 String cpFreeParking = ((HdbCarpark)cp).getFreeParking();
@@ -554,6 +552,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
                 String cpAddress = ((HdbCarpark)cp).getAddress();
                 Log.i(TAG, "Cp: " + cpNum + "lat: " + lat + "lng: " + lng);
             }
+            else if(cp instanceof SmCarpark){}*/
 
             LatLng latlng = new LatLng(lat, lng);
             setMarkerForNearbyCp(cp, latlng);
@@ -642,6 +641,8 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
             setMarker(temp);
         }
     }
+
+
 
 
 
