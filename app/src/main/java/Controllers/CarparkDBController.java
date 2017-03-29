@@ -155,9 +155,9 @@ public class CarparkDBController extends SQLiteOpenHelper {
 
 
     //This method queries the database to get carparks with coordinates within vicinity of destination
-    public Cursor queryRetrieveNearbyCarparks(SVY21Coordinate svy21C){
+    public Cursor queryRetrieveNearbyHDBCarparks(SVY21Coordinate svy21C){
 
-        Log.i(TAG, "Enter queryRetrieveNearbyCarparks");
+        Log.i(TAG, "Enter queryRetrieveNearbyHDBCarparks");
         double easting = svy21C.getEasting();
         double northing = svy21C.getNorthing();
         Cursor cpListInfo = null;
