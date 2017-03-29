@@ -10,12 +10,9 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 
 import MapProjectionConverter.SVY21Coordinate;
 
@@ -39,6 +36,11 @@ public class CarparkDBController extends SQLiteOpenHelper {
     public static final String COLUMN_FP = "free_parking";
     public static final String COLUMN_NP ="night_parking";
 
+    /**
+     *Use the application context, which will ensure that user don't accidentally leak an Activity's context.
+     * @param context
+     * @return
+     */
     public static synchronized CarparkDBController getInstance(Context context) {
 
         // Use the application context, which will ensure that you
@@ -52,6 +54,10 @@ public class CarparkDBController extends SQLiteOpenHelper {
 
     private Context context;
 
+    /**
+     * Object Constructor for CarparkDBController object
+     * @param context
+     */
     public CarparkDBController(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
@@ -95,6 +101,10 @@ public class CarparkDBController extends SQLiteOpenHelper {
 
     }
 
+    /**
+     *
+     * @param db
+     */
     @Override
     public void onOpen(SQLiteDatabase db) {
         super.onOpen(db);
@@ -103,6 +113,14 @@ public class CarparkDBController extends SQLiteOpenHelper {
     }
 
     //load values from csv file.
+
+    /**
+     * Loads data from the CSV file and add it into the database.
+     * The CSV file is currently fixed.
+     * Data is retrieved row by row in the CSV file until all entries are loaded
+     * @param db The desired database in which the data are to be added into.
+     * @throws IOException
+     */
     public void addCSVintoDB(SQLiteDatabase db) throws IOException {
         Log.i(TAG,  "addCSVintoDB method");
         String filename = "hdb-carpark-information.csv";
@@ -131,7 +149,7 @@ public class CarparkDBController extends SQLiteOpenHelper {
         }
     }
 
-
+    //To be removed
     public String dbToString(){
         Log.i(TAG, "enter dbToString");
         String dbString = "";
@@ -153,11 +171,20 @@ public class CarparkDBController extends SQLiteOpenHelper {
 
     }
 
-
+    /**
+     * This method queries the database to get carparks with coordinates within vicinity of destination
+     * Using the coordinates from the input it will compare it with those in the database
+     * All entries within a 25KM radius of the carpark will be added into the cursor object cpListInfo
+     * If less than 5 entries are found, the range is then increase by 5 km.
+     * The range will be increased until 5 or more entries are found.
+     * At the end of the method, it returns the cursor object
+     * @param svy21C The coordinates of the current destination
+     * @return
+     */
     //This method queries the database to get carparks with coordinates within vicinity of destination
-    public Cursor queryRetrieveNearbyCarparks(SVY21Coordinate svy21C){
+    public Cursor queryRetrieveNearbyHDBCarparks(SVY21Coordinate svy21C){
 
-        Log.i(TAG, "Enter queryRetrieveNearbyCarparks");
+        Log.i(TAG, "Enter queryRetrieveNearbyHDBCarparks");
         double easting = svy21C.getEasting();
         double northing = svy21C.getNorthing();
         Cursor cpListInfo = null;
@@ -190,7 +217,8 @@ public class CarparkDBController extends SQLiteOpenHelper {
         return cpListInfo;
     }
 
-    public Cursor querySomething(){
+
+    public Cursor querySomething(){// test method
         SQLiteDatabase db = getWritableDatabase();
         String query = "SELECT * FROM " + TABLE_CARPARKS + " WHERE " + COLUMN_address + " = 'BLK 270/271 ALBERT CENTRE BASEMENT CAR PARK';";
         //String query =  "SELECT * FROM " + TABLE_CARPARKS + " WHERE 1;";

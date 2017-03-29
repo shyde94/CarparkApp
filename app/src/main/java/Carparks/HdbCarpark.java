@@ -1,13 +1,13 @@
-package com.example.android.carparkappv1;
-
-import com.google.android.gms.maps.model.LatLng;
+package Carparks;
 
 import MapProjectionConverter.LatLonCoordinate;
 import MapProjectionConverter.SVY21Coordinate;
 
-public class Carpark {
-    private SVY21Coordinate svyCoord;
-    private LatLonCoordinate latLonCoord;
+/**
+ * Created by Shide on 23/3/17.
+ */
+
+public class HdbCarpark extends Carpark {
     private String cpNum;
     private String cpType;
     private String typeOfParkingSystem;
@@ -16,12 +16,8 @@ public class Carpark {
     private String nightParking;
     private String address;
 
-    public Carpark(){
-    }
-
-    public Carpark(SVY21Coordinate svyCoord, LatLonCoordinate latLonCoord, String cpNum, String cpType, String typeOfParkingSystem, String shortTermParking, String freeParking, String nightParking, String address) {
-        this.svyCoord = svyCoord;
-        this.latLonCoord = latLonCoord;
+    public HdbCarpark(SVY21Coordinate svyCoord, LatLonCoordinate latLonCoord, String cpNum, String cpType, String typeOfParkingSystem, String shortTermParking, String freeParking, String nightParking, String address) {
+        super(svyCoord, latLonCoord);
         this.cpNum = cpNum;
         this.cpType = cpType;
         this.typeOfParkingSystem = typeOfParkingSystem;
@@ -31,21 +27,7 @@ public class Carpark {
         this.address = address;
     }
 
-    public SVY21Coordinate getSvyCoord() {
-        return svyCoord;
-    }
-
-    public void setSvyCoord(SVY21Coordinate svyCoord) {
-        this.svyCoord = svyCoord;
-    }
-
-    public LatLonCoordinate getLatLonCoord() {
-        return latLonCoord;
-    }
-
-    public void setLatLonCoord(LatLonCoordinate latLonCoord) {
-        this.latLonCoord = latLonCoord;
-    }
+    public HdbCarpark(){}
 
     public String getCpNum() {
         return cpNum;
@@ -95,11 +77,11 @@ public class Carpark {
         this.nightParking = nightParking;
     }
 
-    public String getAddress(){ return address; }
+    public String getAddress() {
+        return address;
+    }
 
-    public void setAddress(String address){ this.address = address; }
-
+    public void setAddress(String address) {
+        this.address = address;
+    }
 }
-
-
-//"car_park_no","address","x_coord","y_coord","car_park_type","type_of_parking_system","short_term_parking","free_parking","night_parking"

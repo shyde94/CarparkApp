@@ -10,5 +10,9 @@
     <string name="title_activity_main3">Main3Activity</string>
     <string name="hello_round">Hello Round World!</string>
     <string name="hello_square">Hello Square World!</string>
+<<<<<<< HEAD
 
+=======
+    <string name="arrived">Arrived</string>
+>>>>>>> 9b78ae13e2e749fde49348256ff40b8e7781abd0
 </resources>
