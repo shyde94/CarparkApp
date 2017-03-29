@@ -14,11 +14,10 @@ import Fragments.MenuFragment;
 import Fragments.MyCustomMap;
 
 import static Controllers.ScreenController.Screen.MFH;
-<<<<<<< HEAD
+
 import static android.R.attr.tag;
-=======
+
 import static Controllers.ScreenController.Screen.SAVELOT;
->>>>>>> b23d7e22a4dd59f2ad0ebabaefa0e7819436187f
 
 
 public class MainActivity extends AppCompatActivity implements MenuFragment.OnSearchButtonClickedListener, MyCustomMap.OnArrivedButtonClickedListener {

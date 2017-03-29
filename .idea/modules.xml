@@ -2,12 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/JeshBitBucket.iml" filepath="$PROJECT_DIR$/JeshBitBucket.iml" />
-=======
->>>>>>> b23d7e22a4dd59f2ad0ebabaefa0e7819436187f
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/jesh code.iml" filepath="$PROJECT_DIR$/jesh code.iml" />
     </modules>
   </component>
 </project>

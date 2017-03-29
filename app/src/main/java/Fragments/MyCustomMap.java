@@ -5,11 +5,11 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-<<<<<<< HEAD
+
 import android.content.Intent;
-=======
+
 import android.content.Context;
->>>>>>> b23d7e22a4dd59f2ad0ebabaefa0e7819436187f
+
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -38,6 +38,7 @@ import com.akexorcist.googledirection.constant.TransportMode;
 import com.akexorcist.googledirection.model.Direction;
 import com.akexorcist.googledirection.model.Leg;
 import com.akexorcist.googledirection.model.Route;
+import com.akexorcist.googledirection.model.TransitDetail;
 import com.akexorcist.googledirection.util.DirectionConverter;
 import com.example.android.carparkappv1.Carpark;
 import com.example.android.carparkappv1.CarparkFinder;
@@ -84,12 +85,12 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     private MapFragment mapFragment;
     private Location mCurrentLocation;
     private String destination = "";
-<<<<<<< HEAD
+
     private boolean routeFlag = true;
     private Polyline route;
-=======
+
     Button arrivedbutton;
->>>>>>> b23d7e22a4dd59f2ad0ebabaefa0e7819436187f
+
 
     HashMap<Marker, Carpark> markerToCarpark = new HashMap<>();
 
@@ -140,8 +141,6 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
             e.printStackTrace();
         }
 
-<<<<<<< HEAD
-=======
         arrivedbutton = (Button) view.findViewById(R.id.arrived_button);
 
         arrivedbutton.setOnClickListener(
@@ -160,8 +159,6 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
                 }
         );
 
-
->>>>>>> b23d7e22a4dd59f2ad0ebabaefa0e7819436187f
         return view;
     }
 

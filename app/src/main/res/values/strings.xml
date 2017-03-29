@@ -2,13 +2,13 @@
     <string name="app_name">CarparkAppV1</string>
     <string name="search_location_hint">Enter a destination</string>
     <string name="search_button">Search!</string>
-<<<<<<< HEAD
+
 
     <string name="GOOGLE_MAPS_DIRECTIONS_API_KEY">AIzaSyBI-j7c-g2h6ROM8_bEDFDAT8r5djAKLnY</string>
-=======
+
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_activity_main3">Main3Activity</string>
     <string name="hello_round">Hello Round World!</string>
     <string name="hello_square">Hello Square World!</string>
->>>>>>> b23d7e22a4dd59f2ad0ebabaefa0e7819436187f
+
 </resources>
