@@ -26,7 +26,9 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:25.1.1'
     compile 'com.google.android.gms:play-services:10.0.1'
+    compile 'com.akexorcist:googledirectionlibrary:1.0.4'
     compile 'com.android.support.constraint:constraint-layout:+'
     compile 'com.android.support:design:25.3.0'
     testCompile 'junit:junit:4.12'
+
 }

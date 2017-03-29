@@ -3,6 +3,7 @@ package Controllers;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.os.Bundle;
 
 import com.example.android.carparkappv1.R;
 import com.example.android.carparkappv1.Shared;
@@ -75,10 +76,10 @@ public class ScreenController {
 
     }
     //overloaded method to pass in data for mapfragment
-    public void openScreen(Screen screen, String destination){
+    public void openScreen(Screen screen, String location){
         mFragmentManager = Shared.activity.getFragmentManager();
         MyCustomMap fragment = (MyCustomMap) getFragment(screen);
-        fragment.setDestination(destination);
+        fragment.setDestination(location);
         if(fragment!= null){
             FragmentTransaction fragmentTransaction = mFragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.fragment_container,fragment, "CURRENT_FRAG");

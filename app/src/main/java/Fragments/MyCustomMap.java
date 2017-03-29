@@ -5,13 +5,18 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+
+import android.content.Intent;
+
 import android.content.Context;
+
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,7 +31,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.content.Intent;
-
+import com.akexorcist.googledirection.DirectionCallback;
+import com.akexorcist.googledirection.GoogleDirection;
+import com.akexorcist.googledirection.constant.TransportMode;
+import com.akexorcist.googledirection.model.Direction;
+import com.akexorcist.googledirection.model.Leg;
+import com.akexorcist.googledirection.model.Route;
+import com.akexorcist.googledirection.model.TransitDetail;
+import com.akexorcist.googledirection.util.DirectionConverter;
 import Carparks.Carpark;
 import com.example.android.carparkappv1.CarparkFinder;
 import com.example.android.carparkappv1.R;
@@ -45,6 +57,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -56,12 +70,16 @@ import MapProjectionConverter.LatLonCoordinate;
 import MapProjectionConverter.SVY21;
 import MapProjectionConverter.SVY21Coordinate;
 
+import static android.R.attr.direction;
+import static com.example.android.carparkappv1.Shared.context;
+
+
+public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener,GoogleMap.OnInfoWindowClickListener,GoogleMap.OnMarkerClickListener{
+
 /**
  * MyCustomMap contains the GoogleMap object which initialises the main map being used. Contains destination set by user and
  * user's current location. Implements OnMapReadyCallBack, and GoogleApiClient interfaces.
  */
-public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener,GoogleMap.OnInfoWindowClickListener{
-
     private static final String TAG = "MyCustomMapClass";
     OnArrivedButtonClickedListener mListener;
 
@@ -71,25 +89,30 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     private MapFragment mapFragment;
     private Location mCurrentLocation;
     private String destination = "";
+    private boolean routeFlag = true;
+    private Polyline route;
+
     Button arrivedbutton;
+
 
     HashMap<Marker, Carpark> markerToCarpark = new HashMap<>();
 
     private CarparkFinder cpFinder;
 
     /*public static MyCustomMap newInstance(String destination){
+
         MyCustomMap myMap =  new MyCustomMap();
         Bundle args = new Bundle();
-        args.putString("Destination", destination);
+        args.putString("destination", location);
         myMap.setArguments(args);
         return myMap;
     }*/
+    public String getDestination(){
 
     /**
      *
      * @return destination
      */
-    public String getDestination() {
         return destination;
     }
 
@@ -168,7 +191,6 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
                     }
                 }
         );
-
 
         return view;
     }
@@ -261,9 +283,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         });
 
         map.setOnInfoWindowClickListener(this);/*Recently added. Waits for the marker to be clicked*/
-
-
-
+        map.setOnMarkerClickListener(this);
     }
 
 
@@ -323,7 +343,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
      */
     //This returns a LatLng object, destination in CarparkFinder class is a LatLng object!
     public LatLng searchLocation(String location) {
-        Log.i(TAG, "Enter search location");
+        Log.i(TAG, "Enter search destination");
         Log.i(TAG, location);
         LatLng ll = null;
         if (!location.equals("")) try {
@@ -417,16 +437,27 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     public void setMarker(String title, LatLng ll) {
         MarkerOptions options = new MarkerOptions()
                 .title(title)
+                .position(ll).snippet("This is the destination searched.")
                 .position(ll).snippet("Destination")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         mGoogleMap.addMarker(options);
     }
 
+
+//    public void setMarkerForRoute(String title, LatLng ll) {
+//        MarkerOptions options = new MarkerOptions()
+//                .position(ll)
+//                .title(title);
+//        mGoogleMap.addMarker(options);
+//    }
+
     public void setMarker(LatLng ll) {
         MarkerOptions options = new MarkerOptions()
-                .position(ll).title("Carpark");
+                .position(ll)
+                .title("Carpark");
         mGoogleMap.addMarker(options);
     }
+
 
     /**
      * Method used to record user's current location.
@@ -484,7 +515,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     @Override
     public void onLocationChanged(Location location) {
         if(location == null){
-            Toast.makeText(getActivity(), "Can't get current location", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Can't get current destination", Toast.LENGTH_SHORT).show();
         }
         else{
             LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
@@ -501,6 +532,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         return zoomFactor;
     }
 
+    //This method will set the markers of the nearby carparks on the map AND DISPLAY ROUTE
     /**
      * This method retrieves the carpark objects from CarparkFinder and displays the position of the carparks on the map.
      *
@@ -511,6 +543,9 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         for(Carpark cp : cpFinder.getCpList()){
             double lat = cp.getLatLonCoord().getLatitude();
             double lng = cp.getLatLonCoord().getLongitude();
+
+
+            //String cpNum = cp.getCpNum();
             if(cp instanceof HdbCarpark){
                 String cpNum = ((HdbCarpark)cp).getCpNum();
                 String cpType = ((HdbCarpark)cp).getCpType();
@@ -524,6 +559,59 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
             setMarkerForNearbyCp(cp, latlng);
         }
     }
+    //After clicking marker
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+
+        Carpark cp = markerToCarpark.get(marker);
+        marker.showInfoWindow();
+
+        //to display route on maps
+        LatLng origin = null; //origin is the location searched in the main page
+        try {
+            origin = geoLocate(getDestination());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //latlng of nearby carparks
+        double lat = cp.getLatLonCoord().getLatitude();
+        double lng = cp.getLatLonCoord().getLongitude();
+        LatLng cpLocation = new LatLng(lat, lng);
+
+        GoogleDirection.withServerKey(getString(R.string.GOOGLE_MAPS_DIRECTIONS_API_KEY))
+                .from(origin)
+                .to(cpLocation)
+                .transportMode(TransportMode.WALKING)
+                .execute(new DirectionCallback() {
+
+                    @Override
+                    public void onDirectionSuccess(Direction direction, String rawBody) {
+
+                        if (direction.isOK() && routeFlag == true) {
+                            ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
+                            route = mGoogleMap.addPolyline(DirectionConverter.createPolyline(getActivity(), directionPositionList, 3, Color.RED));
+
+                            //to ensure that it is only clicked once
+                            routeFlag = false;
+                        }
+
+                        else if(direction.isOK() && routeFlag == false){
+                            route.remove();
+                            ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
+                            route = mGoogleMap.addPolyline(DirectionConverter.createPolyline(getActivity(), directionPositionList, 3, Color.RED));
+                        }
+                    }
+
+                    @Override
+                    public void onDirectionFailure(Throwable t) {
+                        Log.i(TAG,"ROUTING FAILED");
+                    }
+                });
+
+        Log.i(TAG, "MarkerClicked");
+        return true;
+    }/*Recently added*/
 
     /**
      * Method to test range to search for carparks. Used for debugging and testing
