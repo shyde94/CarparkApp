@@ -5,7 +5,11 @@ import android.Manifest;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+<<<<<<< HEAD
 import android.content.Intent;
+=======
+import android.content.Context;
+>>>>>>> b23d7e22a4dd59f2ad0ebabaefa0e7819436187f
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -22,9 +26,11 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.Intent;
 
 import com.akexorcist.googledirection.DirectionCallback;
 import com.akexorcist.googledirection.GoogleDirection;
@@ -70,6 +76,7 @@ import static com.example.android.carparkappv1.Shared.context;
 public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener,GoogleMap.OnInfoWindowClickListener,GoogleMap.OnMarkerClickListener{
 
     private static final String TAG = "MyCustomMapClass";
+    OnArrivedButtonClickedListener mListener;
 
     //Variables essential for mapfragment
     private static GoogleMap mGoogleMap;
@@ -77,8 +84,12 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     private MapFragment mapFragment;
     private Location mCurrentLocation;
     private String destination = "";
+<<<<<<< HEAD
     private boolean routeFlag = true;
     private Polyline route;
+=======
+    Button arrivedbutton;
+>>>>>>> b23d7e22a4dd59f2ad0ebabaefa0e7819436187f
 
     HashMap<Marker, Carpark> markerToCarpark = new HashMap<>();
 
@@ -118,6 +129,8 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //setContentView(R.layout.map_fragment);
         View view = inflater.inflate(com.example.android.carparkappv1.R.layout.map_fragment, container, false);
         mapFragment = (MapFragment) getChildFragmentManager().findFragmentById(R.id.mapFragment);
         //destination = mapFragment.getArguments().getString("Destination");
@@ -127,7 +140,49 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
             e.printStackTrace();
         }
 
+<<<<<<< HEAD
+=======
+        arrivedbutton = (Button) view.findViewById(R.id.arrived_button);
+
+        arrivedbutton.setOnClickListener(
+                new View.OnClickListener(){
+                    @Override
+                    public void onClick(View view) {
+                        try {
+                            buttonClicked(view);
+
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+        );
+
+
+>>>>>>> b23d7e22a4dd59f2ad0ebabaefa0e7819436187f
         return view;
+    }
+
+    public void buttonClicked(View v) throws IOException {
+        mListener.onArrivedButtonClicked();
+    }
+
+    public interface OnArrivedButtonClickedListener {
+        public void onArrivedButtonClicked() throws IOException;
+
+    }
+
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mListener = (OnArrivedButtonClickedListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() + " must implement OnArrivedButtonClickedListener");
+        }
     }
 
     public void googleMapStart() throws IOException {
