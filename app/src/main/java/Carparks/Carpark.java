@@ -5,6 +5,9 @@ import com.google.android.gms.maps.model.LatLng;
 import MapProjectionConverter.LatLonCoordinate;
 import MapProjectionConverter.SVY21Coordinate;
 
+/**
+ * Parent carpark class. Provides basic variables that all carparks should have.
+ */
 public class Carpark {
     private SVY21Coordinate svyCoord;
     private LatLonCoordinate latLonCoord;

@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity implements MenuFragment.OnSe
         setContentView(R.layout.activity_main);
         //this.deleteDatabase(CarparkDBController.DATABASE_NAME);
         Shared.activity = MainActivity.this;
-        screenController.openScreen(ScreenController.Screen.TEST);
+        screenController.openScreen(ScreenController.Screen.MENU);
         //screenController.openScreen(ScreenController.Screen.TEST);
     }
 

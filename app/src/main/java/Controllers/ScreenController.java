@@ -16,6 +16,9 @@ import Fragments.SaveLotNumber;
 import Fragments.TestFrag;
 
 
+/**
+ * Acts as facade to load different screens.
+ */
 public class ScreenController {
     public static ScreenController mInstance = null;
     private static List<Screen> openedScreens = new ArrayList<Screen>();
