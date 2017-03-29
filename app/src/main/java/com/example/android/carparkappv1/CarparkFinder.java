@@ -9,8 +9,9 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
+import Carparks.Carpark;
+import Carparks.HdbCarpark;
 import Controllers.CarparkDBController;
-import Controllers.ScreenController;
 import MapProjectionConverter.LatLonCoordinate;
 import MapProjectionConverter.SVY21;
 import MapProjectionConverter.SVY21Coordinate;
@@ -67,7 +68,7 @@ public class CarparkFinder {
         SVY21Coordinate temp = getSVY21Coord(destination);
 
         //CursorList will contain every row of carpark within the vicinity
-        Cursor cursorList = cpController.queryRetrieveNearbyCarparks(temp);
+        Cursor cursorList = cpController.queryRetrieveNearbyHDBCarparks(temp);
         cursorList.moveToFirst();
         while(cursorList.isAfterLast() == false){
             //Create carpark object containing data from each row!
@@ -83,7 +84,7 @@ public class CarparkFinder {
             String freeParking = cursorList.getString(cursorList.getColumnIndex(CarparkDBController.COLUMN_FP));
             String nightParking = cursorList.getString(cursorList.getColumnIndex(CarparkDBController.COLUMN_NP));
             String address = cursorList.getString(cursorList.getColumnIndex(CarparkDBController.COLUMN_address));
-            Carpark carparkTemp = new Carpark(svy21, latLon, cpNum, cpType, typeOfParkingSystem, shortTermParking, freeParking, nightParking, address);
+            Carpark carparkTemp = new HdbCarpark(svy21, latLon, cpNum, cpType, typeOfParkingSystem, shortTermParking, freeParking, nightParking, address);
             cpObjectArray.add(carparkTemp);
 
             cursorList.moveToNext();
@@ -112,13 +113,13 @@ public class CarparkFinder {
     }
 
 
-    public Carpark cursorToCarpark(Cursor c){
-        Carpark cp = new Carpark();
+    /*public Carpark cursorToCarpark(Cursor c){
+        Carpark cp = new HdbCarpark();
         SVY21Coordinate svy21C = new SVY21Coordinate(c.getDouble(c.getColumnIndex(CarparkDBController.COLUMN_Xcoord)), c.getDouble(c.getColumnIndex(CarparkDBController.COLUMN_Ycoord)));
         cp.setCpNum(c.getString(c.getColumnIndex(CarparkDBController.COLUMN_CARPARKNUM)));
         cp.setSvyCoord(svy21C);
         return cp;
-    }
+    }*/
 
     public ArrayList<LatLonCoordinate> handleQuery(){
         ArrayList<LatLonCoordinate> tempList = new ArrayList<LatLonCoordinate>();
