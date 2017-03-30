@@ -36,9 +36,6 @@ public class SaveLotNumber extends Fragment{
         mInputLotNumber = (EditText) view.findViewById(R.id.lot_number_text);
         mLotNumberDisplay = (TextView) view.findViewById(R.id.skip_lot_button);
 
-
-
-
         return view;
     }
 

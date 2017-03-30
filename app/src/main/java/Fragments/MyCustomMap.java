@@ -66,6 +66,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import Carparks.HdbCarpark;
+import Carparks.SmCarpark;
 import MapProjectionConverter.LatLonCoordinate;
 import MapProjectionConverter.SVY21;
 import MapProjectionConverter.SVY21Coordinate;
@@ -541,10 +542,11 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     public void displayNearbyCarparks(){
         Log.i(TAG, "Enter displayNearbyCarparks");
         for(Carpark cp : cpFinder.getCpList()){
+            Log.i(TAG, "Enter for loop");
             double lat = cp.getLatLonCoord().getLatitude();
             double lng = cp.getLatLonCoord().getLongitude();
 
-            /*if(cp instanceof HdbCarpark){
+            if(cp instanceof HdbCarpark){
                 String cpNum = ((HdbCarpark)cp).getCpNum();
                 String cpType = ((HdbCarpark)cp).getCpType();
                 String cpFreeParking = ((HdbCarpark)cp).getFreeParking();
@@ -552,7 +554,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
                 String cpAddress = ((HdbCarpark)cp).getAddress();
                 Log.i(TAG, "Cp: " + cpNum + "lat: " + lat + "lng: " + lng);
             }
-            else if(cp instanceof SmCarpark){}*/
+            else if(cp instanceof SmCarpark){}
 
             LatLng latlng = new LatLng(lat, lng);
             setMarkerForNearbyCp(cp, latlng);

@@ -4,6 +4,7 @@ package com.example.android.carparkappv1;
 import android.content.Context;
 import android.database.Cursor;
 import android.util.Log;
+import android.widget.Switch;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -54,7 +55,7 @@ public class CarparkFinder {
         destination = ll;
         this.context = context;
         this.cpController = new CarparkDBController(context);
-        cpList = new ArrayList<Carpark>();
+        cpList = new ArrayList<>();
     }
 
 
@@ -65,7 +66,6 @@ public class CarparkFinder {
      */
     public void retrieveCarparks(){
         Log.i(TAG, "Enter retrieve Carparks");
-        ArrayList<Carpark> cpObjectArray = new ArrayList<Carpark>();
         SVY21Coordinate temp = getSVY21Coord(destination);
 
         //CursorList will contain every row of carpark within the vicinity
@@ -73,37 +73,39 @@ public class CarparkFinder {
         cursorList.moveToFirst();
         while(cursorList.isAfterLast() == false){
             //Create carpark object containing data from each row!
-            double easting = cursorList.getDouble(cursorList.getColumnIndex(CarparkDBController.COLUMN_Xcoord));
+            /*double easting = cursorList.getDouble(cursorList.getColumnIndex(CarparkDBController.COLUMN_Xcoord));
             double northing = cursorList.getDouble(cursorList.getColumnIndex(CarparkDBController.COLUMN_Ycoord));
 
             SVY21Coordinate svy21 = new SVY21Coordinate(northing, easting);
-            LatLonCoordinate latLon = SVY21.computeLatLon(svy21);
-
-
+            LatLonCoordinate latLon = SVY21.computeLatLon(svy21);*/
             String cpOwner = cursorList.getString(cursorList.getColumnIndex(CarparkDBController.COLUMN_OWNER_TYPE));
             int id = cursorList.getInt(cursorList.getColumnIndex(CarparkDBController.COLUMN_ID));
-            if(cpOwner.equals(CarparkDBController.OWNER_HDB)){
-                createHDBCarparkObjects(id);
-            }
-            else if(cpOwner.equals(CarparkDBController.OWNER_DM)){
-                createDMCarparkObject(id);
-            }
-
-            createHDBCarparkObjects(id);
-
-
-
+            ObjectCreater(cpOwner,id);
             cursorList.moveToNext();
 
 
             //Log.i(TAG, "Carpark: " + cpNum + " " + svy21.getNorthing() + " " + svy21.getEasting());
 
         }
-        cpList = cpObjectArray;
+    }
+
+    public void ObjectCreater(String owner, int id){
+        switch(owner){
+            case CarparkDBController.OWNER_HDB:
+                createHDBCarparkObjects(id);
+                break;
+            case CarparkDBController.OWNER_DM:
+                createDMCarparkObject(id);
+                break;
+            default:
+                Log.i(TAG,"Unidentified carpark");
+        }
     }
 
     public void createHDBCarparkObjects(int id){
+        Log.i(TAG, "Creating HDB Carpark Objects");
         Cursor cursorList = cpController.queryGetHDBCarparkInfo(id);
+        cursorList.moveToFirst();
         double easting = cursorList.getDouble(cursorList.getColumnIndex(CarparkDBController.COLUMN_Xcoord));
         double northing = cursorList.getDouble(cursorList.getColumnIndex(CarparkDBController.COLUMN_Ycoord));
 
@@ -117,6 +119,7 @@ public class CarparkFinder {
         String nightParking = cursorList.getString(cursorList.getColumnIndex(CarparkDBController.COLUMN_NP));
         String address = cursorList.getString(cursorList.getColumnIndex(CarparkDBController.COLUMN_address));
         Carpark carparkTemp = new HdbCarpark(svy21, latLon, cpNum, cpType, typeOfParkingSystem, shortTermParking, freeParking, nightParking, address);
+        Log.i(TAG, "Carpark: " + cpNum + " " + svy21.getNorthing() + " " + svy21.getEasting());
         cpList.add(carparkTemp);
 
         cursorList.close();

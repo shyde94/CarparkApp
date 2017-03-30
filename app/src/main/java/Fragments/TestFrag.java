@@ -40,6 +40,7 @@ public class TestFrag extends Fragment {
         String a = cpFinder.getCpController().dbToString();
         String b = cpFinder.getCpController().testCarparks();
 
+
         Log.i("TestFrag", "String a : " + a);
         Log.i("TestFrag", "String b : " + b);
 
