@@ -22,23 +22,46 @@ public class CarparkDBController extends SQLiteOpenHelper {
 
     private static final String TAG = "CarparkDBControllerClass";
 
+    public static final String OWNER_HDB = "HDB";
+    public static final String OWNER_DM = "DM";
+    public static final String OWNER_SM = "SM";
+    /*
+    ER diagram approach.
+    Carpark entity is the parent entity, subclass entity : HdbCarpark, SmCarpark
+    Create static final string for parent entity Carpark
+
+     */
     private static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "Carpark.db";
+
+
+    //Carpark Entity
     public static final String TABLE_CARPARKS = "Carparks";
     public static final String COLUMN_ID = "_id";
-    public static final String COLUMN_CARPARKNUM = "Carpark_num";
-    public static final String COLUMN_address = "Address";
     public static final String COLUMN_Xcoord = "X_Coord";
     public static final String COLUMN_Ycoord = "Y_Coord";
+    public static final String COLUMN_OWNER_TYPE = "Type_of_Carpark";
+
+    //Create Table for Carpark Entity
+    public static final String CREATE_TABLE_CARPARK = "CREATE TABLE " + TABLE_CARPARKS + " ("
+            + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+            + COLUMN_Xcoord + " DOUBLE, "
+            + COLUMN_Ycoord + " DOUBLE, "
+            + COLUMN_OWNER_TYPE + " TEXT);";
+
+
+    public static final String TABLE_HDB_CARPARKS = "HdbCarparks";
+    public static final String COLUMN_CARPARKNUM = "Carpark_num";
+    public static final String COLUMN_address = "Address";
     public static final String COLUMN_CPTYPE = "Carpark_type";
     public static final String COLUMN_TYPE_PARKING_SYS = "Type_Of_Parking_System";
     public static final String COLUMN_STP = "short_term_parking";
     public static final String COLUMN_FP = "free_parking";
     public static final String COLUMN_NP ="night_parking";
 
-
-    public static final String CREATE_TABLE_HDB_CARPARK = "CREATE TABLE " + TABLE_CARPARKS + " ("
-            + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+    //Create table for HDB Carparks
+    public static final String CREATE_TABLE_HDB_CARPARK = "CREATE TABLE " + TABLE_HDB_CARPARKS + " ("
+            + COLUMN_ID + " INTEGER, "
             + COLUMN_CARPARKNUM + " TEXT, "
             + COLUMN_address + " TEXT, "
             + COLUMN_Xcoord + " DOUBLE, "
@@ -48,6 +71,19 @@ public class CarparkDBController extends SQLiteOpenHelper {
             + COLUMN_STP + " TEXT, "
             + COLUMN_FP + " TEXT, "
             + COLUMN_NP + " TEXT "
+            + ");";
+    public static final String TABLE_DATAMALL_CARPARK = "DMCarpark";
+    public static final String COLUMN_AREA = "Area";
+    public static final String COLUMN_DEV = "Development";
+    public static final String COLUMN_LOTS = "Lots";
+
+    public static final String CREATE_TABLE_DATA_MALL = "CREATE TABLE " + TABLE_DATAMALL_CARPARK + " ( "
+            + COLUMN_ID + " INTEGER, "
+            + COLUMN_AREA + " TEXT, "
+            + COLUMN_DEV + " TEXT, "
+            + COLUMN_Xcoord + " DOUBLE, "
+            + COLUMN_Ycoord + " DOUBLE, "
+            + COLUMN_LOTS + " INTEGER "
             + ");";
     /**
      *Use the application context, which will ensure that user don't accidentally leak an Activity's context.
@@ -85,16 +121,18 @@ public class CarparkDBController extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         Log.i(TAG, "onCreate database!");
+        sqLiteDatabase.execSQL(CREATE_TABLE_CARPARK);   //Create parent carpark table
+        sqLiteDatabase.execSQL(CREATE_TABLE_HDB_CARPARK); //Create subclass HDB carpark table
+        sqLiteDatabase.execSQL(CREATE_TABLE_DATA_MALL); //Create subclass DataMall carparks
 
-        sqLiteDatabase.execSQL(CREATE_TABLE_HDB_CARPARK);
+        //If more types of carparks are available, just need to define columns and create them here.
         Log.i(TAG, "created table_carparks");
         try {
+            //Add data into HDB carpark table and carpark table. Make 1 more method for DM carparks.
             addCSVintoDB(sqLiteDatabase);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
     @Override
@@ -131,23 +169,47 @@ public class CarparkDBController extends SQLiteOpenHelper {
         String line = "";
         BufferedReader buffer = new BufferedReader(new InputStreamReader(inputStream));
 
-        //INSERT INTO Carparks (COLUMN_CARPARKNUM, COLUMN_Xcoord, COLUMN_Ycoord) VALUES (... ... ...)
+        //Adds data from hdb csv file to 2 tables.
         while((line = buffer.readLine()) != null){
-            Log.i(TAG, "inside while loop");
+            Log.i(TAG, "Adding into Carpark DB");
             String [] columns = line.split(",");
 
-            ContentValues cv = new ContentValues();
-            cv.put(COLUMN_CARPARKNUM, columns[0].replace("\"",""));
-            cv.put(COLUMN_address, columns[1].replace("\"",""));
-            cv.put(COLUMN_Xcoord, columns[2].replace("\"",""));
-            cv.put(COLUMN_Ycoord, columns[3].replace("\"",""));
-            cv.put(COLUMN_CPTYPE, columns[4].replace("\"",""));
-            cv.put(COLUMN_TYPE_PARKING_SYS, columns[5].replace("\"",""));
-            cv.put(COLUMN_STP, columns[6].replace("\"",""));
-            cv.put(COLUMN_FP, columns[7].replace("\"",""));
-            cv.put(COLUMN_NP, columns[8].replace("\"",""));
-            db.insert(TABLE_CARPARKS, null, cv);
+            ContentValues cv1 = new ContentValues();
+            cv1.put(COLUMN_Xcoord, columns[2].replace("\"",""));
+            cv1.put(COLUMN_Ycoord, columns[3].replace("\"",""));
+            cv1.put(COLUMN_OWNER_TYPE, OWNER_HDB);
+            db.insert(TABLE_CARPARKS, null, cv1);
+
+
+            //Doing this is inefficient, but somehow SELECT MAX(COLUMN_IN) doesnt work...
+            String query = "SELECT "+ COLUMN_ID + " FROM " + TABLE_CARPARKS + " WHERE 1;";
+            Cursor c = db.rawQuery(query,null);
+            c.moveToLast();
+            int id = c.getInt(c.getColumnIndex(COLUMN_ID));
+            c.close();
+
+            ContentValues cv2 = new ContentValues();
+            cv2.put(COLUMN_ID, id); //THIS IS THE KEY! How to link the id from carpark table to HDBCarpark
+            cv2.put(COLUMN_CARPARKNUM, columns[0].replace("\"",""));
+            cv2.put(COLUMN_address, columns[1].replace("\"",""));
+            cv2.put(COLUMN_Xcoord, columns[2].replace("\"",""));
+            cv2.put(COLUMN_Ycoord, columns[3].replace("\"",""));
+            cv2.put(COLUMN_CPTYPE, columns[4].replace("\"",""));
+            cv2.put(COLUMN_TYPE_PARKING_SYS, columns[5].replace("\"",""));
+            cv2.put(COLUMN_STP, columns[6].replace("\"",""));
+            cv2.put(COLUMN_FP, columns[7].replace("\"",""));
+            cv2.put(COLUMN_NP, columns[8].replace("\"",""));
+            db.insert(TABLE_HDB_CARPARKS, null, cv2);
         }
+    }
+
+    //For Data mall carparks and other potential carparks that have live feeds, how to organise information?
+    /*
+    Each time we pull data down then we create the table to store the data? or we fix all the static values
+    then only insert in the non-static values? hmmmmm.....
+     */
+    public void addDMintoCarparkDB(){
+
     }
 
     //To be removed
@@ -155,16 +217,45 @@ public class CarparkDBController extends SQLiteOpenHelper {
         Log.i(TAG, "enter dbToString");
         String dbString = "";
         SQLiteDatabase db = getWritableDatabase();
-        String query = "SELECT * FROM " + TABLE_CARPARKS + " WHERE 1;";
+        String query = "SELECT * FROM " + TABLE_HDB_CARPARKS + " WHERE 1;";
 
         Cursor c = db.rawQuery(query,null);
         c.moveToFirst();
-        if(c.getCount()!=0){
-            dbString += " " + c.getString(c.getColumnIndex(COLUMN_CARPARKNUM));
-            dbString += " " + c.getString(c.getColumnIndex(COLUMN_address));
-            dbString += " " + c.getString(c.getColumnIndex(COLUMN_Xcoord));
-            dbString += " " + c.getString(c.getColumnIndex(COLUMN_Ycoord));
+        while(!(c.isAfterLast())){
+            if(c.getCount()!=0){
+                dbString += " " + c.getString(c.getColumnIndex(COLUMN_ID));
+                dbString += " " + c.getString(c.getColumnIndex(COLUMN_CARPARKNUM));
+                dbString += " " + c.getString(c.getColumnIndex(COLUMN_address));
+                dbString += " " + c.getString(c.getColumnIndex(COLUMN_Xcoord));
+                dbString += " " + c.getString(c.getColumnIndex(COLUMN_Ycoord));
+            }
+            c.moveToNext();
         }
+
+        db.close();
+        //c.close();
+        Log.i(TAG, "dbString: " + dbString);
+        return dbString;
+
+    }
+    public String testCarparks(){
+        Log.i(TAG, "enter dbToString");
+        String dbString = "";
+        SQLiteDatabase db = getWritableDatabase();
+        String query = "SELECT "+ COLUMN_ID + " FROM " + TABLE_CARPARKS + " WHERE 1;";
+
+        Cursor c = db.rawQuery(query,null);
+        c.moveToLast();
+        while(!(c.isAfterLast())){
+            if(c.getCount()!=0){
+                dbString += " " + c.getString(c.getColumnIndex(COLUMN_ID));
+                //dbString += " " + c.getString(c.getColumnIndex(COLUMN_OWNER_TYPE));
+                //dbString += " " + c.getString(c.getColumnIndex(COLUMN_Xcoord));
+                //dbString += " " + c.getString(c.getColumnIndex(COLUMN_Ycoord));
+            }
+            c.moveToNext();
+        }
+
         db.close();
         //c.close();
         Log.i(TAG, "dbString: " + dbString);
@@ -183,7 +274,7 @@ public class CarparkDBController extends SQLiteOpenHelper {
      * @return
      */
     //This method queries the database to get carparks with coordinates within vicinity of destination
-    public Cursor queryRetrieveNearbyHDBCarparks(SVY21Coordinate svy21C){
+    public Cursor queryRetrieveNearbyCarparks(SVY21Coordinate svy21C){
 
         Log.i(TAG, "Enter queryRetrieveNearbyHDBCarparks");
         double easting = svy21C.getEasting();
@@ -218,8 +309,30 @@ public class CarparkDBController extends SQLiteOpenHelper {
         return cpListInfo;
     }
 
+    public Cursor queryGetHDBCarparkInfo(int id){
+        SQLiteDatabase db = getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_HDB_CARPARKS + " WHERE " + COLUMN_ID + "=" + id + ";";
+        Cursor C = db.rawQuery(query,null);
+        return C;
+    }
 
 
+    public Cursor querySomething(){// test method
+        SQLiteDatabase db = getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_HDB_CARPARKS + " WHERE " + COLUMN_address + " = 'BLK 270/271 ALBERT CENTRE BASEMENT CAR PARK';";
+        //String query =  "SELECT * FROM " + TABLE_CARPARKS + " WHERE 1;";
+        Cursor c = db.rawQuery(query,null);
+        c.moveToFirst();
+        if(c.getCount() != 0){
+            Log.i(TAG, "cursor has stuff");
+            String x = c.getString(c.getColumnIndex(COLUMN_Xcoord));
+            Log.i(TAG, "value of x: " + x);
+        }
+        else{
+            Log.i(TAG, "cursor empty");
+        }
+         return c;
+    }
 
 
 

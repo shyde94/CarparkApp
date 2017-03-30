@@ -10,7 +10,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.android.carparkappv1.CarparkFinder;
 import com.example.android.carparkappv1.R;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
 import java.net.URL;
@@ -21,6 +23,7 @@ import utilities.NetworkUtils;
 public class TestFrag extends Fragment {
 
     //PullData pullData = new PullData();
+    CarparkFinder cpFinder;
 
     TextView mtest1;
     TextView mtest2;
@@ -32,6 +35,14 @@ public class TestFrag extends Fragment {
         mtest1 = (TextView) v.findViewById(R.id.test1);
         mtest2 = (TextView) v.findViewById(R.id.test2);
         //makeSearchQuery();
+        LatLng ll = new LatLng(1.3826272,103.9430888);
+        cpFinder = new CarparkFinder(ll, getActivity());
+        String a = cpFinder.getCpController().dbToString();
+        String b = cpFinder.getCpController().testCarparks();
+
+        Log.i("TestFrag", "String a : " + a);
+        Log.i("TestFrag", "String b : " + b);
+
         return v;
     }
 

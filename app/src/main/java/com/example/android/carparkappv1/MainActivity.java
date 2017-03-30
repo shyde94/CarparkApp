@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 
 import java.io.IOException;
 
+import Controllers.CarparkDBController;
 import Controllers.ScreenController;
 import Fragments.MenuFragment;
 import Fragments.MyCustomMap;
@@ -29,10 +30,10 @@ public class MainActivity extends AppCompatActivity implements MenuFragment.OnSe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //this.deleteDatabase(CarparkDBController.DATABASE_NAME);
+        this.deleteDatabase(CarparkDBController.DATABASE_NAME);
         Shared.activity = MainActivity.this;
 
-        screenController.openScreen(ScreenController.Screen.MENU);
+        screenController.openScreen(ScreenController.Screen.TEST);
         //screenController.openScreen(ScreenController.Screen.TEST);
 
 
