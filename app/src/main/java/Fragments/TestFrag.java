@@ -31,11 +31,11 @@ public class TestFrag extends Fragment {
         //makeSearchQuery();
         LatLng ll = new LatLng(1.3826272,103.9430888);
         cpFinder = new CarparkFinder(ll, getActivity());
-        String a = cpFinder.getCpController().dbToString();
+        //String a = cpFinder.getCpController().dbToString();
         String b = cpFinder.getCpController().testCarparks();
 
 
-        Log.i("TestFrag", "String a : " + a);
+        //Log.i("TestFrag", "String a : " + a);
         Log.i("TestFrag", "String b : " + b);
 
         return v;

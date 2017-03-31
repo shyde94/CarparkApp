@@ -218,8 +218,13 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         if(googleServicesAvailable()){
             Log.i(TAG, "Enter googleMapStart");
             LatLng ll = searchLocation(destination);
-            cpFinder = new CarparkFinder(ll, getActivity());
-            cpFinder.retrieveCarparks();
+            if(ll!=null){
+                cpFinder = new CarparkFinder(ll, getActivity());
+                cpFinder.retrieveCarparks();
+            }
+            else{
+                cpFinder = new CarparkFinder();
+            }
             initMap();
             //gotoLocationZoom(ll, 15);
 
@@ -319,11 +324,17 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     public void searchDestination(){
         if(!destination.equals("")){
             LatLng ll = searchLocation(destination);
-            gotoLocationZoom(ll, 15);
-            setMarker(destination,ll);
+            if(ll!=null){
+                gotoLocationZoom(ll, 15);
+                setMarker(destination,ll);
+            }
+            else{
+                Toast.makeText(getActivity(), "You have entered an invalid location. Please try again", Toast.LENGTH_LONG).show();
+            }
         }
 
     }
+
 
     /**
      * This method converts the name of a place into a LatLng object that can be displayed on the map using the method geoLocate()
@@ -378,22 +389,25 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         double lat, lng;
         Geocoder gc = new Geocoder(getActivity());
         List<Address> tempList = gc.getFromLocationName(location, 5);
-        Address tempAddress = tempList.get(0);
-        String locality = tempAddress.getLocality();
+        if(tempList.size()>0){
+            Address tempAddress = tempList.get(0);
+            String locality = tempAddress.getLocality();
 
-        Log.i(TAG, "Locality: " + locality);
-        Toast.makeText(getActivity(), locality, Toast.LENGTH_SHORT).show();
+            Log.i(TAG, "Locality: " + locality);
+            Toast.makeText(getActivity(), locality, Toast.LENGTH_SHORT).show();
 
-        lat = tempAddress.getLatitude();
-        lng = tempAddress.getLongitude();
-        Log.i(TAG, "Lat:");
-        Log.i(TAG, Double.toString(lat));
-        Log.i(TAG, "Lng:");
-        Log.i(TAG, Double.toString(lng));
-        //gotoLocationZoom(lat,lng,15);
-        LatLng ll = new LatLng(lat, lng);
-        //setMarker(locality, ll);
-        return ll;
+            lat = tempAddress.getLatitude();
+            lng = tempAddress.getLongitude();
+            Log.i(TAG, "Lat:");
+            Log.i(TAG, Double.toString(lat));
+            Log.i(TAG, "Lng:");
+            Log.i(TAG, Double.toString(lng));
+            //gotoLocationZoom(lat,lng,15);
+            LatLng ll = new LatLng(lat, lng);
+            //setMarker(locality, ll);
+            return ll;
+        }
+        return null;
     }
 
     /**
@@ -411,8 +425,6 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
             //Edit Snippet to edit text in the info window. This snippet is the same one in infoWindowAdaptor
             Marker m = mGoogleMap.addMarker(options);
             markerToCarpark.put(m, cp);
-
-
     }
 
     //marker for destination searched
@@ -550,13 +562,16 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     //This method will set the markers of the nearby carparks on the map
     public void displayNearbyCarparks(){
         Log.i(TAG, "Enter displayNearbyCarparks");
-        for(Carpark cp : cpFinder.getCpList()){
-            Log.i(TAG, "Enter for loop");
-            double lat = cp.getLatLonCoord().getLatitude();
-            double lng = cp.getLatLonCoord().getLongitude();
-            LatLng latlng = new LatLng(lat, lng);
-            setMarkerForNearbyCp(cp, latlng);
+        if(cpFinder.getCpList().size()>0){
+            for(Carpark cp : cpFinder.getCpList()){
+                Log.i(TAG, "Enter for loop");
+                double lat = cp.getLatLonCoord().getLatitude();
+                double lng = cp.getLatLonCoord().getLongitude();
+                LatLng latlng = new LatLng(lat, lng);
+                setMarkerForNearbyCp(cp, latlng);
+            }
         }
+
     }
     //After clicking marker
     @Override
