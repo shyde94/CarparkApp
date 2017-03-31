@@ -42,6 +42,7 @@ public class ScreenController {
 
     public boolean onBack() {
         Log.i(TAG, "onBack pressed");
+        Log.i(TAG,"Screen queue: " + openedScreens.toString());
         if (openedScreens.size() > 0) {
             Screen screenToRemove = openedScreens.get(openedScreens.size() - 1);
             openedScreens.remove(openedScreens.size() - 1);
@@ -56,6 +57,7 @@ public class ScreenController {
             else{
                 openScreen(screen);
             }
+            Log.i(TAG,"Post queue: " + openedScreens.toString());
             return false;
         }
         return true;

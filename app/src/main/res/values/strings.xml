@@ -12,4 +12,5 @@
     <string name="hello_square">Hello Square World!</string>
     <string name="arrived">Arrived</string>
     <string name="view_saved_lot">View Saved Lot</string>
+    <string name="saved_lot_number">Saved_lots</string>
 </resources>

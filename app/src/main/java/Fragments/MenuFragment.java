@@ -2,6 +2,7 @@ package Fragments;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import utilities.ParseJSON;
 import com.example.android.carparkappv1.R;
@@ -66,7 +68,9 @@ public class MenuFragment extends Fragment {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        
+                        SharedPreferences sharedPref = getActivity().getSharedPreferences(SaveLotNumber.PREFS_NAME,Context.MODE_PRIVATE);
+                        String lot = sharedPref.getString((getString(R.string.saved_lot_number)),"");
+                        Toast.makeText(getActivity(), "Your car is parked at: "+lot, Toast.LENGTH_SHORT).show();
                     }
                 }
         );
