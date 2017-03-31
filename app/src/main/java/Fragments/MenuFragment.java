@@ -70,7 +70,13 @@ public class MenuFragment extends Fragment {
                     public void onClick(View view) {
                         SharedPreferences sharedPref = getActivity().getSharedPreferences(SaveLotNumber.PREFS_NAME,Context.MODE_PRIVATE);
                         String lot = sharedPref.getString((getString(R.string.saved_lot_number)),"");
-                        Toast.makeText(getActivity(), "Your car is parked at: "+lot, Toast.LENGTH_SHORT).show();
+                        if(!(lot.equals(""))){
+                            Toast.makeText(getActivity(), "Your car is parked at: "+lot, Toast.LENGTH_LONG).show();
+                        }
+                        else{
+                            Toast.makeText(getActivity(),"No lot saved", Toast.LENGTH_LONG).show();
+                        }
+
                     }
                 }
         );

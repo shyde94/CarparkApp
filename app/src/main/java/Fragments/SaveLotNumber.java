@@ -45,6 +45,7 @@ public class SaveLotNumber extends Fragment{
         mInputLotNumber = (EditText) view.findViewById(R.id.lot_number_text);
         mLotNumberDisplay = (TextView) view.findViewById(R.id.skip_lot_button);
         save = (Button) view.findViewById(R.id.save_lot_button);
+        skip = (Button) view.findViewById(R.id.skip_lot_button);
 
         save.setOnClickListener(
                 new View.OnClickListener() {
@@ -56,6 +57,20 @@ public class SaveLotNumber extends Fragment{
                         editor.putString(getString(R.string.saved_lot_number), lotNumber);
                         editor.commit();
                         Toast.makeText(getActivity(), "Your carpark lot number has been saved", Toast.LENGTH_SHORT).show();
+                        ScreenController.getInstance().revertToPreviousScreen();
+                    }
+                }
+        );
+
+        skip.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        //If user skips this step, clear this!
+                        SharedPreferences sharedPref = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putString(getString(R.string.saved_lot_number), "");
+                        editor.commit();
                         ScreenController.getInstance().revertToPreviousScreen();
                     }
                 }
