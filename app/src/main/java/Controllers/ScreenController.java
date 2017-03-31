@@ -40,30 +40,6 @@ public class ScreenController {
         return openedScreens.get(openedScreens.size() - 1);
     }
 
-    public boolean onBack() {
-        Log.i(TAG, "onBack pressed");
-        Log.i(TAG,"Screen queue: " + openedScreens.toString());
-        if (openedScreens.size() > 0) {
-            Screen screenToRemove = openedScreens.get(openedScreens.size() - 1);
-            openedScreens.remove(openedScreens.size() - 1);
-            if (openedScreens.size() == 0) {
-                return true;
-            }
-            Screen screen = openedScreens.get(openedScreens.size() - 1);
-            openedScreens.remove(openedScreens.size() - 1);
-            if(screen.equals(Screen.MFH)){
-                openScreen(Screen.MFH, Shared.destination);
-            }
-            else{
-                openScreen(screen);
-            }
-            Log.i(TAG,"Post queue: " + openedScreens.toString());
-            return false;
-        }
-        return true;
-    }
-
-
     public enum Screen {
         MENU,
         MFH,
@@ -102,7 +78,44 @@ public class ScreenController {
         }
         openedScreens.add(screen);
         Log.i(TAG,"Open Screen queue: " + openedScreens.toString());
+    }
 
+    public boolean onBack() {
+        Log.i(TAG, "onBack pressed");
+        Log.i(TAG,"Screen queue: " + openedScreens.toString());
+        if (openedScreens.size() > 0) {
+            openedScreens.remove(openedScreens.size() - 1);
+            if (openedScreens.size() == 0) {
+                return true;
+            }
+            Screen screen = openedScreens.get(openedScreens.size() - 1);
+            openedScreens.remove(openedScreens.size() - 1);
+            if(screen.equals(Screen.MFH)){
+                openScreen(Screen.MFH, Shared.destination);
+            }
+            else{
+                openScreen(screen);
+            }
+            Log.i(TAG,"Post queue: " + openedScreens.toString());
+            return false;
+        }
+        return true;
+    }
+
+    public void revertToPreviousScreen(){
+        Log.i(TAG, "Revert to previous scree");
+        Log.i(TAG,"Screen queue: " + openedScreens.toString());
+        if(openedScreens.size()>0){
+            openedScreens.remove(openedScreens.size()-1);
+            Screen screen = openedScreens.get(openedScreens.size()-1);
+            openedScreens.remove(screen);
+            if(screen.equals(Screen.MFH)){
+                openScreen(Screen.MFH,Shared.destination);
+            }
+            else{
+                openScreen(screen);
+            }
+        }
 
     }
 

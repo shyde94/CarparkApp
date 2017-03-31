@@ -16,12 +16,16 @@ import android.app.FragmentManager;
 import android.content.pm.PackageManager;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.android.carparkappv1.MainActivity;
 import com.example.android.carparkappv1.R;
 import com.google.android.gms.maps.MapFragment;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import Controllers.ScreenController;
 
 /**
  * Created by Eimoh on 28/3/2017.
@@ -51,6 +55,8 @@ public class SaveLotNumber extends Fragment{
                         SharedPreferences.Editor editor = sharedPref.edit();
                         editor.putString(getString(R.string.saved_lot_number), lotNumber);
                         editor.commit();
+                        Toast.makeText(getActivity(), "Your carpark lot number has been saved", Toast.LENGTH_SHORT).show();
+                        ScreenController.getInstance().revertToPreviousScreen();
                     }
                 }
         );

@@ -433,6 +433,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     }
 
 
+
 //    public void setMarkerForRoute(String title, LatLng ll) {
 //        MarkerOptions options = new MarkerOptions()
 //                .position(ll)
@@ -447,6 +448,13 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         mGoogleMap.addMarker(options);
     }
 
+    public void setCurrentLocationMarker(LatLng ll) {
+        MarkerOptions options = new MarkerOptions()
+                .position(ll)
+                .title("Carpark")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+        mGoogleMap.addMarker(options);
+    }
 
     /**
      * Method used to record user's current location.
@@ -508,10 +516,24 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         }
         else{
             LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
-            //gotoLocationZoom(ll, 15);
-            //setMarker(ll);
+            try {
+                float[] temp = measureDistanceBetween(ll, geoLocate(destination));
+                if(temp[1] < 500){
+                    gotoLocationZoom(ll, 15);
+                    setCurrentLocationMarker(ll);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
+    }
+
+
+    public float[] measureDistanceBetween(LatLng start, LatLng end){
+        float[] temp = new float[1];
+        Location.distanceBetween(start.longitude, start.latitude, end.longitude, end.latitude, temp);
+        return temp;
     }
 
     //this function decides how much to zoom the camera by. centering destination and accomodating all carparks within vicinity.
