@@ -1,4 +1,4 @@
-package com.example.android.carparkappv1;
+package Carparks;
 
 
 import android.content.Context;
@@ -17,7 +17,7 @@ import MapProjectionConverter.LatLonCoordinate;
 import MapProjectionConverter.SVY21;
 import MapProjectionConverter.SVY21Coordinate;
 
-public class CarparkFinder {
+public class CarparkFinder implements ObjectAccessInterface {
     private static final String TAG = "CarparkFinderClass";
 
     private ArrayList<Carpark> cpList; //this list contains the carparks found from the database base on the destination!
@@ -125,6 +125,7 @@ public class CarparkFinder {
         cursorList.close();
     }
 
+
     public void createDMCarparkObject(int id){
 
     }
@@ -156,31 +157,7 @@ public class CarparkFinder {
         return cp;
     }*/
 
-    public ArrayList<LatLonCoordinate> handleQuery(){
-        ArrayList<LatLonCoordinate> tempList = new ArrayList<LatLonCoordinate>();
-        Cursor c = cpController.querySomething();
-        c.moveToFirst();
-        if (c.getCount() == 0) {
-            Log.i(TAG, "c count = 0");
-            return null;
-        } else {
-            while (c.moveToNext()) {
-                Log.i(TAG, "enter while loop");
-                String xCoordS = c.getString(c.getColumnIndex(CarparkDBController.COLUMN_Xcoord));
-                String yCoordS = c.getString(c.getColumnIndex(CarparkDBController.COLUMN_Ycoord));
-                Log.i(TAG, "xCoord: " + xCoordS + "yCoord: " + yCoordS);
-                xCoordS = xCoordS.substring(1,xCoordS.length()-1);
-                yCoordS = yCoordS.substring(1,yCoordS.length()-1);
-                double xCoord = Double.parseDouble(xCoordS);
-                double yCoord = Double.parseDouble(yCoordS);
-                LatLonCoordinate llc = SVY21.computeLatLon(yCoord, xCoord);
-                tempList.add(llc);
-            }
-        }
-        c.close();
-        return tempList;
 
-    }
 
 
 

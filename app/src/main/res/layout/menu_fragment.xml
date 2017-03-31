@@ -15,6 +15,15 @@
         android:layout_marginTop="23dp"
         android:layout_below="@+id/Search_location"
         android:layout_alignParentStart="true" />
+    <Button
+        android:id="@+id/view_saved_lot"
+        android:textSize="20sp"
+        android:text="@string/view_saved_lot"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="23dp"
+        android:layout_below="@+id/search_button"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:id="@+id/location_input"

@@ -1,7 +1,6 @@
 package Fragments;
 
 import android.app.Fragment;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -10,14 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.android.carparkappv1.CarparkFinder;
+import Carparks.CarparkFinder;
 import com.example.android.carparkappv1.R;
 import com.google.android.gms.maps.model.LatLng;
-
-import java.io.IOException;
-import java.net.URL;
-
-import utilities.NetworkUtils;
 
 
 public class TestFrag extends Fragment {

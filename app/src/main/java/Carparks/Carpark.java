@@ -35,6 +35,11 @@ public class Carpark {
     public void setLatLonCoord(LatLonCoordinate latLonCoord) {
         this.latLonCoord = latLonCoord;
     }
+
+    public String returnDetails(){
+        String words="";
+        return words;
+    }
 }
 
 

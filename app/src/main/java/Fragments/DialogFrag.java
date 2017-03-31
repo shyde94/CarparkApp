@@ -8,6 +8,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 
+import com.example.android.carparkappv1.Shared;
+
 import Carparks.Carpark;
 import Carparks.HdbCarpark;
 
@@ -59,17 +61,7 @@ public class DialogFrag extends DialogFragment {
                             Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                                     Uri.parse(mapsApp));
                             startActivity(intent);
-                        }
-                    })
-                    .setNegativeButton("Arrived at Carpark", new DialogInterface.OnClickListener() {
-                        /**
-                         *
-                         * @param dialogInterface
-                         * @param i
-                         */
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-
+                            Shared.carpark = carpark;
                         }
                     });
             // Create the AlertDialog object and return it

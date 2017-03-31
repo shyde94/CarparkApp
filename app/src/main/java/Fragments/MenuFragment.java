@@ -26,6 +26,7 @@ import utilities.NetworkUtils;
 
 public class MenuFragment extends Fragment {
     Button button;
+    Button mViewSaveLot;
     EditText mInputLocation;
     TextView mLocationDisplay;
     ParseJSON parser;
@@ -44,6 +45,7 @@ public class MenuFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.menu_fragment, container, false);
         button = (Button) view.findViewById(R.id.search_button);
+        mViewSaveLot = (Button) view.findViewById(R.id.view_saved_lot);
         mInputLocation = (EditText) view.findViewById(R.id.Search_location);
         mLocationDisplay = (TextView) view.findViewById(R.id.location_input);
         parser = new ParseJSON();
@@ -60,6 +62,14 @@ public class MenuFragment extends Fragment {
                     }
                 }
         );
+        mViewSaveLot.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        
+                    }
+                }
+        );
         return view;
     }
 
@@ -72,7 +82,6 @@ public class MenuFragment extends Fragment {
         String location = mInputLocation.getText().toString();
         if(!location.equals("")){
             mListener.onSearchedButtonClicked(mInputLocation.getText().toString());
-
         }
         try {
             parser.sortThisJson();

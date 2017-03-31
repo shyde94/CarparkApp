@@ -317,22 +317,6 @@ public class CarparkDBController extends SQLiteOpenHelper {
     }
 
 
-    public Cursor querySomething(){// test method
-        SQLiteDatabase db = getWritableDatabase();
-        String query = "SELECT * FROM " + TABLE_HDB_CARPARKS + " WHERE " + COLUMN_address + " = 'BLK 270/271 ALBERT CENTRE BASEMENT CAR PARK';";
-        //String query =  "SELECT * FROM " + TABLE_CARPARKS + " WHERE 1;";
-        Cursor c = db.rawQuery(query,null);
-        c.moveToFirst();
-        if(c.getCount() != 0){
-            Log.i(TAG, "cursor has stuff");
-            String x = c.getString(c.getColumnIndex(COLUMN_Xcoord));
-            Log.i(TAG, "value of x: " + x);
-        }
-        else{
-            Log.i(TAG, "cursor empty");
-        }
-         return c;
-    }
 
 
 

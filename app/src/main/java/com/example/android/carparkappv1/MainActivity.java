@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements MenuFragment.OnSe
     @Override
     public void onSearchedButtonClicked(String location) throws IOException {
         screenController.openScreen(MFH, location);
+        Shared.destination = location;
 
     }
 

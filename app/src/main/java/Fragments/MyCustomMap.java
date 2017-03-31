@@ -6,8 +6,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 
-import android.content.Intent;
-
 import android.content.Context;
 
 import android.content.pm.PackageManager;
@@ -16,7 +14,6 @@ import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -30,17 +27,14 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.content.Intent;
+
 import com.akexorcist.googledirection.DirectionCallback;
 import com.akexorcist.googledirection.GoogleDirection;
 import com.akexorcist.googledirection.constant.TransportMode;
 import com.akexorcist.googledirection.model.Direction;
-import com.akexorcist.googledirection.model.Leg;
-import com.akexorcist.googledirection.model.Route;
-import com.akexorcist.googledirection.model.TransitDetail;
 import com.akexorcist.googledirection.util.DirectionConverter;
 import Carparks.Carpark;
-import com.example.android.carparkappv1.CarparkFinder;
+import Carparks.CarparkFinder;
 import com.example.android.carparkappv1.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -58,7 +52,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -71,9 +64,6 @@ import MapProjectionConverter.LatLonCoordinate;
 import MapProjectionConverter.SVY21;
 import MapProjectionConverter.SVY21Coordinate;
 
-import static android.R.attr.direction;
-import static com.example.android.carparkappv1.Shared.context;
-
 
 public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener,GoogleMap.OnInfoWindowClickListener,GoogleMap.OnMarkerClickListener{
 
@@ -82,7 +72,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
  * user's current location. Implements OnMapReadyCallBack, and GoogleApiClient interfaces.
  */
     private static final String TAG = "MyCustomMapClass";
-    OnArrivedButtonClickedListener mListener;
+
 
     //Variables essential for mapfragment
     private static GoogleMap mGoogleMap;
@@ -94,6 +84,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     private Polyline route;
 
     Button arrivedbutton;
+    OnArrivedButtonClickedListener mListener;
 
 
     HashMap<Marker, Carpark> markerToCarpark = new HashMap<>();
@@ -183,12 +174,9 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
                     public void onClick(View view) {
                         try {
                             buttonClicked(view);
-
-
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-
                     }
                 }
         );
