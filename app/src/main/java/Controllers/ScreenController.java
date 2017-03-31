@@ -50,7 +50,7 @@ public class ScreenController {
                 return true;
             }
             Screen screen = openedScreens.get(openedScreens.size() - 1);
-            //openedScreens.remove(openedScreens.size() - 1);
+            openedScreens.remove(openedScreens.size() - 1);
             if(screen.equals(Screen.MFH)){
                 openScreen(Screen.MFH, Shared.destination);
             }
@@ -73,6 +73,7 @@ public class ScreenController {
     }
 
     public void openScreen(Screen screen){
+
         Log.i(TAG, "Opening normal screen");
         mFragmentManager = Shared.activity.getFragmentManager();
         Fragment fragment = getFragment(screen);
@@ -83,10 +84,12 @@ public class ScreenController {
             mFragmentManager.executePendingTransactions();
         }
         openedScreens.add(screen);
+        Log.i(TAG," Open Screen queue: " + openedScreens.toString());
 
     }
     //overloaded method to pass in data for mapfragment
     public void openScreen(Screen screen, String location){
+
         Log.i(TAG, "Opening myCustomMap screen");
         mFragmentManager = Shared.activity.getFragmentManager();
         MyCustomMap fragment = (MyCustomMap) getFragment(screen);
@@ -98,6 +101,8 @@ public class ScreenController {
             mFragmentManager.executePendingTransactions();
         }
         openedScreens.add(screen);
+        Log.i(TAG,"Open Screen queue: " + openedScreens.toString());
+
 
     }
 
