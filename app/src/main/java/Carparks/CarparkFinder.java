@@ -127,7 +127,21 @@ public class CarparkFinder implements ObjectAccessInterface {
 
 
     public void createDMCarparkObject(int id){
-
+        Log.i(TAG, "Creating DMCarpark Objects");
+        Cursor cursorList = cpController.queryGetDMCarparkInfo(id);
+        cursorList.moveToFirst();
+        double easting = cursorList.getDouble(cursorList.getColumnIndex(CarparkDBController.COLUMN_Xcoord));
+        double northing = cursorList.getDouble(cursorList.getColumnIndex(CarparkDBController.COLUMN_Ycoord));
+        SVY21Coordinate svy21 = new SVY21Coordinate(northing, easting);
+        LatLonCoordinate latLon = SVY21.computeLatLon(svy21);
+        String CarparkNum = cursorList.getString(cursorList.getColumnIndex(CarparkDBController.COLUMN_CARPARKNUM));
+        String Area = cursorList.getString(cursorList.getColumnIndex(CarparkDBController.COLUMN_AREA));
+        String Dev = cursorList.getString(cursorList.getColumnIndex(CarparkDBController.COLUMN_DEV));
+        int lots = cursorList.getInt(cursorList.getColumnIndex(CarparkDBController.COLUMN_LOTS));
+        Log.i(TAG, "Carpark: " + CarparkNum + " " + svy21.getNorthing() + " " + svy21.getEasting() + " Lots: " + lots);
+        Carpark carparkTemp = new DmCarpark(svy21,latLon,CarparkNum,Area,Dev,lots);
+        cpList.add(carparkTemp);
+        cursorList.close();
     }
 
 

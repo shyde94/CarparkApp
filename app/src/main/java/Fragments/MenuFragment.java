@@ -89,15 +89,16 @@ public class MenuFragment extends Fragment {
      * @throws IOException
      */
     public void buttonClicked(View v) throws IOException {
-        String location = mInputLocation.getText().toString();
-        if(!location.equals("")){
-            mListener.onSearchedButtonClicked(mInputLocation.getText().toString());
-        }
         try {
             parser.sortThisJson();
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        String location = mInputLocation.getText().toString();
+        if(!location.equals("")){
+            mListener.onSearchedButtonClicked(mInputLocation.getText().toString());
+        }
+
     }
     public interface OnSearchButtonClickedListener {
         public void onSearchedButtonClicked(String location) throws IOException;

@@ -20,7 +20,7 @@ import Carparks.HdbCarpark;
 
 public class DialogFrag extends DialogFragment {
 
-        private Carpark carpark;
+    private Carpark carpark;
 
     /**
      * Sets the carpark object that is related to the selected carpark
@@ -41,18 +41,12 @@ public class DialogFrag extends DialogFragment {
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the Builder class for convenient DialogFrag construction
             String carpark_details = ""; String cpNum = "";
-            if(carpark instanceof HdbCarpark){
-                String cpAddress = ((HdbCarpark)carpark).getAddress() + "\n";
-                String cpRate = "";
-                String cpType = ((HdbCarpark)carpark).getTypeOfParkingSystem() + "\n";
-                cpNum = ((HdbCarpark)carpark).getCpNum();
-                carpark_details = cpAddress + cpRate + cpType;
-
-            }
+            String displayInfo = carpark.displayInfo();
+            String title = carpark.title();
 
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage(carpark_details).setTitle(cpNum)
+            builder.setMessage(displayInfo).setTitle(title)
                     .setPositiveButton("Select Carpark", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             double lat = carpark.getLatLonCoord().getLatitude();

@@ -403,16 +403,15 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
      */
     //marker for nearby carpark
     public void setMarkerForNearbyCp(Carpark cp, LatLng ll){
-        if(cp instanceof HdbCarpark){
             MarkerOptions options = new MarkerOptions()
-                    .title(((HdbCarpark)cp).getCpNum() + "\n" + ((HdbCarpark)cp).getAddress())
+                    .title(cp.title())
                     .position(ll)
                     .snippet("Click for more information..")
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.car2));
             //Edit Snippet to edit text in the info window. This snippet is the same one in infoWindowAdaptor
             Marker m = mGoogleMap.addMarker(options);
             markerToCarpark.put(m, cp);
-        }
+
 
     }
 
@@ -518,7 +517,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
             LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
             try {
                 float[] temp = measureDistanceBetween(ll, geoLocate(destination));
-                if(temp[1] < 500){
+                if(temp[0] < 500){
                     gotoLocationZoom(ll, 15);
                     setCurrentLocationMarker(ll);
                 }
@@ -555,17 +554,6 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
             Log.i(TAG, "Enter for loop");
             double lat = cp.getLatLonCoord().getLatitude();
             double lng = cp.getLatLonCoord().getLongitude();
-
-            if(cp instanceof HdbCarpark){
-                String cpNum = ((HdbCarpark)cp).getCpNum();
-                String cpType = ((HdbCarpark)cp).getCpType();
-                String cpFreeParking = ((HdbCarpark)cp).getFreeParking();
-                String cpNightParking = ((HdbCarpark)cp).getNightParking();
-                String cpAddress = ((HdbCarpark)cp).getAddress();
-                Log.i(TAG, "Cp: " + cpNum + "lat: " + lat + "lng: " + lng);
-            }
-            else if(cp instanceof SmCarpark){}
-
             LatLng latlng = new LatLng(lat, lng);
             setMarkerForNearbyCp(cp, latlng);
         }
@@ -579,48 +567,51 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
 
         //to display route on maps
         LatLng origin = null; //origin is the location searched in the main page
-        try {
-            origin = geoLocate(getDestination());
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (cp!=null){
+            try {
+                origin = geoLocate(getDestination());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            //latlng of nearby carparks
+            double lat = cp.getLatLonCoord().getLatitude();
+            double lng = cp.getLatLonCoord().getLongitude();
+            LatLng cpLocation = new LatLng(lat, lng);
+
+            GoogleDirection.withServerKey(getString(R.string.GOOGLE_MAPS_DIRECTIONS_API_KEY))
+                    .from(origin)
+                    .to(cpLocation)
+                    .transportMode(TransportMode.WALKING)
+                    .execute(new DirectionCallback() {
+
+                        @Override
+                        public void onDirectionSuccess(Direction direction, String rawBody) {
+
+                            if (direction.isOK() && routeFlag == true) {
+                                ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
+                                route = mGoogleMap.addPolyline(DirectionConverter.createPolyline(getActivity(), directionPositionList, 3, Color.RED));
+
+                                //to ensure that it is only clicked once
+                                routeFlag = false;
+                            }
+
+                            else if(direction.isOK() && routeFlag == false){
+                                route.remove();
+                                ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
+                                route = mGoogleMap.addPolyline(DirectionConverter.createPolyline(getActivity(), directionPositionList, 3, Color.RED));
+                            }
+                        }
+
+                        @Override
+                        public void onDirectionFailure(Throwable t) {
+                            Log.i(TAG,"ROUTING FAILED");
+                        }
+                    });
+
+            Log.i(TAG, "MarkerClicked");
         }
 
-        //latlng of nearby carparks
-        double lat = cp.getLatLonCoord().getLatitude();
-        double lng = cp.getLatLonCoord().getLongitude();
-        LatLng cpLocation = new LatLng(lat, lng);
-
-        GoogleDirection.withServerKey(getString(R.string.GOOGLE_MAPS_DIRECTIONS_API_KEY))
-                .from(origin)
-                .to(cpLocation)
-                .transportMode(TransportMode.WALKING)
-                .execute(new DirectionCallback() {
-
-                    @Override
-                    public void onDirectionSuccess(Direction direction, String rawBody) {
-
-                        if (direction.isOK() && routeFlag == true) {
-                            ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
-                            route = mGoogleMap.addPolyline(DirectionConverter.createPolyline(getActivity(), directionPositionList, 3, Color.RED));
-
-                            //to ensure that it is only clicked once
-                            routeFlag = false;
-                        }
-
-                        else if(direction.isOK() && routeFlag == false){
-                            route.remove();
-                            ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
-                            route = mGoogleMap.addPolyline(DirectionConverter.createPolyline(getActivity(), directionPositionList, 3, Color.RED));
-                        }
-                    }
-
-                    @Override
-                    public void onDirectionFailure(Throwable t) {
-                        Log.i(TAG,"ROUTING FAILED");
-                    }
-                });
-
-        Log.i(TAG, "MarkerClicked");
         return true;
     }/*Recently added*/
 

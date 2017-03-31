@@ -6,7 +6,9 @@ import MapProjectionConverter.SVY21Coordinate;
 /**
  * Instances of this class represent HDB Carparks
  */
-public class HdbCarpark extends Carpark {
+public class HdbCarpark implements Carpark {
+    private SVY21Coordinate svyCoord;
+    private LatLonCoordinate latLonCoord;
     private String cpNum;
     private String cpType;
     private String typeOfParkingSystem;
@@ -28,7 +30,8 @@ public class HdbCarpark extends Carpark {
      * @param address Address of carpark
      */
     public HdbCarpark(SVY21Coordinate svyCoord, LatLonCoordinate latLonCoord, String cpNum, String cpType, String typeOfParkingSystem, String shortTermParking, String freeParking, String nightParking, String address) {
-        super(svyCoord, latLonCoord);
+        this.svyCoord = svyCoord;
+        this.latLonCoord = latLonCoord;
         this.cpNum = cpNum;
         this.cpType = cpType;
         this.typeOfParkingSystem = typeOfParkingSystem;
@@ -39,6 +42,7 @@ public class HdbCarpark extends Carpark {
     }
 
     public HdbCarpark(){}
+
 
     /**
      * Get carpark number
@@ -149,4 +153,39 @@ public class HdbCarpark extends Carpark {
         this.address = address;
     }
 
+    @Override
+    public LatLonCoordinate getLatLonCoord() {
+        return this.latLonCoord;
+    }
+
+    @Override
+    public SVY21Coordinate getSVY21Coord() {
+        return this.svyCoord;
+    }
+
+    @Override
+    public void SetLatLonCoord(LatLonCoordinate ll) {
+        this.latLonCoord = ll;
+    }
+
+    @Override
+    public String title() {
+        String title = cpNum + "\n" + address;
+        return title;
+    }
+
+    @Override
+    public void SetSVY21Coordinate(SVY21Coordinate svy21) {
+        this.svyCoord = svy21;
+    }
+
+    @Override
+    public String displayInfo() {
+        String cpAddress = getAddress() + "\n";
+        String cpRate = "";
+        String cpType = getTypeOfParkingSystem() + "\n";
+        String cpNum = getCpNum();
+        String carpark_details = cpAddress + cpRate + cpType;
+        return carpark_details;
+    }
 }

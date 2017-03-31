@@ -18,7 +18,7 @@ import MapProjectionConverter.SVY21Coordinate;
 
 public class CarparkDBController extends SQLiteOpenHelper {
 
-    private static CarparkDBController sInstance;
+    private static CarparkDBController mInstance;
 
     private static final String TAG = "CarparkDBControllerClass";
 
@@ -79,6 +79,7 @@ public class CarparkDBController extends SQLiteOpenHelper {
 
     public static final String CREATE_TABLE_DATA_MALL = "CREATE TABLE " + TABLE_DATAMALL_CARPARK + " ( "
             + COLUMN_ID + " INTEGER, "
+            + COLUMN_CARPARKNUM + " TEXT, "
             + COLUMN_AREA + " TEXT, "
             + COLUMN_DEV + " TEXT, "
             + COLUMN_Xcoord + " DOUBLE, "
@@ -95,10 +96,10 @@ public class CarparkDBController extends SQLiteOpenHelper {
         // Use the application context, which will ensure that you
         // don't accidentally leak an Activity's context.
         // See this article for more information: http://bit.ly/6LRzfx
-        if (sInstance == null) {
-            sInstance = new CarparkDBController(context.getApplicationContext());
+        if (mInstance == null) {
+            mInstance = new CarparkDBController(context.getApplicationContext());
         }
-        return sInstance;
+        return mInstance;
     }
 
     private Context context;
@@ -130,6 +131,7 @@ public class CarparkDBController extends SQLiteOpenHelper {
         try {
             //Add data into HDB carpark table and carpark table. Make 1 more method for DM carparks.
             addCSVintoDB(sqLiteDatabase);
+            addDMintoCarparkDB(sqLiteDatabase);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -208,7 +210,41 @@ public class CarparkDBController extends SQLiteOpenHelper {
     Each time we pull data down then we create the table to store the data? or we fix all the static values
     then only insert in the non-static values? hmmmmm.....
      */
-    public void addDMintoCarparkDB(){
+    public void addDMintoCarparkDB(SQLiteDatabase db) throws IOException {
+        Log.i(TAG, "adding DM table");
+        String filename = "dm_carpark.csv";
+        AssetManager am = context.getAssets();
+        InputStream inputStream = null;
+        inputStream = am.open(filename);
+        String line = "";
+        BufferedReader buffer = new BufferedReader(new InputStreamReader(inputStream));
+        while((line = buffer.readLine()) != null){
+            Log.i(TAG, "Adding into Carpark DB");
+            String [] columns = line.split(",");
+
+            ContentValues cv1 = new ContentValues();
+            cv1.put(COLUMN_Xcoord, columns[3].replace("\"",""));    //column[3] represents easting coordinates of carpark
+            cv1.put(COLUMN_Ycoord, columns[4].replace("\"",""));    //column[4] represents northing coordinates of carpark
+            cv1.put(COLUMN_OWNER_TYPE, OWNER_DM);
+            db.insert(TABLE_CARPARKS, null, cv1);
+
+
+            //Doing this is inefficient, but somehow SELECT MAX(COLUMN_IN) doesnt work...
+            String query = "SELECT "+ COLUMN_ID + " FROM " + TABLE_CARPARKS + " WHERE 1;";
+            Cursor c = db.rawQuery(query,null);
+            c.moveToLast();
+            int id = c.getInt(c.getColumnIndex(COLUMN_ID));
+            c.close();
+
+            ContentValues cv2 = new ContentValues();
+            cv2.put(COLUMN_ID, id); //THIS IS THE KEY! How to link the id from carpark table to HDBCarpark
+            cv2.put(COLUMN_CARPARKNUM, columns[0].replace("\"",""));
+            cv2.put(COLUMN_AREA, columns[1].replace("\"",""));
+            cv2.put(COLUMN_DEV, columns[2].replace("\"",""));
+            cv2.put(COLUMN_Xcoord, columns[3].replace("\"",""));
+            cv2.put(COLUMN_Ycoord, columns[4].replace("\"",""));
+            db.insert(TABLE_DATAMALL_CARPARK, null, cv2);
+        }
 
     }
 
@@ -317,8 +353,17 @@ public class CarparkDBController extends SQLiteOpenHelper {
     }
 
 
+    public Cursor queryGetDMCarparkInfo(int id) {
+        SQLiteDatabase db = getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_DATAMALL_CARPARK + " WHERE " + COLUMN_ID + "=" + id + ";";
+        Cursor C = db.rawQuery(query, null);
+        return C;
+    }
 
-
-
-
+    public void queryUpdateTableDMCarparkLots(String cpNum, int lots){
+        Log.i(TAG, "Update number of lots in DM Carpark. " + "Lots: " + lots);
+        SQLiteDatabase db = getWritableDatabase();
+        String query = "UPDATE " + TABLE_DATAMALL_CARPARK + " SET "+ COLUMN_LOTS + "=" + lots+" WHERE " + COLUMN_CARPARKNUM + " = " + cpNum + ";";
+        db.execSQL(query);
+    }
 }

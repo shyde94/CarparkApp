@@ -8,33 +8,14 @@ import MapProjectionConverter.SVY21Coordinate;
 /**
  * Parent carpark class. Provides basic variables that all carparks should have.
  */
-public class Carpark {
-    private SVY21Coordinate svyCoord;
-    private LatLonCoordinate latLonCoord;
+public interface Carpark {
+    String displayInfo();
+    String title();
+    LatLonCoordinate getLatLonCoord();
+    SVY21Coordinate getSVY21Coord();
+    void SetLatLonCoord(LatLonCoordinate ll);
+    void SetSVY21Coordinate(SVY21Coordinate svy21);
 
-    public Carpark(){
-    }
-
-    public Carpark(SVY21Coordinate svyCoord, LatLonCoordinate latLonCoord) {
-        this.svyCoord = svyCoord;
-        this.latLonCoord = latLonCoord;
-    }
-
-    public SVY21Coordinate getSvyCoord() {
-        return svyCoord;
-    }
-
-    public void setSvyCoord(SVY21Coordinate svyCoord) {
-        this.svyCoord = svyCoord;
-    }
-
-    public LatLonCoordinate getLatLonCoord() {
-        return latLonCoord;
-    }
-
-    public void setLatLonCoord(LatLonCoordinate latLonCoord) {
-        this.latLonCoord = latLonCoord;
-    }
 
 }
 
