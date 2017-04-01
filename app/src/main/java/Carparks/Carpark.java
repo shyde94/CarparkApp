@@ -1,5 +1,6 @@
 package Carparks;
 
+import com.akexorcist.googledirection.model.Info;
 import com.google.android.gms.maps.model.LatLng;
 
 import MapProjectionConverter.LatLonCoordinate;
@@ -9,12 +10,33 @@ public class Carpark {
     private SVY21Coordinate svyCoord;
     private LatLonCoordinate latLonCoord;
 
+    private String DurationToDestination;
+    private String DistanceToDestination;
+
+
+
     public Carpark(){
     }
 
     public Carpark(SVY21Coordinate svyCoord, LatLonCoordinate latLonCoord) {
         this.svyCoord = svyCoord;
         this.latLonCoord = latLonCoord;
+    }
+
+    public String getDurationToDestination() {
+        return DurationToDestination;
+    }
+
+    public void setDurationToDestination(String durationToDestination) {
+        DurationToDestination = durationToDestination;
+    }
+
+    public String getDistanceToDestination() {
+        return DistanceToDestination;
+    }
+
+    public void setDistanceToDestination(String distanceToDestination) {
+        DistanceToDestination = distanceToDestination;
     }
 
     public SVY21Coordinate getSvyCoord() {
