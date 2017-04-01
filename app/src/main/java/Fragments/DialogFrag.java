@@ -8,6 +8,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 
+import com.example.android.carparkappv1.Shared;
+
 import Carparks.Carpark;
 import Carparks.HdbCarpark;
 
@@ -18,7 +20,7 @@ import Carparks.HdbCarpark;
 
 public class DialogFrag extends DialogFragment {
 
-        private Carpark carpark;
+    private Carpark carpark;
 
     /**
      * Sets the carpark object that is related to the selected carpark
@@ -39,18 +41,12 @@ public class DialogFrag extends DialogFragment {
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the Builder class for convenient DialogFrag construction
             String carpark_details = ""; String cpNum = "";
-            if(carpark instanceof HdbCarpark){
-                String cpAddress = ((HdbCarpark)carpark).getAddress() + "\n";
-                String cpRate = "";
-                String cpType = ((HdbCarpark)carpark).getTypeOfParkingSystem() + "\n";
-                cpNum = ((HdbCarpark)carpark).getCpNum();
-                carpark_details = cpAddress + cpRate + cpType;
-
-            }
+            String displayInfo = carpark.displayInfo();
+            String title = carpark.title();
 
 
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage(carpark_details).setTitle(cpNum)
+            builder.setMessage(displayInfo).setTitle(title)
                     .setPositiveButton("Select Carpark", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             double lat = carpark.getLatLonCoord().getLatitude();
@@ -59,17 +55,7 @@ public class DialogFrag extends DialogFragment {
                             Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                                     Uri.parse(mapsApp));
                             startActivity(intent);
-                        }
-                    })
-                    .setNegativeButton("Arrived at Carpark", new DialogInterface.OnClickListener() {
-                        /**
-                         *
-                         * @param dialogInterface
-                         * @param i
-                         */
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-
+                            Shared.carpark = carpark;
                         }
                     });
             // Create the AlertDialog object and return it

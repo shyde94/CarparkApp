@@ -6,8 +6,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 
-import android.content.Intent;
-
 import android.content.Context;
 
 import android.content.pm.PackageManager;
@@ -16,7 +14,6 @@ import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -30,7 +27,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.content.Intent;
+
 import com.akexorcist.googledirection.DirectionCallback;
 import com.akexorcist.googledirection.GoogleDirection;
 import com.akexorcist.googledirection.constant.TransportMode;
@@ -41,7 +38,7 @@ import com.akexorcist.googledirection.model.Route;
 import com.akexorcist.googledirection.model.TransitDetail;
 import com.akexorcist.googledirection.util.DirectionConverter;
 import Carparks.Carpark;
-import com.example.android.carparkappv1.CarparkFinder;
+import Carparks.CarparkFinder;
 import com.example.android.carparkappv1.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -59,7 +56,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,12 +63,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import Carparks.HdbCarpark;
+import Carparks.SmCarpark;
 import MapProjectionConverter.LatLonCoordinate;
 import MapProjectionConverter.SVY21;
 import MapProjectionConverter.SVY21Coordinate;
-
-import static android.R.attr.direction;
-import static com.example.android.carparkappv1.Shared.context;
 
 
 public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener,GoogleMap.OnInfoWindowClickListener,GoogleMap.OnMarkerClickListener{
@@ -180,12 +174,9 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
                     public void onClick(View view) {
                         try {
                             buttonClicked(view);
-
-
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
-
                     }
                 }
         );
@@ -227,8 +218,13 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         if(googleServicesAvailable()){
             Log.i(TAG, "Enter googleMapStart");
             LatLng ll = searchLocation(destination);
-            cpFinder = new CarparkFinder(ll, getActivity());
-            cpFinder.retrieveCarparks();
+            if(ll!=null){
+                cpFinder = new CarparkFinder(ll, getActivity());
+                cpFinder.retrieveCarparks();
+            }
+            else{
+                cpFinder = new CarparkFinder();
+            }
             initMap();
             //gotoLocationZoom(ll, 15);
 
@@ -328,11 +324,17 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     public void searchDestination(){
         if(!destination.equals("")){
             LatLng ll = searchLocation(destination);
-            gotoLocationZoom(ll, 15);
-            setMarker(destination,ll);
+            if(ll!=null){
+                gotoLocationZoom(ll, 15);
+                setMarker(destination,ll);
+            }
+            else{
+                Toast.makeText(getActivity(), "You have entered an invalid location. Please try again", Toast.LENGTH_LONG).show();
+            }
         }
 
     }
+
 
     /**
      * This method converts the name of a place into a LatLng object that can be displayed on the map using the method geoLocate()
@@ -387,22 +389,25 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         double lat, lng;
         Geocoder gc = new Geocoder(getActivity());
         List<Address> tempList = gc.getFromLocationName(location, 5);
-        Address tempAddress = tempList.get(0);
-        String locality = tempAddress.getLocality();
+        if(tempList.size()>0){
+            Address tempAddress = tempList.get(0);
+            String locality = tempAddress.getLocality();
 
-        Log.i(TAG, "Locality: " + locality);
-        Toast.makeText(getActivity(), locality, Toast.LENGTH_SHORT).show();
+            Log.i(TAG, "Locality: " + locality);
+            Toast.makeText(getActivity(), locality, Toast.LENGTH_SHORT).show();
 
-        lat = tempAddress.getLatitude();
-        lng = tempAddress.getLongitude();
-        Log.i(TAG, "Lat:");
-        Log.i(TAG, Double.toString(lat));
-        Log.i(TAG, "Lng:");
-        Log.i(TAG, Double.toString(lng));
-        //gotoLocationZoom(lat,lng,15);
-        LatLng ll = new LatLng(lat, lng);
-        //setMarker(locality, ll);
-        return ll;
+            lat = tempAddress.getLatitude();
+            lng = tempAddress.getLongitude();
+            Log.i(TAG, "Lat:");
+            Log.i(TAG, Double.toString(lat));
+            Log.i(TAG, "Lng:");
+            Log.i(TAG, Double.toString(lng));
+            //gotoLocationZoom(lat,lng,15);
+            LatLng ll = new LatLng(lat, lng);
+            //setMarker(locality, ll);
+            return ll;
+        }
+        return null;
     }
 
     /**
@@ -411,7 +416,6 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
      * @param ll LatLng object containing coordinates of carpark
      */
     //marker for nearby carpark
-
     public void setMarkerForNearbyCp(final Carpark cp, LatLng ll) {
 
         if (cp instanceof HdbCarpark) {
@@ -423,8 +427,8 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
             //Edit Snippet to edit text in the info window. This snippet is the same one in infoWindowAdaptor
             Marker m = mGoogleMap.addMarker(options);
             markerToCarpark.put(m, cp);
-
         }
+
     }
 
     //marker for destination searched
@@ -510,10 +514,24 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         }
         else{
             LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
-            //gotoLocationZoom(ll, 15);
-            //setMarker(ll);
+            try {
+                float[] temp = measureDistanceBetween(ll, geoLocate(destination));
+                if(temp[0] < 500){
+                    gotoLocationZoom(ll, 15);
+                    setCurrentLocation();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
+    }
+
+
+    public float[] measureDistanceBetween(LatLng start, LatLng end){
+        float[] temp = new float[1];
+        Location.distanceBetween(start.longitude, start.latitude, end.longitude, end.latitude, temp);
+        return temp;
     }
 
     //this function decides how much to zoom the camera by. centering destination and accomodating all carparks within vicinity.
@@ -531,24 +549,16 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     //This method will set the markers of the nearby carparks on the map
     public void displayNearbyCarparks(){
         Log.i(TAG, "Enter displayNearbyCarparks");
-        for(Carpark cp : cpFinder.getCpList()){
-            double lat = cp.getLatLonCoord().getLatitude();
-            double lng = cp.getLatLonCoord().getLongitude();
-
-
-            //String cpNum = cp.getCpNum();
-            if(cp instanceof HdbCarpark){
-                String cpNum = ((HdbCarpark)cp).getCpNum();
-                String cpType = ((HdbCarpark)cp).getCpType();
-                String cpFreeParking = ((HdbCarpark)cp).getFreeParking();
-                String cpNightParking = ((HdbCarpark)cp).getNightParking();
-                String cpAddress = ((HdbCarpark)cp).getAddress();
-                Log.i(TAG, "Cp: " + cpNum + "lat: " + lat + "lng: " + lng);
+        if(cpFinder.getCpList().size()>0){
+            for(Carpark cp : cpFinder.getCpList()){
+                Log.i(TAG, "Enter for loop");
+                double lat = cp.getLatLonCoord().getLatitude();
+                double lng = cp.getLatLonCoord().getLongitude();
+                LatLng latlng = new LatLng(lat, lng);
+                setMarkerForNearbyCp(cp, latlng);
             }
-
-            LatLng latlng = new LatLng(lat, lng);
-            setMarkerForNearbyCp(cp, latlng);
         }
+
     }
     //After clicking marker
     @Override
@@ -587,22 +597,23 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
                             Info durationInfo = direction.getRouteList().get(0).getLegList().get(0).getDuration();
                             Info distanceInfo = direction.getRouteList().get(0).getLegList().get(0).getDistance();
 
-                            cp.setDurationToDestination(durationInfo.getText());
-                            cp.setDistanceToDestination(distanceInfo.getText());
+                            //cp.setDurationToDestination(durationInfo.getText());
+                            //cp.setDistanceToDestination(distanceInfo.getText());
 
                             Log.i(TAG,"DURATION: "+ durationInfo.getText());
 
                             //to ensure that route is only shown once (avoid duplicate routes)
                             routeFlag = false;
-                        } else if (direction.isOK() && routeFlag == false) {
+                        }
+                        else if (direction.isOK() && routeFlag == false) {
                             route.remove();
                             ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
                             route = mGoogleMap.addPolyline(DirectionConverter.createPolyline(getActivity(), directionPositionList, 3, Color.RED));
                             //get distance and duration from carpark to destination
                             Info durationInfo = direction.getRouteList().get(0).getLegList().get(0).getDuration();
                             Info distanceInfo = direction.getRouteList().get(0).getLegList().get(0).getDistance();
-                            cp.setDurationToDestination(durationInfo.getText());
-                            cp.setDistanceToDestination(distanceInfo.getText());
+                            //cp.setDurationToDestination(durationInfo.getText());
+                            //cp.setDistanceToDestination(distanceInfo.getText());
                         }
                     }
 
@@ -611,8 +622,6 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
                         Log.i(TAG, "ROUTING FAILED");
                     }
                 });
-
-
 
         Log.i(TAG, "MarkerClicked");
         return true;
@@ -647,6 +656,8 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
             setMarker(temp);
         }
     }
+
+
 
 
 

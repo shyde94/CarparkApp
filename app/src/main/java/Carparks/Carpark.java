@@ -6,55 +6,23 @@ import com.google.android.gms.maps.model.LatLng;
 import MapProjectionConverter.LatLonCoordinate;
 import MapProjectionConverter.SVY21Coordinate;
 
-public class Carpark {
-    private SVY21Coordinate svyCoord;
-    private LatLonCoordinate latLonCoord;
+/**
+ * Parent carpark class. Provides basic variables that all carparks should have.
+ */
+public interface Carpark {
+    String displayInfo();
 
-    private String DurationToDestination;
-    private String DistanceToDestination;
+    String title();
 
+    LatLonCoordinate getLatLonCoord();
 
+    SVY21Coordinate getSVY21Coord();
 
-    public Carpark(){
-    }
+    void SetLatLonCoord(LatLonCoordinate ll);
 
-    public Carpark(SVY21Coordinate svyCoord, LatLonCoordinate latLonCoord) {
-        this.svyCoord = svyCoord;
-        this.latLonCoord = latLonCoord;
-    }
-
-    public String getDurationToDestination() {
-        return DurationToDestination;
-    }
-
-    public void setDurationToDestination(String durationToDestination) {
-        DurationToDestination = durationToDestination;
-    }
-
-    public String getDistanceToDestination() {
-        return DistanceToDestination;
-    }
-
-    public void setDistanceToDestination(String distanceToDestination) {
-        DistanceToDestination = distanceToDestination;
-    }
-
-    public SVY21Coordinate getSvyCoord() {
-        return svyCoord;
-    }
-
-    public void setSvyCoord(SVY21Coordinate svyCoord) {
-        this.svyCoord = svyCoord;
-    }
-
-    public LatLonCoordinate getLatLonCoord() {
-        return latLonCoord;
-    }
-
-    public void setLatLonCoord(LatLonCoordinate latLonCoord) {
-        this.latLonCoord = latLonCoord;
-    }
+    void SetSVY21Coordinate(SVY21Coordinate svy21);
 }
+
 
 
 //"car_park_no","address","x_coord","y_coord","car_park_type","type_of_parking_system","short_term_parking","free_parking","night_parking"

@@ -1,8 +1,6 @@
 package Fragments;
 
 import android.app.Fragment;
-import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -11,19 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.android.carparkappv1.CarparkFinder;
+import Carparks.CarparkFinder;
 import com.example.android.carparkappv1.R;
 import com.google.android.gms.maps.model.LatLng;
-
-import java.io.IOException;
-import java.net.URL;
-
-import utilities.NetworkUtils;
 
 
 public class TestFrag extends Fragment {
 
-    CarparkFinder cpFinderTest;
+    //PullData pullData = new PullData();
+    CarparkFinder cpFinder;
 
     TextView mtest1;
     TextView mtest2;
@@ -34,13 +28,20 @@ public class TestFrag extends Fragment {
         View v = inflater.inflate(R.layout.test_frag, container, false);
         mtest1 = (TextView) v.findViewById(R.id.test1);
         mtest2 = (TextView) v.findViewById(R.id.test2);
+        //makeSearchQuery();
+        LatLng ll = new LatLng(1.3826272,103.9430888);
+        cpFinder = new CarparkFinder(ll, getActivity());
+        //String a = cpFinder.getCpController().dbToString();
+        String b = cpFinder.getCpController().testCarparks();
 
-        makeSearchQuery();
+
+        //Log.i("TestFrag", "String a : " + a);
+        Log.i("TestFrag", "String b : " + b);
 
         return v;
     }
 
-
+    /*
     public void makeSearchQuery() {
         URL url = NetworkUtils.buildUrl();
         mtest1.setText(url.toString());
@@ -69,5 +70,5 @@ public class TestFrag extends Fragment {
         protected void onPostExecute(String searchResults) {
             mtest1.setText(searchResults);
         }
-    }
+    }*/
 }
