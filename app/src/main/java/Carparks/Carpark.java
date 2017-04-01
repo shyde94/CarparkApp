@@ -6,7 +6,7 @@ import MapProjectionConverter.LatLonCoordinate;
 import MapProjectionConverter.SVY21Coordinate;
 
 /**
- * Parent carpark class. Provides basic variables that all carparks should have.
+ * Strategy pattern interface. Can include more methods for more functionality.
  */
 public interface Carpark {
     String displayInfo();
