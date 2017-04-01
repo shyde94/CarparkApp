@@ -394,7 +394,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
             String locality = tempAddress.getLocality();
 
             Log.i(TAG, "Locality: " + locality);
-            Toast.makeText(getActivity(), locality, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getActivity(), locality, Toast.LENGTH_SHORT).show();
 
             lat = tempAddress.getLatitude();
             lng = tempAddress.getLongitude();
