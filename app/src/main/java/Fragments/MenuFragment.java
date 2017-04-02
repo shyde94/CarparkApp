@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,7 +40,7 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
         GoogleApiClient.ConnectionCallbacks{
     Button button;
     Button mViewSaveLot;
-    EditText mInputLocation;
+    //EditText mInputLocation;
     TextView mLocationDisplay;
     ParseJSON parser;
     AutoCompleteTextView mAutocompleteTextView;
@@ -66,7 +65,7 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
         View view = inflater.inflate(R.layout.menu_fragment, container, false);
         button = (Button) view.findViewById(R.id.search_button);
         mViewSaveLot = (Button) view.findViewById(R.id.view_saved_lot);
-        mInputLocation = (EditText) view.findViewById(R.id.Search_location);
+       // mInputLocation = (EditText) view.findViewById(R.id.Search_location);
         //mLocationDisplay = (TextView) view.findViewById(R.id.location_input);
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addApi(Places.GEO_DATA_API)
@@ -159,10 +158,10 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        String location = mInputLocation.getText().toString();
+        String location = mAutocompleteTextView.getText().toString();
         if(!location.equals("")){
             mGoogleApiClient.disconnect();
-            mListener.onSearchedButtonClicked(mInputLocation.getText().toString());
+            mListener.onSearchedButtonClicked(mAutocompleteTextView.getText().toString());
         }
 
     }
