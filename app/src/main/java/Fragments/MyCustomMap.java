@@ -32,6 +32,10 @@ import com.akexorcist.googledirection.DirectionCallback;
 import com.akexorcist.googledirection.GoogleDirection;
 import com.akexorcist.googledirection.constant.TransportMode;
 import com.akexorcist.googledirection.model.Direction;
+import com.akexorcist.googledirection.model.Info;
+import com.akexorcist.googledirection.model.Leg;
+import com.akexorcist.googledirection.model.Route;
+import com.akexorcist.googledirection.model.TransitDetail;
 import com.akexorcist.googledirection.util.DirectionConverter;
 import Carparks.Carpark;
 import Carparks.CarparkFinder;
@@ -73,7 +77,6 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
  */
     private static final String TAG = "MyCustomMapClass";
 
-
     //Variables essential for mapfragment
     private static GoogleMap mGoogleMap;
     private GoogleApiClient mGoogleApiClient;
@@ -82,14 +85,11 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     private String destination = "";
     private boolean routeFlag = true;
     private Polyline route;
-
-    Button arrivedbutton;
-    OnArrivedButtonClickedListener mListener;
-
+    private Button arrivedbutton;
+    private OnArrivedButtonClickedListener mListener;
+    private CarparkFinder cpFinder;
 
     HashMap<Marker, Carpark> markerToCarpark = new HashMap<>();
-
-    private CarparkFinder cpFinder;
 
     /*public static MyCustomMap newInstance(String destination){
 
@@ -394,7 +394,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
             String locality = tempAddress.getLocality();
 
             Log.i(TAG, "Locality: " + locality);
-            Toast.makeText(getActivity(), locality, Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getActivity(), locality, Toast.LENGTH_SHORT).show();
 
             lat = tempAddress.getLatitude();
             lng = tempAddress.getLongitude();
@@ -416,16 +416,17 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
      * @param ll LatLng object containing coordinates of carpark
      */
     //marker for nearby carpark
-    public void setMarkerForNearbyCp(Carpark cp, LatLng ll){
-            MarkerOptions options = new MarkerOptions()
-                    .title(cp.title())
-                    .position(ll)
-                    .snippet("Click for more information..")
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.car2));
-            //Edit Snippet to edit text in the info window. This snippet is the same one in infoWindowAdaptor
-            Marker m = mGoogleMap.addMarker(options);
-            markerToCarpark.put(m, cp);
+    public void setMarkerForNearbyCp(final Carpark cp, LatLng ll) {
+        MarkerOptions options = new MarkerOptions()
+                .title(cp.title())
+                .position(ll)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.car2));
+        //Edit Snippet to edit text in the info window. This snippet is the same one in infoWindowAdaptor
+        Marker m = mGoogleMap.addMarker(options);
+        markerToCarpark.put(m, cp);
     }
+
+
 
     //marker for destination searched
 
@@ -443,21 +444,13 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         mGoogleMap.addMarker(options);
     }
 
-
-
-//    public void setMarkerForRoute(String title, LatLng ll) {
-//        MarkerOptions options = new MarkerOptions()
-//                .position(ll)
-//                .title(title);
-//        mGoogleMap.addMarker(options);
-//    }
-
     public void setMarker(LatLng ll) {
         MarkerOptions options = new MarkerOptions()
                 .position(ll)
                 .title("Carpark");
         mGoogleMap.addMarker(options);
     }
+
 
     public void setCurrentLocationMarker(LatLng ll) {
         MarkerOptions options = new MarkerOptions()
@@ -476,6 +469,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
                 .addApi(LocationServices.API).addConnectionCallbacks(this).addOnConnectionFailedListener(this).build();
         mGoogleApiClient.connect();
     }
+
 
     /**
      * Method to be implemented from interface onMapReadyCallback
@@ -575,58 +569,77 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     }
     //After clicking marker
     @Override
-    public boolean onMarkerClick(Marker marker) {
+    public boolean onMarkerClick(final Marker marker) {
 
         Carpark cp = markerToCarpark.get(marker);
         marker.showInfoWindow();
 
         //to display route on maps
-        LatLng origin = null; //origin is the location searched in the main page
-        if (cp!=null){
-            try {
-                origin = geoLocate(getDestination());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            //latlng of nearby carparks
-            double lat = cp.getLatLonCoord().getLatitude();
-            double lng = cp.getLatLonCoord().getLongitude();
-            LatLng cpLocation = new LatLng(lat, lng);
-
-            GoogleDirection.withServerKey(getString(R.string.GOOGLE_MAPS_DIRECTIONS_API_KEY))
-                    .from(origin)
-                    .to(cpLocation)
-                    .transportMode(TransportMode.WALKING)
-                    .execute(new DirectionCallback() {
-
-                        @Override
-                        public void onDirectionSuccess(Direction direction, String rawBody) {
-
-                            if (direction.isOK() && routeFlag == true) {
-                                ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
-                                route = mGoogleMap.addPolyline(DirectionConverter.createPolyline(getActivity(), directionPositionList, 3, Color.RED));
-
-                                //to ensure that it is only clicked once
-                                routeFlag = false;
-                            }
-
-                            else if(direction.isOK() && routeFlag == false){
-                                route.remove();
-                                ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
-                                route = mGoogleMap.addPolyline(DirectionConverter.createPolyline(getActivity(), directionPositionList, 3, Color.RED));
-                            }
-                        }
-
-                        @Override
-                        public void onDirectionFailure(Throwable t) {
-                            Log.i(TAG,"ROUTING FAILED");
-                        }
-                    });
-
-            Log.i(TAG, "MarkerClicked");
+        LatLng locationSearched = null; //origin is the location searched in the main page
+        try {
+            locationSearched = geoLocate(getDestination());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
+        //latlng of nearby carparks
+        double lat = cp.getLatLonCoord().getLatitude();
+        double lng = cp.getLatLonCoord().getLongitude();
+        final LatLng cpLocation = new LatLng(lat, lng);
+
+        GoogleDirection.withServerKey(getString(R.string.GOOGLE_MAPS_DIRECTIONS_API_KEY))
+                .from(cpLocation)
+                .to(locationSearched)
+                .transportMode(TransportMode.WALKING)
+                .execute(new DirectionCallback() {
+
+                    @Override
+                    public void onDirectionSuccess(Direction direction, String rawBody) {
+
+                        if (direction.isOK() && routeFlag == true) {
+                            ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
+                            route = mGoogleMap.addPolyline(DirectionConverter.createPolyline(getActivity(), directionPositionList, 3, Color.RED));
+
+                            //get distance and duration from carpark to destination
+                            Info durationInfo = direction.getRouteList().get(0).getLegList().get(0).getDuration();
+                            Info distanceInfo = direction.getRouteList().get(0).getLegList().get(0).getDistance();
+
+                            // Updating the infowindow contents with the duration and distance from carpark to distance
+                            marker.setSnippet("Walking duration: " + durationInfo.getText() + "\n" + "Walking distance: " + distanceInfo.getText() + "\n" + "Click for more information.." );
+
+                            // Updating the infowindow
+                            marker.showInfoWindow();
+
+
+                            Log.i(TAG,"DURATION: "+ durationInfo.getText());
+
+                            //to ensure that route is only shown once (avoid duplicate routes)
+                            routeFlag = false;
+                        }
+                        else if (direction.isOK() && routeFlag == false) {
+                            route.remove();
+                            ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
+                            route = mGoogleMap.addPolyline(DirectionConverter.createPolyline(getActivity(), directionPositionList, 3, Color.RED));
+
+                            //get distance and duration from carpark to destination
+                            Info durationInfo = direction.getRouteList().get(0).getLegList().get(0).getDuration();
+                            Info distanceInfo = direction.getRouteList().get(0).getLegList().get(0).getDistance();
+
+                            // Updating the infowindow contents with the duration and distance from carpark to distance
+                            marker.setSnippet("Walking duration: " + durationInfo.getText() + "\n" + "Walking distance: " + distanceInfo.getText() + "\n" + "Click for more information.." );
+
+                            // Updating the infowindow
+                            marker.showInfoWindow();
+                        }
+                    }
+
+                    @Override
+                    public void onDirectionFailure(Throwable t) {
+                        Log.i(TAG, "ROUTING FAILED");
+                    }
+                });
+
+        Log.i(TAG, "MarkerClicked");
         return true;
     }/*Recently added*/
 
