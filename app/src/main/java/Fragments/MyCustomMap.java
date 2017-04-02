@@ -417,19 +417,16 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
      */
     //marker for nearby carpark
     public void setMarkerForNearbyCp(final Carpark cp, LatLng ll) {
-
-        if (cp instanceof HdbCarpark) {
-            MarkerOptions options = new MarkerOptions()
-                    .title(((HdbCarpark) cp).getCpNum() + "\n" + ((HdbCarpark) cp).getAddress())
-                    .position(ll)
-                    .snippet("Click for more information..")
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.car2));
-            //Edit Snippet to edit text in the info window. This snippet is the same one in infoWindowAdaptor
-            Marker m = mGoogleMap.addMarker(options);
-            markerToCarpark.put(m, cp);
-        }
-
+        MarkerOptions options = new MarkerOptions()
+                .title(cp.title())
+                .position(ll)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.car2));
+        //Edit Snippet to edit text in the info window. This snippet is the same one in infoWindowAdaptor
+        Marker m = mGoogleMap.addMarker(options);
+        markerToCarpark.put(m, cp);
     }
+
+
 
     //marker for destination searched
 
@@ -454,6 +451,15 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         mGoogleMap.addMarker(options);
     }
 
+
+    public void setCurrentLocationMarker(LatLng ll) {
+        MarkerOptions options = new MarkerOptions()
+                .position(ll)
+                .title("Carpark")
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+        mGoogleMap.addMarker(options);
+    }
+
     /**
      * Method used to record user's current location.
      */
@@ -463,6 +469,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
                 .addApi(LocationServices.API).addConnectionCallbacks(this).addOnConnectionFailedListener(this).build();
         mGoogleApiClient.connect();
     }
+
 
     /**
      * Method to be implemented from interface onMapReadyCallback
@@ -518,7 +525,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
                 float[] temp = measureDistanceBetween(ll, geoLocate(destination));
                 if(temp[0] < 500){
                     gotoLocationZoom(ll, 15);
-                    setCurrentLocation();
+                    setCurrentLocationMarker(ll);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -562,9 +569,9 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     }
     //After clicking marker
     @Override
-    public boolean onMarkerClick(Marker marker) {
+    public boolean onMarkerClick(final Marker marker) {
 
-        final Carpark cp = markerToCarpark.get(marker);
+        Carpark cp = markerToCarpark.get(marker);
         marker.showInfoWindow();
 
         //to display route on maps
@@ -597,8 +604,12 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
                             Info durationInfo = direction.getRouteList().get(0).getLegList().get(0).getDuration();
                             Info distanceInfo = direction.getRouteList().get(0).getLegList().get(0).getDistance();
 
-                            //cp.setDurationToDestination(durationInfo.getText());
-                            //cp.setDistanceToDestination(distanceInfo.getText());
+                            // Updating the infowindow contents with the duration and distance from carpark to distance
+                            marker.setSnippet("Walking duration: " + durationInfo.getText() + "\n" + "Walking distance: " + distanceInfo.getText() + "\n" + "Click for more information.." );
+
+                            // Updating the infowindow
+                            marker.showInfoWindow();
+
 
                             Log.i(TAG,"DURATION: "+ durationInfo.getText());
 
@@ -609,11 +620,16 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
                             route.remove();
                             ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
                             route = mGoogleMap.addPolyline(DirectionConverter.createPolyline(getActivity(), directionPositionList, 3, Color.RED));
+
                             //get distance and duration from carpark to destination
                             Info durationInfo = direction.getRouteList().get(0).getLegList().get(0).getDuration();
                             Info distanceInfo = direction.getRouteList().get(0).getLegList().get(0).getDistance();
-                            //cp.setDurationToDestination(durationInfo.getText());
-                            //cp.setDistanceToDestination(distanceInfo.getText());
+
+                            // Updating the infowindow contents with the duration and distance from carpark to distance
+                            marker.setSnippet("Walking duration: " + durationInfo.getText() + "\n" + "Walking distance: " + distanceInfo.getText() + "\n" + "Click for more information.." );
+
+                            // Updating the infowindow
+                            marker.showInfoWindow();
                         }
                     }
 
