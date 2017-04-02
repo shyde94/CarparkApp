@@ -10,13 +10,23 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import utilities.ParseJSON;
 import com.example.android.carparkappv1.R;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.PlaceBuffer;
+import com.google.android.gms.location.places.Places;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 
 import org.json.JSONException;
 
@@ -24,15 +34,23 @@ import java.io.IOException;
 import java.net.URL;
 
 import utilities.NetworkUtils;
+import utilities.ParseJSON;
 
 
-public class MenuFragment extends Fragment {
+public class MenuFragment extends Fragment implements GoogleApiClient.OnConnectionFailedListener,
+        GoogleApiClient.ConnectionCallbacks{
     Button button;
     Button mViewSaveLot;
     EditText mInputLocation;
     TextView mLocationDisplay;
     ParseJSON parser;
-
+    AutoCompleteTextView mAutocompleteTextView;
+    private static final int GOOGLE_API_CLIENT_ID = 0;
+    private static final String TAG = "MenuFragment";
+    private GoogleApiClient mGoogleApiClient;
+    private PlaceArrayAdapter mPlaceArrayAdapter;
+    private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
+            new LatLng(-85, -180), new LatLng(85, 180));
     OnSearchButtonClickedListener mListener;
 
     /**
@@ -49,7 +67,18 @@ public class MenuFragment extends Fragment {
         button = (Button) view.findViewById(R.id.search_button);
         mViewSaveLot = (Button) view.findViewById(R.id.view_saved_lot);
         mInputLocation = (EditText) view.findViewById(R.id.Search_location);
-        mLocationDisplay = (TextView) view.findViewById(R.id.location_input);
+        //mLocationDisplay = (TextView) view.findViewById(R.id.location_input);
+        mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
+                .addApi(Places.GEO_DATA_API)
+                .addConnectionCallbacks(this)
+                .build();
+        mGoogleApiClient.connect();
+        mAutocompleteTextView = (AutoCompleteTextView) view.findViewById(R.id.location_input);
+        mAutocompleteTextView.setThreshold(3);
+        mAutocompleteTextView.setOnItemClickListener(mAutocompleteClickListener);
+        mPlaceArrayAdapter = new PlaceArrayAdapter(getActivity(), android.R.layout.simple_list_item_1,
+                BOUNDS_MOUNTAIN_VIEW, null);
+        mAutocompleteTextView.setAdapter(mPlaceArrayAdapter);
         parser = new ParseJSON();
         makeSearchQuery();
         button.setOnClickListener(
@@ -82,7 +111,43 @@ public class MenuFragment extends Fragment {
         );
         return view;
     }
+    private AdapterView.OnItemClickListener mAutocompleteClickListener
+            = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            final PlaceArrayAdapter.PlaceAutocomplete item = mPlaceArrayAdapter.getItem(position);
+            final String placeId = String.valueOf(item.placeId);
+            Log.i(TAG, "Selected: " + item.description);
+            PendingResult<PlaceBuffer> placeResult = Places.GeoDataApi
+                    .getPlaceById(mGoogleApiClient, placeId);
+            placeResult.setResultCallback(mUpdatePlaceDetailsCallback);
+            Log.i(TAG, "Fetching details for ID: " + item.placeId);
+        }
+    };
 
+    private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback
+            = new ResultCallback<PlaceBuffer>() {
+        @Override
+        public void onResult(PlaceBuffer places) {
+            if (!places.getStatus().isSuccess()) {
+                Log.e(TAG, "Place query did not complete. Error: " +
+                        places.getStatus().toString());
+                return;
+            }
+            // Selecting the first object buffer.
+            final Place place = places.get(0);
+            CharSequence attributions = places.getAttributions();
+
+            //mNameTextView.setText(Html.fromHtml(place.getName() + ""));
+           /* mAddressTextView.setText(Html.fromHtml(place.getAddress() + ""));
+            mIdTextView.setText(Html.fromHtml(place.getId() + ""));
+            mPhoneTextView.setText(Html.fromHtml(place.getPhoneNumber() + ""));
+            mWebTextView.setText(place.getWebsiteUri() + "");
+            if (attributions != null) {
+                mAttTextView.setText(Html.fromHtml(attributions.toString()));
+            }*/
+        }
+    };
     /**
      * This method
      * @param v
@@ -96,6 +161,7 @@ public class MenuFragment extends Fragment {
         }
         String location = mInputLocation.getText().toString();
         if(!location.equals("")){
+            mGoogleApiClient.disconnect();
             mListener.onSearchedButtonClicked(mInputLocation.getText().toString());
         }
 
@@ -142,5 +208,28 @@ public class MenuFragment extends Fragment {
             parser.setDataFromDM(searchResults);
         }
     }
+    @Override
+    public void onConnected(Bundle bundle) {
+        mPlaceArrayAdapter.setGoogleApiClient(mGoogleApiClient);
+        Log.i(TAG, "Google Places API connected.");
 
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.e(TAG, "Google Places API connection failed with error code: "
+                + connectionResult.getErrorCode());
+
+        /*Toast.makeText(this,
+                "Google Places API connection failed with error code:" +
+                        connectionResult.getErrorCode(),
+                Toast.LENGTH_LONG).show();*/
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        mPlaceArrayAdapter.setGoogleApiClient(null);
+        Log.e(TAG, "Google Places API connection suspended.");
+    }
 }
+
