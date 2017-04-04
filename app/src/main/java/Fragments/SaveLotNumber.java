@@ -52,12 +52,19 @@ public class SaveLotNumber extends Fragment{
                     @Override
                     public void onClick(View view) {
                         String lotNumber = mInputLotNumber.getText().toString();
-                        SharedPreferences sharedPref = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-                        SharedPreferences.Editor editor = sharedPref.edit();
-                        editor.putString(getString(R.string.saved_lot_number), lotNumber);
-                        editor.commit();
-                        Toast.makeText(getActivity(), "Your carpark lot number has been saved", Toast.LENGTH_SHORT).show();
-                        ScreenController.getInstance().revertToPreviousScreen();
+                        if(!(lotNumber).equals("")){
+                            SharedPreferences sharedPref = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPref.edit();
+                            editor.putString(getString(R.string.saved_lot_number), lotNumber);
+                            editor.commit();
+                            Toast.makeText(getActivity(), "Your carpark lot number has been saved", Toast.LENGTH_LONG).show();
+                            ScreenController.getInstance().revertToPreviousScreen();
+                        }
+                        else{
+                            Toast.makeText(getActivity(), "You have not entered anything", Toast.LENGTH_LONG).show();
+                        }
+
+
                     }
                 }
         );

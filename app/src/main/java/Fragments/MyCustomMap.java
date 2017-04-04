@@ -606,6 +606,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
 
                             // Updating the infowindow contents with the duration and distance from carpark to distance
                             marker.setSnippet("Walking duration: " + durationInfo.getText() + "\n" + "Walking distance: " + distanceInfo.getText() + "\n" + "Click for more information.." );
+                            Carpark cp = markerToCarpark.get(marker);
 
                             // Updating the infowindow
                             marker.showInfoWindow();
