@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -73,6 +74,11 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
                 .build();
         mGoogleApiClient.connect();
         mAutocompleteTextView = (AutoCompleteTextView) view.findViewById(R.id.location_input);
+        InputMethodManager imm = (InputMethodManager)
+                getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if(imm != null){
+            imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+        }
         mAutocompleteTextView.setThreshold(3);
         mAutocompleteTextView.setOnItemClickListener(mAutocompleteClickListener);
         mPlaceArrayAdapter = new PlaceArrayAdapter(getActivity(), android.R.layout.simple_list_item_1,
