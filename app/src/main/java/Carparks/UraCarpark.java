@@ -47,12 +47,12 @@ public class UraCarpark implements Carpark {
 
     @Override
     public String displayInfo() {
-        String info = "Remarks: " +remarks + "\n"
-                + "Weekday rate: " + weekdayRate + "\n"
+        String info = "Weekday rate: " + weekdayRate + "\n"
                 + "Parking system: " + parkingSys + "\n"
                 + "Start time: " + startTime + "\n"
                 + "End time: " + endTime + "\n"
-                + "Sun, PH Rate: " + sunPHRate + "\n";
+                + "Sun, PH Rate: " + sunPHRate + "\n"
+                +"Remarks: " +remarks + "\n";
         return info;
     }
 

@@ -41,23 +41,37 @@ public class DialogFrag extends DialogFragment {
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the Builder class for convenient DialogFrag construction
             String carpark_details = ""; String cpNum = "";
-            String displayInfo = carpark.displayInfo();
-            String title = carpark.title();
-
-
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setMessage(displayInfo).setTitle(title)
-                    .setPositiveButton("Select Carpark", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            double lat = carpark.getLatLonCoord().getLatitude();
-                            double lng = carpark.getLatLonCoord().getLongitude();
-                            String mapsApp = "http://maps.google.com/maps?daddr="+lat+","+lng;
-                            Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                                    Uri.parse(mapsApp));
-                            startActivity(intent);
-                            Shared.carpark = carpark;
-                        }
-                    });
+            if(carpark!= null){
+                String displayInfo = carpark.displayInfo();
+                String title = carpark.title();
+                builder.setMessage(displayInfo).setTitle(title)
+                        .setPositiveButton("Select Carpark", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                double lat = carpark.getLatLonCoord().getLatitude();
+                                double lng = carpark.getLatLonCoord().getLongitude();
+                                String mapsApp = "http://maps.google.com/maps?daddr="+lat+","+lng;
+                                Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                        Uri.parse(mapsApp));
+                                startActivity(intent);
+                                Shared.carpark = carpark;
+                            }
+                        });
+            }
+            else{
+                builder.setTitle(Shared.destination)
+                        .setPositiveButton("Go to Destination", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                double lat = Shared.latLngDestination.latitude;
+                                double lng = Shared.latLngDestination.longitude;
+                                String mapsApp = "http://maps.google.com/maps?daddr="+lat+","+lng;
+                                Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                        Uri.parse(mapsApp));
+                                startActivity(intent);
+                            }
+                        });
+            }
+
             // Create the AlertDialog object and return it
             return builder.create();
         }

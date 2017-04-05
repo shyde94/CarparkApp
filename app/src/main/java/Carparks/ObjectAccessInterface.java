@@ -12,5 +12,7 @@ public interface ObjectAccessInterface {
     void createHDBCarparkObjects(int id);
     void createDMCarparkObject(int id);
     void ObjectCreater(String owner, int id);
+    void createURACarparkObject(int id);
+
 
 }

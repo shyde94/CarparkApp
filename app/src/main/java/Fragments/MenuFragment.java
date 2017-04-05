@@ -43,7 +43,7 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
     Button button;
     Button mViewSaveLot;
     //EditText mInputLocation;
-    TextView mLocationDisplay;
+    //TextView mLocationDisplay;
     ParseJSON parser;
     AutoCompleteTextView mAutocompleteTextView;
     private static final int GOOGLE_API_CLIENT_ID = 0;
@@ -68,7 +68,7 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
 
 
 
-
+        mAutocompleteTextView = (AutoCompleteTextView) view.findViewById(R.id.location_input);
         button = (Button) view.findViewById(R.id.search_button);
         mViewSaveLot = (Button) view.findViewById(R.id.view_saved_lot);
        // mInputLocation = (EditText) view.findViewById(R.id.Search_location);
@@ -78,11 +78,14 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
                 .addConnectionCallbacks(this)
                 .build();
         mGoogleApiClient.connect();
-        mAutocompleteTextView = (AutoCompleteTextView) view.findViewById(R.id.location_input);
+
+        mAutocompleteTextView.requestFocus();
         InputMethodManager imm = (InputMethodManager)
                 getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         if(imm != null){
+            Log.i(TAG, "imm?");
             imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+
         }
         mAutocompleteTextView.setThreshold(3);
         mAutocompleteTextView.setOnItemClickListener(mAutocompleteClickListener);

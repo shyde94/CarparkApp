@@ -170,7 +170,7 @@ public class HdbCarpark implements Carpark {
 
     @Override
     public String title() {
-        String title = cpNum + "\n" + address;
+        String title = cpNum + "\n" + cpType + "";
         return title;
     }
 
@@ -182,10 +182,12 @@ public class HdbCarpark implements Carpark {
     @Override
     public String displayInfo() {
         String cpAddress = getAddress() + "\n";
-        String cpRate = "";
         String cpType = getTypeOfParkingSystem() + "\n";
         String cpNum = getCpNum();
-        String carpark_details = cpAddress + cpRate + cpType;
+        String carpark_details = "Address: " + cpAddress
+                + "Type of parking: " + typeOfParkingSystem+ "\n"
+                + "Short Term parking: " + shortTermParking + "\n"
+                + "Night parking: "+ nightParking;
         return carpark_details;
     }
 }

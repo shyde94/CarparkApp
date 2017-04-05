@@ -40,6 +40,7 @@ import com.akexorcist.googledirection.util.DirectionConverter;
 import Carparks.Carpark;
 import Carparks.CarparkFinder;
 import com.example.android.carparkappv1.R;
+import com.example.android.carparkappv1.Shared;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -63,6 +64,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import Carparks.HdbCarpark;
+import Carparks.ObjectAccessInterface;
 import Carparks.SmCarpark;
 import MapProjectionConverter.LatLonCoordinate;
 import MapProjectionConverter.SVY21;
@@ -87,7 +89,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     private Polyline route;
     private Button arrivedbutton;
     private OnArrivedButtonClickedListener mListener;
-    private CarparkFinder cpFinder;
+    private ObjectAccessInterface cpFinder;
 
     HashMap<Marker, Carpark> markerToCarpark = new HashMap<>();
 
@@ -324,6 +326,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     public void searchDestination(){
         if(!destination.equals("")){
             LatLng ll = searchLocation(destination);
+            Shared.latLngDestination = ll;
             if(ll!=null){
                 gotoLocationZoom(ll, 15);
                 setMarker(destination,ll);
@@ -491,11 +494,13 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
             String[] mPermission = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-            ActivityCompat.requestPermissions((Activity) getActivity(), mPermission, 1);
+            ActivityCompat.requestPermissions(getActivity(), mPermission, 1);
             Log.i(TAG, "Ask for permission");
+            return;
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mlocationRequest, this);
         mCurrentLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
         if(mCurrentLocation != null){
             Log.i(TAG, "Current lat: " + mCurrentLocation.getLatitude());
             Log.i(TAG, "Current long: "+ mCurrentLocation.getLongitude());
@@ -583,8 +588,12 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         }
 
         //latlng of nearby carparks
-        double lat = cp.getLatLonCoord().getLatitude();
-        double lng = cp.getLatLonCoord().getLongitude();
+        double lat=0, lng=0;
+        if(cp!=null){
+            lat = cp.getLatLonCoord().getLatitude();
+            lng = cp.getLatLonCoord().getLongitude();
+        }
+
         final LatLng cpLocation = new LatLng(lat, lng);
 
         GoogleDirection.withServerKey(getString(R.string.GOOGLE_MAPS_DIRECTIONS_API_KEY))
