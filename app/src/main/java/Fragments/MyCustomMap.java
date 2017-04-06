@@ -614,7 +614,11 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
                             Info distanceInfo = direction.getRouteList().get(0).getLegList().get(0).getDistance();
 
                             // Updating the infowindow contents with the duration and distance from carpark to distance
-                            marker.setSnippet("Walking duration: " + durationInfo.getText() + "\n" + "Walking distance: " + distanceInfo.getText() + "\n" + "Click for more information.." );
+                            marker.setSnippet("Walking duration: "
+                                    + durationInfo.getText()
+                                    + "\n" + "Walking distance: "
+                                    + distanceInfo.getText() + "\n"
+                                    + "Click for more information.." );
                             Carpark cp = markerToCarpark.get(marker);
 
                             // Updating the infowindow
@@ -648,7 +652,6 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
                         Log.i(TAG, "ROUTING FAILED");
                     }
                 });
-
         Log.i(TAG, "MarkerClicked");
         return true;
     }/*Recently added*/

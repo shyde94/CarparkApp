@@ -139,7 +139,25 @@ public class CarparkDBController extends SQLiteOpenHelper {
             + COLUMN_REMARKS + " TEXT "
             + ");";
 
+    //Station Name,Address,Tel. No.,Available Services
 
+    public static final String TABLE_SHELL_STATIONS = "ShellStations";
+    public static final String COLUMN_STATION_NAME= "StationName";
+    public static final String COLUMN_ADDRESS= "Address";
+    public static final String COLUMN_TEL= "Tel";
+    public static final String COLUMN_SERVICES= "Services";
+    public static final String COLUMN_COMPANY = "Company";
+
+    public static final String CREATE_TABLE_SHELL = "CREATE TABLE " + TABLE_SHELL_STATIONS + " ( "
+            + COLUMN_ID + " INTEGER AUTO INCREMENT, "
+            + COLUMN_STATION_NAME + " TEXT, "
+            + COLUMN_ADDRESS + " TEXT, "
+            + COLUMN_TEL + " TEXT, "
+            + COLUMN_SERVICES + " TEXT, "
+            + COLUMN_COMPANY + " TEXT,"
+            + COLUMN_Xcoord + " DOUBLE, "
+            + COLUMN_Ycoord + " DOUBLE"
+            + ");";
 
 
     /**
@@ -182,6 +200,7 @@ public class CarparkDBController extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL(CREATE_TABLE_HDB_CARPARK); //Create subclass HDB carpark table
         sqLiteDatabase.execSQL(CREATE_TABLE_DATA_MALL); //Create subclass DataMall carparks
         sqLiteDatabase.execSQL(CREATE_TABLE_URACARPARK);
+        sqLiteDatabase.execSQL(CREATE_TABLE_SHELL);
 
         //If more types of carparks are available, just need to define columns and create them here.
         Log.i(TAG, "created table_carparks");
@@ -356,7 +375,7 @@ public class CarparkDBController extends SQLiteOpenHelper {
         }
     }
 
-
+    
 
     //To be removed
     public String dbToString(){
