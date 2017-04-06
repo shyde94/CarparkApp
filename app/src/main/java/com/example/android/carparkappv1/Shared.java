@@ -19,4 +19,5 @@ public class Shared {
     public static String destination;
     public static LatLng latLngDestination;
     public static Carpark carpark;
+    public static int choice=0;
 }

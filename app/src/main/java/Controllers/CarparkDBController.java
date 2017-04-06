@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import MapProjectionConverter.SVY21;
 import MapProjectionConverter.SVY21Coordinate;
 
 public class CarparkDBController extends SQLiteOpenHelper {
@@ -143,7 +144,6 @@ public class CarparkDBController extends SQLiteOpenHelper {
 
     public static final String TABLE_SHELL_STATIONS = "ShellStations";
     public static final String COLUMN_STATION_NAME= "StationName";
-    public static final String COLUMN_ADDRESS= "Address";
     public static final String COLUMN_TEL= "Tel";
     public static final String COLUMN_SERVICES= "Services";
     public static final String COLUMN_COMPANY = "Company";
@@ -151,7 +151,7 @@ public class CarparkDBController extends SQLiteOpenHelper {
     public static final String CREATE_TABLE_SHELL = "CREATE TABLE " + TABLE_SHELL_STATIONS + " ( "
             + COLUMN_ID + " INTEGER AUTO INCREMENT, "
             + COLUMN_STATION_NAME + " TEXT, "
-            + COLUMN_ADDRESS + " TEXT, "
+            + COLUMN_address + " TEXT, "
             + COLUMN_TEL + " TEXT, "
             + COLUMN_SERVICES + " TEXT, "
             + COLUMN_COMPANY + " TEXT,"
@@ -209,6 +209,7 @@ public class CarparkDBController extends SQLiteOpenHelper {
             addCSVintoDB(sqLiteDatabase);
             addDMintoCarparkDB(sqLiteDatabase);
             addURAintoCarparkDB(sqLiteDatabase);
+            addShellKiosk(sqLiteDatabase);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -375,7 +376,42 @@ public class CarparkDBController extends SQLiteOpenHelper {
         }
     }
 
-    
+    public void addShellKiosk(SQLiteDatabase db) throws IOException {
+        Log.i(TAG, "Adding into shell tables");
+        String filename = "petrol_details.csv";
+        AssetManager am = context.getAssets();
+        InputStream inputStream = null;
+        inputStream = am.open(filename);
+        String line = "";
+        BufferedReader buffer = new BufferedReader(new InputStreamReader(inputStream));
+        while((line = buffer.readLine())!= null){
+            Log.i(TAG, "Adding into Shell table");
+            Log.i(TAG, line);
+            int first = line.indexOf("\"");
+            int last = line.lastIndexOf("\"");
+            String services = line.substring(first+1, last);
+            Log.i(TAG, "services: " + services);
+            line = line.replaceAll(services,"-");
+            Log.i("LINE", "LINE: " + line);
+            String[] columns = line.split(",");
+            double lat = Double.parseDouble(columns[4]);
+            double lng = Double.parseDouble(columns[5]);
+            SVY21Coordinate temp = SVY21.computeSVY21(lat,lng);
+            ContentValues cv = new ContentValues();
+            cv.put(COLUMN_STATION_NAME, columns[0].replace("\"",""));
+            cv.put(COLUMN_address, columns[1].replace("\"",""));
+            cv.put(COLUMN_TEL, columns[2].replace("\"",""));
+            cv.put(COLUMN_SERVICES, services.replace("\"",""));
+            cv.put(COLUMN_COMPANY, "Shell");
+            cv.put(COLUMN_Xcoord, temp.getEasting());
+            cv.put(COLUMN_Ycoord, temp.getNorthing());
+
+            db.insert(TABLE_SHELL_STATIONS, null, cv);
+
+        }
+    }
+
+
 
     //To be removed
     public String dbToString(){
@@ -475,6 +511,39 @@ public class CarparkDBController extends SQLiteOpenHelper {
         return cpListInfo;
     }
 
+    public Cursor queryRetrievePetrolKiosks(SVY21Coordinate svy21C){
+        Log.i(TAG, "Enter queryRetrievePetrolKiosks");
+        double easting = svy21C.getEasting();
+        double northing = svy21C.getNorthing();
+        Cursor cpListInfo = null;
+
+
+        SQLiteDatabase db = getWritableDatabase();
+        String query="";
+        //Set boarder range to get carparks
+        double boarderRange = 200;
+        int count = 0;
+        //TEST BOX RANGE FOUND...SO CAN USE TO FIND QUERY!
+        try{
+            do{
+                double xBoxMin = easting - boarderRange;
+                double xBoxMax = easting + boarderRange;
+                double yBoxMin = northing - boarderRange;
+                double yBoxMax = northing + boarderRange;
+                query = "SELECT * FROM " + TABLE_SHELL_STATIONS +
+                        " WHERE " + COLUMN_Xcoord + " BETWEEN " + xBoxMin + " AND " +  xBoxMax
+                        + " AND " + COLUMN_Ycoord + " BETWEEN " + yBoxMin + " AND " + yBoxMax;
+                cpListInfo = db.rawQuery(query, null);
+                boarderRange+=25;
+                count ++;
+
+            }while(cpListInfo.getCount() <=5);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        String tempString = "";
+        return cpListInfo;
+    }
 
     public Cursor queryGetCarparkInfo(int id, String TableName){
         SQLiteDatabase db = getWritableDatabase();

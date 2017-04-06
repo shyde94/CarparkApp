@@ -69,6 +69,8 @@ import Carparks.SmCarpark;
 import MapProjectionConverter.LatLonCoordinate;
 import MapProjectionConverter.SVY21;
 import MapProjectionConverter.SVY21Coordinate;
+import PetrolStations.PStations;
+import PetrolStations.PetrolStationFinder;
 
 
 public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, LocationListener,GoogleMap.OnInfoWindowClickListener,GoogleMap.OnMarkerClickListener{
@@ -90,6 +92,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     private Button arrivedbutton;
     private OnArrivedButtonClickedListener mListener;
     private ObjectAccessInterface cpFinder;
+    private PetrolStationFinder psFinder;
 
     HashMap<Marker, Carpark> markerToCarpark = new HashMap<>();
 
@@ -218,18 +221,20 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
      */
     public void googleMapStart() throws IOException {
         if(googleServicesAvailable()){
-            Log.i(TAG, "Enter googleMapStart");
-            LatLng ll = searchLocation(destination);
-            if(ll!=null){
-                cpFinder = new CarparkFinder(ll, getActivity());
-                cpFinder.retrieveCarparks();
-            }
-            else{
-                cpFinder = new CarparkFinder();
+            if(Shared.choice == 0){
+                Log.i(TAG, "Enter googleMapStart");
+                LatLng ll = searchLocation(destination);
+                if(ll!=null){
+                    cpFinder = new CarparkFinder(ll, getActivity());
+                    cpFinder.retrieveCarparks();
+
+                }
+                else{
+                    cpFinder = new CarparkFinder();
+                }
             }
             initMap();
             //gotoLocationZoom(ll, 15);
-
         }
     }
 
@@ -242,44 +247,57 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     public void onMapReady(GoogleMap map) {
         mGoogleMap = map;
         Log.i(TAG, "onMapReady map success");
+        Log.i(TAG, "there");
         setCurrentLocation();
-        searchDestination();
-        displayNearbyCarparks();
-        //bBoxTest(500,500);
+        Log.i(TAG, "here");
+        if(Shared.choice == 0) {
+            searchDestination();
+            displayNearbyCarparks();
+            //bBoxTest(500,500);
+        }
+        /*else if(Shared.choice == 1){
+            Log.i(TAG, "Search for petrol stations");
+            LatLng ll = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+            psFinder = new PetrolStationFinder(Shared.context, ll);
+            psFinder.retrieveStations();
+            displayNearbyPStations();
+        }*/
+        Log.i(TAG, "omg");
+            map.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
 
-        map.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                @Override
+                public View getInfoWindow(Marker arg0) {
+                    return null;
+                }
 
-            @Override
-            public View getInfoWindow(Marker arg0) {
-                return null;
-            }
-
-            @Override
-            public View getInfoContents(Marker marker) {/*Edits the layout of the info window*/
+                @Override
+                public View getInfoContents(Marker marker) {/*Edits the layout of the info window*/
 
 
-                LinearLayout info = new LinearLayout(getContext());
-                info.setOrientation(LinearLayout.VERTICAL);
+                    LinearLayout info = new LinearLayout(getContext());
+                    info.setOrientation(LinearLayout.VERTICAL);
 
-                TextView title = new TextView(getContext());
-                title.setTextColor(Color.RED);
-                title.setGravity(Gravity.CENTER);
-                title.setTypeface(null, Typeface.BOLD);
-                title.setText(marker.getTitle());
+                    TextView title = new TextView(getContext());
+                    title.setTextColor(Color.RED);
+                    title.setGravity(Gravity.CENTER);
+                    title.setTypeface(null, Typeface.BOLD);
+                    title.setText(marker.getTitle());
 
-                TextView snippet = new TextView(getContext());
-                snippet.setTextColor(Color.BLACK);
-                snippet.setText(marker.getSnippet());
+                    TextView snippet = new TextView(getContext());
+                    snippet.setTextColor(Color.BLACK);
+                    snippet.setText(marker.getSnippet());
 
-                info.addView(title);
-                info.addView(snippet);
+                    info.addView(title);
+                    info.addView(snippet);
 
-                return info;
-            }
-        });
+                    return info;
+                }
+            });
 
-        map.setOnInfoWindowClickListener(this);/*Recently added. Waits for the marker to be clicked*/
-        map.setOnMarkerClickListener(this);
+            map.setOnInfoWindowClickListener(this);/*Recently added. Waits for the marker to be clicked*/
+            map.setOnMarkerClickListener(this);
+
+
     }
 
 
@@ -521,16 +539,29 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
 
     @Override
     public void onLocationChanged(Location location) {
+        LatLng ll;
         if(location == null){
             Toast.makeText(getActivity(), "Can't get current destination", Toast.LENGTH_SHORT).show();
         }
-        else{
-            LatLng ll = new LatLng(location.getLatitude(), location.getLongitude());
+        else if(Shared.choice == 1){
+            Log.i(TAG, "Choice = 1");
+            ll = new LatLng(location.getLatitude(), location.getLongitude());
+            gotoLocationZoom(ll,13);
+            setCurrentLocationMarker(ll);
+            psFinder = new PetrolStationFinder(Shared.context, ll);
+            psFinder.retrieveStations();
+            displayNearbyPStations();
+        }
+        else if(Shared.choice ==0){
+            Log.i(TAG, "Choice = 0");
+            ll = new LatLng(location.getLatitude(), location.getLongitude());
             try {
-                float[] temp = measureDistanceBetween(ll, geoLocate(destination));
-                if(temp[0] < 500){
-                    gotoLocationZoom(ll, 15);
-                    setCurrentLocationMarker(ll);
+                if(!(destination.equals(""))){
+                    float[] temp = measureDistanceBetween(ll, geoLocate(destination));
+                    if(temp[0] < 500){
+                        gotoLocationZoom(ll, 15);
+                        setCurrentLocationMarker(ll);
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -572,86 +603,176 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         }
 
     }
+
+
+    public void displayNearbyPStations(){
+        Log.i(TAG, "Enter displayNearbyPStations");
+        if(psFinder.getStationList().size()>0){
+            for(Carpark cp : psFinder.getStationList()){
+                Log.i(TAG, "Enter for loop");
+                double lat = cp.getLatLonCoord().getLatitude();
+                double lng = cp.getLatLonCoord().getLongitude();
+                LatLng latlng = new LatLng(lat, lng);
+                setMarkerForNearbyCp(cp, latlng);
+            }
+        }
+
+    }
+
+
     //After clicking marker
     @Override
     public boolean onMarkerClick(final Marker marker) {
 
         Carpark cp = markerToCarpark.get(marker);
         marker.showInfoWindow();
+        if(Shared.choice==0){
+            LatLng locationSearched = null; //origin is the location searched in the main page
+            try {
+                locationSearched = geoLocate(getDestination());
 
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            //latlng of nearby carparks
+            double lat=0, lng=0;
+            if(cp!=null){
+                Log.i(TAG, "creating latlng object from cplocation");
+                lat = cp.getLatLonCoord().getLatitude();
+                lng = cp.getLatLonCoord().getLongitude();
+            }
+
+            final LatLng cpLocation = new LatLng(lat, lng);
+
+            GoogleDirection.withServerKey(getString(R.string.GOOGLE_MAPS_DIRECTIONS_API_KEY))
+                    .from(cpLocation)
+                    .to(locationSearched)
+                    .transportMode(TransportMode.WALKING)
+                    .execute(new DirectionCallback() {
+
+                        @Override
+                        public void onDirectionSuccess(Direction direction, String rawBody) {
+
+                            if (direction.isOK() && routeFlag == true) {
+                                ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
+                                route = mGoogleMap.addPolyline(DirectionConverter.createPolyline(getActivity(), directionPositionList, 3, Color.RED));
+
+                                //get distance and duration from carpark to destination
+                                Info durationInfo = direction.getRouteList().get(0).getLegList().get(0).getDuration();
+                                Info distanceInfo = direction.getRouteList().get(0).getLegList().get(0).getDistance();
+
+                                // Updating the infowindow contents with the duration and distance from carpark to distance
+                                marker.setSnippet("Walking duration: "
+                                        + durationInfo.getText()
+                                        + "\n" + "Walking distance: "
+                                        + distanceInfo.getText() + "\n"
+                                        + "Click for more information.." );
+                                Carpark cp = markerToCarpark.get(marker);
+
+                                // Updating the infowindow
+                                marker.showInfoWindow();
+
+
+                                Log.i(TAG,"DURATION: "+ durationInfo.getText());
+
+                                //to ensure that route is only shown once (avoid duplicate routes)
+                                routeFlag = false;
+                            }
+                            else if (direction.isOK() && routeFlag == false) {
+                                route.remove();
+                                ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
+                                route = mGoogleMap.addPolyline(DirectionConverter.createPolyline(getActivity(), directionPositionList, 3, Color.RED));
+
+                                //get distance and duration from carpark to destination
+                                Info durationInfo = direction.getRouteList().get(0).getLegList().get(0).getDuration();
+                                Info distanceInfo = direction.getRouteList().get(0).getLegList().get(0).getDistance();
+
+                                // Updating the infowindow contents with the duration and distance from carpark to distance
+                                marker.setSnippet("Walking duration: " + durationInfo.getText() + "\n" + "Walking distance: " + distanceInfo.getText() + "\n" + "Click for more information.." );
+
+                                // Updating the infowindow
+                                marker.showInfoWindow();
+                            }
+                        }
+
+                        @Override
+                        public void onDirectionFailure(Throwable t) {
+                            Log.i(TAG, "ROUTING FAILED");
+                        }
+                    });
+        }
+        else if(Shared.choice == 1){
+            LatLng mLocationLL = new LatLng(mCurrentLocation.getLatitude(), mCurrentLocation.getLongitude());
+            //latlng of nearby carparks
+            double lat=0, lng=0;
+            if(cp!=null){
+                Log.i(TAG, "creating latlng object from cplocation");
+                lat = cp.getLatLonCoord().getLatitude();
+                lng = cp.getLatLonCoord().getLongitude();
+            }
+
+            final LatLng cpLocation = new LatLng(lat, lng);
+
+            GoogleDirection.withServerKey(getString(R.string.GOOGLE_MAPS_DIRECTIONS_API_KEY))
+                    .from(mLocationLL)
+                    .to(cpLocation)
+                    .transportMode(TransportMode.DRIVING)
+                    .execute(new DirectionCallback() {
+
+                        @Override
+                        public void onDirectionSuccess(Direction direction, String rawBody) {
+
+                            if (direction.isOK() && routeFlag == true) {
+                                ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
+                                route = mGoogleMap.addPolyline(DirectionConverter.createPolyline(getActivity(), directionPositionList, 3, Color.RED));
+
+                                //get distance and duration from carpark to destination
+                                Info durationInfo = direction.getRouteList().get(0).getLegList().get(0).getDuration();
+                                Info distanceInfo = direction.getRouteList().get(0).getLegList().get(0).getDistance();
+
+                                // Updating the infowindow contents with the duration and distance from carpark to distance
+                                marker.setSnippet("Driving duration: "
+                                        + durationInfo.getText()
+                                        + "\n" + "Driving distance: "
+                                        + distanceInfo.getText() + "\n"
+                                        + "Click for more information.." );
+                                Carpark cp = markerToCarpark.get(marker);
+
+                                // Updating the infowindow
+                                marker.showInfoWindow();
+
+
+                                Log.i(TAG,"DURATION: "+ durationInfo.getText());
+
+                                //to ensure that route is only shown once (avoid duplicate routes)
+                                routeFlag = false;
+                            }
+                            else if (direction.isOK() && routeFlag == false) {
+                                route.remove();
+                                ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
+                                route = mGoogleMap.addPolyline(DirectionConverter.createPolyline(getActivity(), directionPositionList, 3, Color.RED));
+
+                                //get distance and duration from carpark to destination
+                                Info durationInfo = direction.getRouteList().get(0).getLegList().get(0).getDuration();
+                                Info distanceInfo = direction.getRouteList().get(0).getLegList().get(0).getDistance();
+
+                                // Updating the infowindow contents with the duration and distance from carpark to distance
+                                marker.setSnippet("Driving duration: " + durationInfo.getText() + "\n" + "Driving distance:" + distanceInfo.getText() + "\n" + "Click for more information.." );
+
+                                // Updating the infowindow
+                                marker.showInfoWindow();
+                            }
+                        }
+
+                        @Override
+                        public void onDirectionFailure(Throwable t) {
+                            Log.i(TAG, "ROUTING FAILED");
+                        }
+                    });
+        }
         //to display route on maps
-        LatLng locationSearched = null; //origin is the location searched in the main page
-        try {
-            locationSearched = geoLocate(getDestination());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        //latlng of nearby carparks
-        double lat=0, lng=0;
-        if(cp!=null){
-            lat = cp.getLatLonCoord().getLatitude();
-            lng = cp.getLatLonCoord().getLongitude();
-        }
-
-        final LatLng cpLocation = new LatLng(lat, lng);
-
-        GoogleDirection.withServerKey(getString(R.string.GOOGLE_MAPS_DIRECTIONS_API_KEY))
-                .from(cpLocation)
-                .to(locationSearched)
-                .transportMode(TransportMode.WALKING)
-                .execute(new DirectionCallback() {
-
-                    @Override
-                    public void onDirectionSuccess(Direction direction, String rawBody) {
-
-                        if (direction.isOK() && routeFlag == true) {
-                            ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
-                            route = mGoogleMap.addPolyline(DirectionConverter.createPolyline(getActivity(), directionPositionList, 3, Color.RED));
-
-                            //get distance and duration from carpark to destination
-                            Info durationInfo = direction.getRouteList().get(0).getLegList().get(0).getDuration();
-                            Info distanceInfo = direction.getRouteList().get(0).getLegList().get(0).getDistance();
-
-                            // Updating the infowindow contents with the duration and distance from carpark to distance
-                            marker.setSnippet("Walking duration: "
-                                    + durationInfo.getText()
-                                    + "\n" + "Walking distance: "
-                                    + distanceInfo.getText() + "\n"
-                                    + "Click for more information.." );
-                            Carpark cp = markerToCarpark.get(marker);
-
-                            // Updating the infowindow
-                            marker.showInfoWindow();
-
-
-                            Log.i(TAG,"DURATION: "+ durationInfo.getText());
-
-                            //to ensure that route is only shown once (avoid duplicate routes)
-                            routeFlag = false;
-                        }
-                        else if (direction.isOK() && routeFlag == false) {
-                            route.remove();
-                            ArrayList<LatLng> directionPositionList = direction.getRouteList().get(0).getLegList().get(0).getDirectionPoint();
-                            route = mGoogleMap.addPolyline(DirectionConverter.createPolyline(getActivity(), directionPositionList, 3, Color.RED));
-
-                            //get distance and duration from carpark to destination
-                            Info durationInfo = direction.getRouteList().get(0).getLegList().get(0).getDuration();
-                            Info distanceInfo = direction.getRouteList().get(0).getLegList().get(0).getDistance();
-
-                            // Updating the infowindow contents with the duration and distance from carpark to distance
-                            marker.setSnippet("Walking duration: " + durationInfo.getText() + "\n" + "Walking distance: " + distanceInfo.getText() + "\n" + "Click for more information.." );
-
-                            // Updating the infowindow
-                            marker.showInfoWindow();
-                        }
-                    }
-
-                    @Override
-                    public void onDirectionFailure(Throwable t) {
-                        Log.i(TAG, "ROUTING FAILED");
-                    }
-                });
         Log.i(TAG, "MarkerClicked");
         return true;
     }/*Recently added*/
