@@ -14,8 +14,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.carparkappv1.R;
@@ -51,7 +49,7 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
     private GoogleApiClient mGoogleApiClient;
     private PlaceArrayAdapter mPlaceArrayAdapter;
     private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
-            new LatLng(-85, -180), new LatLng(85, 180));
+            new LatLng(1.2, 103), new LatLng(1.5, 104));
     OnSearchButtonClickedListener mListener;
 
     /**
