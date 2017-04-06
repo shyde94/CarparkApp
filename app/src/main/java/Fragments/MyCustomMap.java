@@ -2,12 +2,9 @@ package Fragments;
 
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
-
 import android.content.Context;
-
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -33,12 +30,7 @@ import com.akexorcist.googledirection.GoogleDirection;
 import com.akexorcist.googledirection.constant.TransportMode;
 import com.akexorcist.googledirection.model.Direction;
 import com.akexorcist.googledirection.model.Info;
-import com.akexorcist.googledirection.model.Leg;
-import com.akexorcist.googledirection.model.Route;
-import com.akexorcist.googledirection.model.TransitDetail;
 import com.akexorcist.googledirection.util.DirectionConverter;
-import Carparks.Carpark;
-import Carparks.CarparkFinder;
 import com.example.android.carparkappv1.R;
 import com.example.android.carparkappv1.Shared;
 import com.google.android.gms.common.ConnectionResult;
@@ -63,9 +55,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import Carparks.HdbCarpark;
+import Carparks.Carpark;
+import Carparks.CarparkFinder;
 import Carparks.ObjectAccessInterface;
-import Carparks.SmCarpark;
 import MapProjectionConverter.LatLonCoordinate;
 import MapProjectionConverter.SVY21;
 import MapProjectionConverter.SVY21Coordinate;
@@ -93,6 +85,9 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     private OnArrivedButtonClickedListener mListener;
     private ObjectAccessInterface cpFinder;
     private PetrolStationFinder psFinder;
+
+
+    final double maxLat= 1.5 ,minLat=1.2,maxLng=104,minLng=103;
 
     HashMap<Marker, Carpark> markerToCarpark = new HashMap<>();
 
@@ -404,7 +399,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
      * @return LatLng object containing latitude and longitude of location input by user
      * @throws IOException
      */
-    public LatLng geoLocate(String location) throws IOException {
+    public LatLng geoLocate(String location) throws IOException {//converts add to coord
         Log.i(TAG, "Enter geoLocate");
         Log.i(TAG, location);
         double lat, lng;
@@ -425,6 +420,10 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
             Log.i(TAG, Double.toString(lng));
             //gotoLocationZoom(lat,lng,15);
             LatLng ll = new LatLng(lat, lng);
+            if(lat<minLat||lat>maxLat||lng<minLng||lng>maxLng)
+            {
+                ll=null;
+            }
             //setMarker(locality, ll);
             return ll;
         }
