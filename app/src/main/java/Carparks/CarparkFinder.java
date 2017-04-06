@@ -3,8 +3,10 @@ package Carparks;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteException;
 import android.util.Log;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -23,6 +25,7 @@ public class CarparkFinder implements ObjectAccessInterface {
     private ArrayList<Carpark> cpList = new ArrayList<>(); //this list contains the carparks found from the database base on the destination!
     private LatLng destination;
     private CarparkDBController cpController;
+
 
 
     private Context context;
@@ -48,7 +51,6 @@ public class CarparkFinder implements ObjectAccessInterface {
         this.cpList = cpList;
     }
 
-
     //Constructor
     public CarparkFinder(LatLng ll, Context context) {
         Log.i(TAG, "Created new CarparkFinder object");
@@ -70,25 +72,24 @@ public class CarparkFinder implements ObjectAccessInterface {
         Log.i(TAG, "Enter retrieve Carparks");
         SVY21Coordinate temp = getSVY21Coord(destination);
 
-        //CursorList will contain every row of carpark within the vicinity
-        Cursor cursorList = cpController.queryRetrieveNearbyCarparks(temp);
-        cursorList.moveToFirst();
-        while (cursorList.isAfterLast() == false) {
-            //Create carpark object containing data from each row!
+            //CursorList will contain every row of carpark within the vicinity
+            Cursor cursorList = cpController.queryRetrieveNearbyCarparks(temp);
+            cursorList.moveToFirst();
+            while (cursorList.isAfterLast() == false) {
+                //Create carpark object containing data from each row!
             /*double easting = cursorList.getDouble(cursorList.getColumnIndex(CarparkDBController.COLUMN_Xcoord));
             double northing = cursorList.getDouble(cursorList.getColumnIndex(CarparkDBController.COLUMN_Ycoord));
 
             SVY21Coordinate svy21 = new SVY21Coordinate(northing, easting);
             LatLonCoordinate latLon = SVY21.computeLatLon(svy21);*/
-            String cpOwner = cursorList.getString(cursorList.getColumnIndex(CarparkDBController.COLUMN_OWNER_TYPE));
-            int id = cursorList.getInt(cursorList.getColumnIndex(CarparkDBController.COLUMN_ID));
-            ObjectCreater(cpOwner, id);
-            cursorList.moveToNext();
+                String cpOwner = cursorList.getString(cursorList.getColumnIndex(CarparkDBController.COLUMN_OWNER_TYPE));
+                int id = cursorList.getInt(cursorList.getColumnIndex(CarparkDBController.COLUMN_ID));
+                ObjectCreater(cpOwner, id);
+                cursorList.moveToNext();
 
 
-            //Log.i(TAG, "Carpark: " + cpNum + " " + svy21.getNorthing() + " " + svy21.getEasting());
-
-        }
+                //Log.i(TAG, "Carpark: " + cpNum + " " + svy21.getNorthing() + " " + svy21.getEasting());
+            }
     }
 
     public void ObjectCreater(String owner, int id) {

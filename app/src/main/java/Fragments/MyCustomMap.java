@@ -429,8 +429,6 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         markerToCarpark.put(m, cp);
     }
 
-
-
     //marker for destination searched
 
     /**

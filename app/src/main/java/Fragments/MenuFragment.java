@@ -3,6 +3,7 @@ package Fragments;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteException;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -36,6 +37,8 @@ import java.net.URL;
 
 import utilities.NetworkUtils;
 import utilities.ParseJSON;
+
+import static com.example.android.carparkappv1.Shared.context;
 
 
 public class MenuFragment extends Fragment implements GoogleApiClient.OnConnectionFailedListener,
