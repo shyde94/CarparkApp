@@ -452,7 +452,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
      * @param cp Carpark object
      * @param ll LatLng object containing coordinates of petrol station
      */
-    //marker for nearby carpark
+    //marker for nearby petrol station
     public void setMarkerForNearbyPStations(final Carpark cp, LatLng ll) {
         MarkerOptions options = new MarkerOptions()
                 .title(cp.title())

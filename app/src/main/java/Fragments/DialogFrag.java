@@ -13,6 +13,8 @@ import com.example.android.carparkappv1.Shared;
 import Carparks.Carpark;
 import Carparks.HdbCarpark;
 
+import static com.example.android.carparkappv1.Shared.choice;
+
 /**
  * Created by jon92 on 23/3/2017.
  */
@@ -42,7 +44,7 @@ public class DialogFrag extends DialogFragment {
             // Use the Builder class for convenient DialogFrag construction
             String carpark_details = ""; String cpNum = "";
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            if(carpark!= null){
+            if((carpark != null) && (choice == 0)){
                 String displayInfo = carpark.displayInfo();
                 String title = carpark.title();
                 builder.setMessage(displayInfo).setTitle(title)
@@ -58,6 +60,24 @@ public class DialogFrag extends DialogFragment {
                             }
                         });
             }
+
+            else if((carpark != null) && (choice == 1)){
+                String displayInfo = carpark.displayInfo();
+                String title = carpark.title();
+                builder.setMessage(displayInfo).setTitle(title)
+                        .setPositiveButton("Go To Petrol Kiosk", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                double lat = carpark.getLatLonCoord().getLatitude();
+                                double lng = carpark.getLatLonCoord().getLongitude();
+                                String mapsApp = "http://maps.google.com/maps?daddr="+lat+","+lng;
+                                Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                        Uri.parse(mapsApp));
+                                startActivity(intent);
+                                Shared.carpark = carpark;
+                            }
+                        });
+            }
+
             else{
                 builder.setTitle(Shared.destination)
                         .setPositiveButton("Go to Destination", new DialogInterface.OnClickListener() {
