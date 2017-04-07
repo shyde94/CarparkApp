@@ -170,7 +170,7 @@ public class HdbCarpark implements Carpark {
 
     @Override
     public String title() {
-        String title = cpNum + "\n" + cpType + "";
+        String title = cpNum + "\n" + address + "";
         return title;
     }
 

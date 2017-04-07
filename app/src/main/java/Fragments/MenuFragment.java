@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.android.carparkappv1.R;
+import com.example.android.carparkappv1.Shared;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -43,6 +44,7 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
         GoogleApiClient.ConnectionCallbacks{
     Button button;
     Button mViewSaveLot;
+    Button mFindPetrolStation;
     //EditText mInputLocation;
     //TextView mLocationDisplay;
     ParseJSON parser;
@@ -71,6 +73,7 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
 
         mAutocompleteTextView = (AutoCompleteTextView) view.findViewById(R.id.location_input);
         button = (Button) view.findViewById(R.id.search_button);
+        mFindPetrolStation = (Button) view.findViewById(R.id.search_nearest_station);
         mViewSaveLot = (Button) view.findViewById(R.id.view_saved_lot);
        // mInputLocation = (EditText) view.findViewById(R.id.Search_location);
         //mLocationDisplay = (TextView) view.findViewById(R.id.location_input);
@@ -107,6 +110,19 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
                     }
                 }
         );
+        mFindPetrolStation.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        try {
+                            findPetrolStations(view);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+        );
+
         mViewSaveLot.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -125,6 +141,9 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
         );
         return view;
     }
+
+
+
     private AdapterView.OnItemClickListener mAutocompleteClickListener
             = new AdapterView.OnItemClickListener() {
         @Override
@@ -168,6 +187,7 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
      * @throws IOException
      */
     public void buttonClicked(View v) throws IOException {
+        Shared.choice = 0;
         try {
             parser.sortThisJson();
         } catch (JSONException e) {
@@ -180,10 +200,18 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
         }
 
     }
+
+    private void findPetrolStations(View view) throws IOException {
+        Shared.choice = 1;
+        mListener.onSearchedButtonClicked("");
+
+    }
     public interface OnSearchButtonClickedListener {
         public void onSearchedButtonClicked(String location) throws IOException;
 
     }
+
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
