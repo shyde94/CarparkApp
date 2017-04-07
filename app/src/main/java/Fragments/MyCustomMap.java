@@ -446,6 +446,24 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         markerToCarpark.put(m, cp);
     }
 
+
+    /**
+     * Method to pin icon that represents a Petrol Station on the map
+     * @param cp Carpark object
+     * @param ll LatLng object containing coordinates of petrol station
+     */
+    //marker for nearby carpark
+    public void setMarkerForNearbyPStations(final Carpark cp, LatLng ll) {
+        MarkerOptions options = new MarkerOptions()
+                .title(cp.title())
+                .position(ll)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.pstation3));
+        //Edit Snippet to edit text in the info window. This snippet is the same one in infoWindowAdaptor
+        Marker m = mGoogleMap.addMarker(options);
+        markerToCarpark.put(m, cp);
+    }
+
+
     //marker for destination searched
 
     /**
@@ -473,7 +491,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     public void setCurrentLocationMarker(LatLng ll) {
         MarkerOptions options = new MarkerOptions()
                 .position(ll)
-                .title("Carpark")
+                .title("Current Location")
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
         mGoogleMap.addMarker(options);
     }
@@ -610,7 +628,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
                 double lat = cp.getLatLonCoord().getLatitude();
                 double lng = cp.getLatLonCoord().getLongitude();
                 LatLng latlng = new LatLng(lat, lng);
-                setMarkerForNearbyCp(cp, latlng);
+                setMarkerForNearbyPStations(cp, latlng);
             }
         }
 
