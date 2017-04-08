@@ -3,7 +3,8 @@ package Fragments;
 import android.app.Fragment;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteException;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -36,8 +37,6 @@ import java.net.URL;
 
 import utilities.NetworkUtils;
 import utilities.ParseJSON;
-
-import static com.example.android.carparkappv1.Shared.context;
 
 
 public class MenuFragment extends Fragment implements GoogleApiClient.OnConnectionFailedListener,
@@ -102,10 +101,16 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
                 new View.OnClickListener(){
                     @Override
                     public void onClick(View view) {
+                        if(isNetworkAvailable()!=false){
                         try {
                             buttonClicked(view);
                         } catch (IOException e) {
                             e.printStackTrace();
+                        }
+                    }
+                    else
+                        {
+                            Toast.makeText(getActivity(), "No Network Detected", Toast.LENGTH_LONG).show();
                         }
                     }
                 }
@@ -114,10 +119,16 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+                        if(isNetworkAvailable()!=false){
                         try {
                             findPetrolStations(view);
                         } catch (IOException e) {
                             e.printStackTrace();
+                        }
+                    }
+                        else
+                        {
+                            Toast.makeText(getActivity(), "No Network Detected", Toast.LENGTH_LONG).show();
                         }
                     }
                 }
@@ -272,6 +283,12 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
     public void onConnectionSuspended(int i) {
         mPlaceArrayAdapter.setGoogleApiClient(null);
         Log.e(TAG, "Google Places API connection suspended.");
+    }
+    private boolean isNetworkAvailable() {// checks to see if there is network connected
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }
 
