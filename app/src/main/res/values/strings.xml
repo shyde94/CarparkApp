@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CarparkAppV1</string>
+    <string name="app_name">EZ Carpark</string>
     <string name="search_location_hint">Enter a destination</string>
     <string name="search_button">Search!</string>
 
