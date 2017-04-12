@@ -11,7 +11,6 @@ import android.support.v7.app.AlertDialog;
 import com.example.android.carparkappv1.Shared;
 
 import Carparks.Carpark;
-import Carparks.HdbCarpark;
 
 import static com.example.android.carparkappv1.Shared.choice;
 
@@ -23,6 +22,7 @@ import static com.example.android.carparkappv1.Shared.choice;
 public class DialogFrag extends DialogFragment {
 
     private Carpark carpark;
+
 
     /**
      * Sets the carpark object that is related to the selected carpark

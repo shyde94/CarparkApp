@@ -402,7 +402,8 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         Log.i(TAG, "Enter geoLocate");
         Log.i(TAG, location);
         double lat, lng;
-        Geocoder gc = new Geocoder(getActivity());
+        //Geocoder gc = new Geocoder(getActivity());
+        Geocoder gc = new Geocoder(Shared.context);
         List<Address> tempList = gc.getFromLocationName(location, 5);
         if(tempList.size()>0){
             Address tempAddress = tempList.get(0);
@@ -515,7 +516,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         Log.i(TAG, "onConnected");
         LocationRequest mlocationRequest = LocationRequest.create();
         mlocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
+        mlocationRequest.setInterval(1000);
 
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
@@ -554,6 +555,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
 
     @Override
     public void onLocationChanged(Location location) {
+        Log.i(TAG, "enter on location changed");
         LatLng ll;
         if(location == null){
             Toast.makeText(getActivity(), "Can't get current destination", Toast.LENGTH_SHORT).show();
@@ -667,6 +669,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
                 Log.i(TAG, "creating latlng object from cplocation");
                 lat = cp.getLatLonCoord().getLatitude();
                 lng = cp.getLatLonCoord().getLongitude();
+                Log.i(TAG, "Selected Carpark: " + "lat: " + lat + ", lng: " + lng);
             }
 
             final LatLng cpLocation = new LatLng(lat, lng);
