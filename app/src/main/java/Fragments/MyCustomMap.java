@@ -404,7 +404,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         double lat, lng;
         //Geocoder gc = new Geocoder(getActivity());
         Geocoder gc = new Geocoder(Shared.context);
-        List<Address> tempList = gc.getFromLocationName(location, 5);
+        List<Address> tempList = gc.getFromLocationName(location, 10);
         if(tempList.size()>0){
             Address tempAddress = tempList.get(0);
             String locality = tempAddress.getLocality();
@@ -426,6 +426,8 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
             }
             //setMarker(locality, ll);
             return ll;
+        }else{
+            Log.i(TAG, "can't find");
         }
         return null;
     }
@@ -516,7 +518,10 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         Log.i(TAG, "onConnected");
         LocationRequest mlocationRequest = LocationRequest.create();
         mlocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mlocationRequest.setInterval(1000);
+        if(Shared.choice == 0){
+            mlocationRequest.setInterval(1000);
+        }
+
 
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
