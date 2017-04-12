@@ -31,6 +31,7 @@ import com.akexorcist.googledirection.constant.TransportMode;
 import com.akexorcist.googledirection.model.Direction;
 import com.akexorcist.googledirection.model.Info;
 import com.akexorcist.googledirection.util.DirectionConverter;
+import com.example.android.carparkappv1.MainActivity;
 import com.example.android.carparkappv1.R;
 import com.example.android.carparkappv1.Shared;
 import com.google.android.gms.common.ConnectionResult;
@@ -58,6 +59,7 @@ import java.util.List;
 import Carparks.Carpark;
 import Carparks.CarparkFinder;
 import Carparks.ObjectAccessInterface;
+import Controllers.ScreenController;
 import MapProjectionConverter.LatLonCoordinate;
 import MapProjectionConverter.SVY21;
 import MapProjectionConverter.SVY21Coordinate;
@@ -526,6 +528,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
             String[] mPermission = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
             ActivityCompat.requestPermissions(getActivity(), mPermission, 1);
             Log.i(TAG, "Ask for permission");
+            ScreenController.getInstance().revertToPreviousScreen();
             return;
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mlocationRequest, this);
@@ -569,11 +572,15 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
             ll = new LatLng(location.getLatitude(), location.getLongitude());
             try {
                 if(!(destination.equals(""))){
-                    float[] temp = measureDistanceBetween(ll, geoLocate(destination));
-                    if(temp[0] < 500){
-                        gotoLocationZoom(ll, 15);
-                        setCurrentLocationMarker(ll);
+                    LatLng ll2 = geoLocate(destination);
+                    if(ll2!=null){
+                        float[] temp = measureDistanceBetween(ll, geoLocate(destination));
+                        if(temp[0] < 500){
+                            gotoLocationZoom(ll, 15);
+                            setCurrentLocationMarker(ll);
+                        }
                     }
+
                 }
             } catch (IOException e) {
                 e.printStackTrace();

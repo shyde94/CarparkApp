@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import Carparks.CarparkFinder;
@@ -21,13 +23,16 @@ public class TestFrag extends Fragment {
 
     TextView mtest1;
     TextView mtest2;
+    AutoCompleteTextView testautocomplete;
+    AutoCompleteTextView testAuto2;
+    EditText mEdit;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.test_frag, container, false);
-        mtest1 = (TextView) v.findViewById(R.id.test1);
-        mtest2 = (TextView) v.findViewById(R.id.test2);
+        /*//mtest1 = (TextView) v.findViewById(R.id.test1);
+        //mtest2 = (TextView) v.findViewById(R.id.test2);
         //makeSearchQuery();
         LatLng ll = new LatLng(1.3826272,103.9430888);
         cpFinder = new CarparkFinder(ll, getActivity());
@@ -36,7 +41,11 @@ public class TestFrag extends Fragment {
 
 
         //Log.i("TestFrag", "String a : " + a);
-        Log.i("TestFrag", "String b : " + b);
+        Log.i("TestFrag", "String b : " + b);*/
+
+        testautocomplete = (AutoCompleteTextView) v.findViewById(R.id.AUTO);
+        testAuto2 = (AutoCompleteTextView)v.findViewById(R.id.AUTO2);
+        //mEdit = (EditText) v.findViewById(R.id.mEdit);
 
         return v;
     }

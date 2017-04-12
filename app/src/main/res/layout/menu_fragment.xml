@@ -16,11 +16,11 @@
         android:layout_below="@+id/imageView"
         android:layout_marginTop="44dp"
         android:inputType="textAutoComplete"
-        android:textIsSelectable="true"
         android:textSize="15dp"
         android:visibility="visible"
         android:hint="Enter Destination here"
         tools:editable="true"
+        android:imeOptions="actionDone"
         />
 
     <Button

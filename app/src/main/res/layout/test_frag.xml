@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <TextView
@@ -15,4 +17,34 @@
         android:layout_gravity="center"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-</LinearLayout>
+    <AutoCompleteTextView
+        android:id="@+id/AUTO"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="24dp"
+        android:inputType="textAutoComplete"
+        android:textSize="15dp"
+        android:visibility="visible"
+        android:hint="Enter Destination here"/>
+    <AutoCompleteTextView
+        android:id="@+id/AUTO2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/imageView"
+        android:layout_marginTop="44dp"
+        android:inputType="textAutoComplete"
+        android:textSize="15dp"
+        android:visibility="visible"
+        android:hint="Potato"
+        tools:editable="true"
+        android:imeOptions="actionDone" />
+
+
+    <!--<EditText
+        android:id="@+id/mEdit"
+        android:hint="Enter lot number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />-->
+</RelativeLayout>
