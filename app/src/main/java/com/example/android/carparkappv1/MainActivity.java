@@ -2,6 +2,10 @@ package com.example.android.carparkappv1;
 
 
 import android.app.Activity;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteCursorDriver;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQuery;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
@@ -34,7 +38,7 @@ public class MainActivity extends AppCompatActivity implements MenuFragment.OnSe
         Shared.context = getApplicationContext();
         screenController.openScreen(ScreenController.Screen.MENU);
         //screenController.openScreen(ScreenController.Screen.TEST);
-
+        (new LoadTable()).start();
 
 
     }
@@ -56,6 +60,13 @@ public class MainActivity extends AppCompatActivity implements MenuFragment.OnSe
 
     public void onArrivedButtonClicked() throws IOException {
         screenController.openScreen(SAVELOT);
+    }
+
+    public class LoadTable extends Thread{
+        @Override
+        public void run() {
+            CarparkDBController.getInstance(Shared.context).getReadableDatabase();
+        }
     }
 }
 

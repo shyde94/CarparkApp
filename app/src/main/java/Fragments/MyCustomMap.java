@@ -242,9 +242,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
     public void onMapReady(GoogleMap map) {
         mGoogleMap = map;
         Log.i(TAG, "onMapReady map success");
-        Log.i(TAG, "there");
         setCurrentLocation();
-        Log.i(TAG, "here");
         if(Shared.choice == 0) {
             searchDestination();
             displayNearbyCarparks();
@@ -257,7 +255,6 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
             psFinder.retrieveStations();
             displayNearbyPStations();
         }*/
-        Log.i(TAG, "omg");
             map.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
 
                 @Override
