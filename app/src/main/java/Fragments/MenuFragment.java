@@ -87,7 +87,8 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
                 getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         if(imm != null){
             Log.i(TAG, "imm?");
-            imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+            //imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
+            imm.showSoftInput(mAutocompleteTextView, InputMethodManager.SHOW_IMPLICIT);
 
         }
         mAutocompleteTextView.setThreshold(3);

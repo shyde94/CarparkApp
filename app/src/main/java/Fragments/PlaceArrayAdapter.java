@@ -30,7 +30,7 @@ public class PlaceArrayAdapter
     private GoogleApiClient mGoogleApiClient;
     private AutocompleteFilter mPlaceFilter;
     private LatLngBounds mBounds;
-    private ArrayList<PlaceAutocomplete> mResultList;
+    private ArrayList<PlaceAutocomplete> mResultList = new ArrayList<PlaceAutocomplete>();
 
     /**
      * Constructor
@@ -127,7 +127,13 @@ public class PlaceArrayAdapter
                     notifyDataSetChanged();
                 } else {
                     // The API did not return any results, invalidate the data set.
-                    notifyDataSetInvalidated();
+                    if(mResultList!=null){
+                        Log.i(TAG, "mResultList WORKSSSSS");
+                        notifyDataSetInvalidated();
+                    }else{
+                        Log.i(TAG,"mResultList is null");
+                    }
+
                 }
             }
         };
