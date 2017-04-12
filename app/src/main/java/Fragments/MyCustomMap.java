@@ -561,11 +561,18 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         else if(Shared.choice == 1){
             Log.i(TAG, "Choice = 1");
             ll = new LatLng(location.getLatitude(), location.getLongitude());
-            gotoLocationZoom(ll,13);
-            setCurrentLocationMarker(ll);
-            psFinder = new PetrolStationFinder(Shared.context, ll);
-            psFinder.retrieveStations();
-            displayNearbyPStations();
+            if(!(ll.latitude<minLat||ll.latitude>maxLat||ll.longitude<minLng||ll.longitude>maxLng)){
+                Log.i(TAG,"finding petrol stations:");
+                Log.i(TAG, "lat: "+ll.latitude+ " Lng: " + ll.longitude);
+                gotoLocationZoom(ll,13);
+                setCurrentLocationMarker(ll);
+                psFinder = new PetrolStationFinder(Shared.context, ll);
+                psFinder.retrieveStations();
+                displayNearbyPStations();
+            }else{
+                Toast.makeText(getActivity(), "This service does not extend to your current location",Toast.LENGTH_LONG).show();
+            }
+
         }
         else if(Shared.choice ==0){
             Log.i(TAG, "Choice = 0");

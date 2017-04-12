@@ -210,6 +210,9 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
             mGoogleApiClient.disconnect();
             mListener.onSearchedButtonClicked(mAutocompleteTextView.getText().toString());
         }
+        else{
+            Toast.makeText(getActivity(), "You have not entered a valid location", Toast.LENGTH_LONG).show();
+        }
 
     }
 
