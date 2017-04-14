@@ -555,10 +555,16 @@ public class CarparkDBController extends SQLiteOpenHelper {
     }
 
     public void queryUpdateTableDMCarparkLots(String cpNum, int lots){
-        Log.i(TAG, "Update number of lots in DM Carpark. " + "Lots: " + lots);
-        SQLiteDatabase db = getWritableDatabase();
-        String query = "UPDATE " + TABLE_DATAMALL_CARPARK + " SET "+ COLUMN_LOTS + "=" + lots+" WHERE " + COLUMN_CARPARKNUM + " = " + cpNum + ";";
-        db.execSQL(query);
+        try{
+            Log.i(TAG, "Update number of lots in DM Carpark. " + "Lots: " + lots);
+            SQLiteDatabase db = getWritableDatabase();
+                String query = "UPDATE " + TABLE_DATAMALL_CARPARK + " SET "+ COLUMN_LOTS + "=" + lots+" WHERE " + COLUMN_CARPARKNUM + " = " + cpNum + ";";
+            db.execSQL(query);
+            db.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
     }
 
 

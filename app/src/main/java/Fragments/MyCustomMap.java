@@ -414,9 +414,9 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
 
             lat = tempAddress.getLatitude();
             lng = tempAddress.getLongitude();
-            Log.i(TAG, "Lat:");
+            Log.i(TAG, "Destination Lat:");
             Log.i(TAG, Double.toString(lat));
-            Log.i(TAG, "Lng:");
+            Log.i(TAG, "Destination Lng:");
             Log.i(TAG, Double.toString(lng));
             //gotoLocationZoom(lat,lng,15);
             LatLng ll = new LatLng(lat, lng);
@@ -518,9 +518,7 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         Log.i(TAG, "onConnected");
         LocationRequest mlocationRequest = LocationRequest.create();
         mlocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        if(Shared.choice == 0){
-            mlocationRequest.setInterval(1000);
-        }
+
 
 
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

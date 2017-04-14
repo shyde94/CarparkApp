@@ -83,6 +83,7 @@ public class ParseJSON {
             double northing = svy21.getNorthing();
 
             CarparkDBController.getInstance(Shared.context).queryUpdateTableDMCarparkLots(cpNum, lots);
+            CarparkDBController.getInstance(Shared.context).close();
 
             String line = cpNum+","+area+","+dev+","+easting+","+northing+","+lots;
             Log.i("Parser", line);
