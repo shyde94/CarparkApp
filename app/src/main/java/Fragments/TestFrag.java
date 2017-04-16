@@ -15,7 +15,9 @@ import Carparks.CarparkFinder;
 import com.example.android.carparkappv1.R;
 import com.google.android.gms.maps.model.LatLng;
 
-
+/**
+ * Used for testing
+ */
 public class TestFrag extends Fragment {
 
     //PullData pullData = new PullData();

@@ -62,7 +62,6 @@ public class CarparkFinder implements ObjectAccessInterface {
     public CarparkFinder(){
     }
 
-
     /**
      * Take destination, convert into SVYCoordinate, call database query method, converts strings to give objects.
      *
@@ -92,6 +91,11 @@ public class CarparkFinder implements ObjectAccessInterface {
             }
     }
 
+    /**
+     * Method used to call a specific Carpark to be created
+     * @param owner Represents the different type of Carparks: HDB, Datamall, URA
+     * @param id The column index of the different type of Carparks
+     */
     public void ObjectCreater(String owner, int id) {
         switch (owner) {
             case CarparkDBController.OWNER_HDB:
@@ -107,6 +111,9 @@ public class CarparkFinder implements ObjectAccessInterface {
         }
     }
 
+    /**
+     * Method used to create HDB Carpark Object
+     */
     public void createHDBCarparkObjects(int id) {
         Log.i(TAG, "Creating HDB Carpark Objects");
         Cursor cursorList = cpController.queryGetCarparkInfo(id, CarparkDBController.TABLE_HDB_CARPARKS);
@@ -130,7 +137,9 @@ public class CarparkFinder implements ObjectAccessInterface {
         cursorList.close();
     }
 
-
+    /**
+     * Method used to create Datamall Carpark Object
+     */
     public void createDMCarparkObject(int id) {
         Log.i(TAG, "Creating DMCarpark Objects");
         Cursor cursorList = cpController.queryGetCarparkInfo(id, CarparkDBController.TABLE_DATAMALL_CARPARK);
@@ -149,7 +158,9 @@ public class CarparkFinder implements ObjectAccessInterface {
         cursorList.close();
     }
 
-
+    /**
+     * Method used to create URA Carpark Object
+     */
     public void createURACarparkObject(int id) {
         Log.i(TAG, "Creating URA Carpark Objects");
         Cursor cursorList = cpController.queryGetCarparkInfo(id, CarparkDBController.TABLE_URA_CARPARK);
@@ -179,7 +190,11 @@ public class CarparkFinder implements ObjectAccessInterface {
         cursorList.close();
     }
 
-
+    /**
+     * Method used to convert WSG84 (destination coordinates) to SVY21 to query database which is in SVY21
+     * @param d latlng of destination
+     * @return SVY21 coordinates
+     */
     //Convert WSG84 (destination coordinates) to SVY21 to query database which is in SVY21
     public SVY21Coordinate getSVY21Coord(LatLng d) {
         SVY21Coordinate svyC = SVY21.computeSVY21(d.latitude, d.longitude);

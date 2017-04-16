@@ -3,7 +3,7 @@ package Carparks;
 import java.util.ArrayList;
 
 /**
- * Created by Shide on 31/3/17.
+ * interface used to access data in database
  */
 
 public interface ObjectAccessInterface {

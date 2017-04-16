@@ -4,7 +4,7 @@ import MapProjectionConverter.LatLonCoordinate;
 import MapProjectionConverter.SVY21Coordinate;
 
 /**
- * Created by Shide on 23/3/17.
+ * For future implementation for more shopping mall carparks
  */
 
 public class SmCarpark implements Carpark{
