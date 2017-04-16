@@ -57,7 +57,7 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
     OnSearchButtonClickedListener mListener;
 
     /**
-     *
+     *This method creates and return a view for the menufragment
      * @param inflater
      * @param container
      * @param savedInstanceState
@@ -154,8 +154,10 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
         return view;
     }
 
-
-
+    /**
+     * This method is used when user clicks on one of the prediction
+     * It will then update the field with the selected prediction details
+     */
     private AdapterView.OnItemClickListener mAutocompleteClickListener
             = new AdapterView.OnItemClickListener() {
         @Override
@@ -169,7 +171,10 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
             Log.i(TAG, "Fetching details for ID: " + item.placeId);
         }
     };
-
+    /**
+     *This methods checks if the place query update is successful
+     * If query is not successful, it will print a message in the log
+     */
     private ResultCallback<PlaceBuffer> mUpdatePlaceDetailsCallback
             = new ResultCallback<PlaceBuffer>() {
         @Override
@@ -183,18 +188,12 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
             final Place place = places.get(0);
             CharSequence attributions = places.getAttributions();
 
-            //mNameTextView.setText(Html.fromHtml(place.getName() + ""));
-           /* mAddressTextView.setText(Html.fromHtml(place.getAddress() + ""));
-            mIdTextView.setText(Html.fromHtml(place.getId() + ""));
-            mPhoneTextView.setText(Html.fromHtml(place.getPhoneNumber() + ""));
-            mWebTextView.setText(place.getWebsiteUri() + "");
-            if (attributions != null) {
-                mAttTextView.setText(Html.fromHtml(attributions.toString()));
-            }*/
         }
     };
     /**
-     * This method
+     * This method get the text from the autocompletetextview when the search button is clicked
+     * If the text is not NULL it will take in that and disconnect from the google API
+     * Else it will print out an error message
      * @param v
      * @throws IOException
      */
@@ -216,17 +215,29 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
 
     }
 
+    /**
+     *This method finds the petrol station on the map
+     * @param view
+     * @throws IOException
+     */
     private void findPetrolStations(View view) throws IOException {
         Shared.choice = 1;
         mListener.onSearchedButtonClicked("");
 
     }
+
+    /**
+     * This method executes the search when searchbutton is clicked
+     */
     public interface OnSearchButtonClickedListener {
         public void onSearchedButtonClicked(String location) throws IOException;
 
     }
 
-
+    /**
+     * This method checks if the OnSearchButtonClickedListner has been implemented
+     * @param context
+     */
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -237,12 +248,18 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
         }
     }
 
-
+    /**
+     *This method executes a search based on the URL created
+     */
     public void makeSearchQuery(){
         URL url = NetworkUtils.buildUrl();
         new Search().execute(url);
 
     }
+
+    /**
+     * This class is used to search for results
+     */
     public class Search extends AsyncTask<URL, Void, String> {
 
         @Override
@@ -265,6 +282,11 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
             parser.setDataFromDM(searchResults);
         }
     }
+
+    /**
+     *This method turns on the connection to the google API
+     * @param bundle
+     */
     @Override
     public void onConnected(Bundle bundle) {
         mPlaceArrayAdapter.setGoogleApiClient(mGoogleApiClient);
@@ -272,6 +294,10 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
 
     }
 
+    /**
+     * This method prints out a log entry when the the connection fails
+     * @param connectionResult
+     */
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.e(TAG, "Google Places API connection failed with error code: "
@@ -283,11 +309,22 @@ public class MenuFragment extends Fragment implements GoogleApiClient.OnConnecti
                 Toast.LENGTH_LONG).show();*/
     }
 
+    /**
+     * This method turns off the google API client
+     * @param i
+     */
     @Override
     public void onConnectionSuspended(int i) {
         mPlaceArrayAdapter.setGoogleApiClient(null);
         Log.e(TAG, "Google Places API connection suspended.");
     }
+
+    /**
+     * This methods checks if the device is connected to a network
+     * This prevents the app from crashing when there is no network
+     * It will return true if network is true else it will return false
+     * @return
+     */
     private boolean isNetworkAvailable() {// checks to see if there is network connected
         ConnectivityManager connectivityManager
                 = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);

@@ -26,11 +26,21 @@ public class PetrolStationFinder {
 
     private static final String TAG = "PetrolStationFinderClass";
 
+    /**
+     * PetrolStationFinder class constructor
+     * @param context
+     * @param currentLocation
+     */
     public PetrolStationFinder(Context context, LatLng currentLocation) {
         this.cpController = CarparkDBController.getInstance(context);
         this.currentLocation = currentLocation;
     }
 
+    /**
+     * This method uses the current location to find the nearby petrol station
+     * It will first search the petrol station database and it will find the carpark within a certain range of the current location
+     * These selected carpark tuples from the database are then added to the array list stationList
+     */
     public void retrieveStations() {
         Log.i(TAG, "Enter retrieve Carparks");
         SVY21Coordinate temp = getSVY21Coord(currentLocation);
@@ -57,15 +67,28 @@ public class PetrolStationFinder {
         }
     }
 
+    /**
+     * This method Converts the coordinates to be used on google map
+     * @param d
+     * @return
+     */
     public SVY21Coordinate getSVY21Coord(LatLng d) {
         SVY21Coordinate svyC = SVY21.computeSVY21(d.latitude, d.longitude);
         return svyC;
     }
 
+    /**
+     * This method Retunrns stationlist arraylist
+     * @return
+     */
     public ArrayList<Carpark> getStationList() {
         return stationList;
     }
 
+    /**
+     * This method Sets the stationlist arraylist
+     * @param stationList
+     */
     public void setStationList(ArrayList<Carpark> stationList) {
         this.stationList = stationList;
     }

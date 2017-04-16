@@ -9,7 +9,6 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.Toast;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -35,10 +34,10 @@ public class PlaceArrayAdapter
     /**
      * Constructor
      *
-     * @param context  Context
-     * @param resource Layout resource
-     * @param bounds   Used to specify the search bounds
-     * @param filter   Used to specify place types
+     * @param context
+     * @param resource
+     * @param bounds
+     * @param filter
      */
     public PlaceArrayAdapter(Context context, int resource, LatLngBounds bounds,
                              AutocompleteFilter filter) {
@@ -47,6 +46,10 @@ public class PlaceArrayAdapter
         mPlaceFilter = filter;
     }
 
+    /**
+     * This methods set the google API client
+     * @param googleApiClient
+     */
     public void setGoogleApiClient(GoogleApiClient googleApiClient) {
         if (googleApiClient == null || !googleApiClient.isConnected()) {
             mGoogleApiClient = null;
@@ -55,16 +58,34 @@ public class PlaceArrayAdapter
         }
     }
 
+    /**
+     * This method returns the size of mResultList
+     * @return
+     */
     @Override
     public int getCount() {
         return mResultList.size();
     }
 
+    /**
+     * Returns the item at the specified position in the mResultList
+     * @param position
+     * @return
+     */
     @Override
     public PlaceAutocomplete getItem(int position) {
         return mResultList.get(position);
     }
 
+    /**
+     * This method gets prediction based on the text input
+     * using the input the method will get prediction from the google place API
+     * It will then wait up to 60s for the prediction to be done
+     * If prediction is unsuccessful, it will return a NULL value and print a log message saying prediction has failed
+     * Else it will return the arraylist which contains up to 5 elements of the prediction
+     * @param constraint refers to the input text
+     * @return
+     */
     private ArrayList<PlaceAutocomplete> getPredictions(CharSequence constraint) {
         if (mGoogleApiClient != null) {
             Log.i(TAG, "Executing autocomplete query for: " + constraint);
@@ -105,6 +126,12 @@ public class PlaceArrayAdapter
     @Override
     public Filter getFilter() {
         Filter filter = new Filter() {
+            /**
+             * This methods filters out the resultlist based on the constraint
+             * if constraint is Null, it will return a null value
+             * @param constraint refers to the input text
+             * @return
+             */
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 FilterResults results = new FilterResults();
@@ -120,6 +147,13 @@ public class PlaceArrayAdapter
                 return results;
             }
 
+            /**
+             * This method updates the dataset based on result from place API
+             * IF API returns at least 1 result, update dataset
+             * Else , invalidate the dataset
+             * @param constraint
+             * @param results
+             */
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
                 if (results != null && results.count > 0) {
@@ -145,11 +179,20 @@ public class PlaceArrayAdapter
         public CharSequence placeId;
         public CharSequence description;
 
+        /**
+         * Class constructor
+         * @param placeId
+         * @param description
+         */
         public PlaceAutocomplete(CharSequence placeId, CharSequence description) {
             this.placeId = placeId;
             this.description = description;
         }
 
+        /**
+         * Return the string description
+         * @return
+         */
         @Override
         public String toString() {
             return description.toString();
