@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/CarparkAppV1.iml" filepath="$PROJECT_DIR$/CarparkAppV1.iml" />
-      <module fileurl="file://$PROJECT_DIR$/Jesh Carpark.iml" filepath="$PROJECT_DIR$/Jesh Carpark.iml" />
       <module fileurl="file://$PROJECT_DIR$/JeshBitBucket.iml" filepath="$PROJECT_DIR$/JeshBitBucket.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>

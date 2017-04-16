@@ -18,7 +18,7 @@ import MapProjectionConverter.SVY21;
 import MapProjectionConverter.SVY21Coordinate;
 
 /**
- * Created by Shide on 30/3/17.
+ * ParseJson takes in a String object and uses the data in the string to update the table DMCarparks
  */
 
 public class ParseJSON {

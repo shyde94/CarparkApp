@@ -152,33 +152,54 @@ public class HdbCarpark implements Carpark {
     public void setAddress(String address) {
         this.address = address;
     }
-
+    /**
+     * Get latitude and longitude coordinates
+     * @return latitude and longitude coordinates
+     */
     @Override
     public LatLonCoordinate getLatLonCoord() {
         return this.latLonCoord;
     }
-
+    /**
+     * Get eastings and northings coordinates
+     * @return eastings and northings coordinates
+     */
     @Override
     public SVY21Coordinate getSVY21Coord() {
         return this.svyCoord;
     }
-
+    /**
+     * Set latitude and longitude coordinates
+     * @param ll latitude and longitude coordinates
+     */
     @Override
     public void SetLatLonCoord(LatLonCoordinate ll) {
         this.latLonCoord = ll;
     }
 
+    /**
+     * Set eastings and northings coordinates
+     * @param svy21 eastings and northings coordinate
+     */
+    @Override
+    public void SetSVY21Coordinate(SVY21Coordinate svy21) {
+        this.svyCoord = svy21;
+    }
+
+    /**
+     * Title is used to display the cpNum and address of carpark
+     * @return title to be used to display inside infowindow of markers
+     */
     @Override
     public String title() {
         String title = cpNum + "\n" + address + "";
         return title;
     }
 
-    @Override
-    public void SetSVY21Coordinate(SVY21Coordinate svy21) {
-        this.svyCoord = svy21;
-    }
-
+    /**
+     * Relevant data to be displayed inside dialog of carpark marker
+     * @return carpark details to be displayed in dialog of carpaark marker
+     */
     @Override
     public String displayInfo() {
         String cpAddress = getAddress() + "\n";

@@ -10,7 +10,7 @@ import java.net.URL;
 import java.util.Scanner;
 
 /**
- * Created by Shide on 15/2/17.
+ * Networkutils handles the sending of a httprequest object to collect data for live number of lots. It receives the reply in the form of a json object and sends it to ParseJson to handle
  */
 
 public class NetworkUtils {

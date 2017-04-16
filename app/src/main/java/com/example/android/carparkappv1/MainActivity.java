@@ -28,7 +28,10 @@ public class MainActivity extends AppCompatActivity implements MenuFragment.OnSe
 
     public Activity activity = this;
 
-
+    /**
+     * Method used to start activity
+     * @param savedInstanceState State of the application that is saved in a bundle which can be passed back to onCreate if the activity needs to be recreated
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +46,9 @@ public class MainActivity extends AppCompatActivity implements MenuFragment.OnSe
 
     }
 
+    /**
+     * Method used when the Back button on phone is pressed
+     */
     @Override
     public void onBackPressed() {
         if (ScreenController.getInstance().onBack()) {
@@ -50,7 +56,10 @@ public class MainActivity extends AppCompatActivity implements MenuFragment.OnSe
         }
     }
 
-    //This gets called by searchLocationFragment when search button is clicked
+    /**
+     * This gets called by MenuFragment when search button is clicked
+     */
+    //This gets called by MenuFragment when search button is clicked
     @Override
     public void onSearchedButtonClicked(String location) throws IOException {
         screenController.openScreen(MFH, location);
@@ -58,10 +67,16 @@ public class MainActivity extends AppCompatActivity implements MenuFragment.OnSe
 
     }
 
+    /**
+     * This gets called by MyCustomMap when arrived button is clicked
+     */
     public void onArrivedButtonClicked() throws IOException {
         screenController.openScreen(SAVELOT);
     }
 
+    /**
+     * Method used to load table in database
+     */
     public class LoadTable extends Thread{
         @Override
         public void run() {

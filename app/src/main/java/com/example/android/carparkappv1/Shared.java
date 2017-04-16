@@ -10,7 +10,7 @@ import Carparks.Carpark;
 
 
 /**
- * Created by Shide on 11/3/17.
+ * Variables of shared class are static variables, so that they can be referenced in methods of other classes
  */
 
 public class Shared {

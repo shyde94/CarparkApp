@@ -28,7 +28,7 @@ import java.io.IOException;
 import Controllers.ScreenController;
 
 /**
- * Created by Eimoh on 28/3/2017.
+ *
  */
 
 public class SaveLotNumber extends Fragment{

@@ -615,7 +615,6 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
         return zoomFactor;
     }
 
-    //This method will set the markers of the nearby carparks on the map AND DISPLAY ROUTE
     /**
      * This method retrieves the carpark objects from CarparkFinder and displays the position of the carparks on the map.
      *
@@ -635,6 +634,10 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
 
     }
 
+    /**
+     * This method retrieves the carpark(petrol station) objects from psFinder and displays the position of the petrol stations on the map.
+     *
+     */
 
     public void displayNearbyPStations(){
         Log.i(TAG, "Enter displayNearbyPStations");
@@ -652,6 +655,12 @@ public class MyCustomMap extends Fragment implements OnMapReadyCallback, GoogleA
 
 
     //After clicking marker
+    /**
+     * This method displays the walking and driving routes from the origin marker to destination marker
+     * Walking routes are displayed from carpark marker to destination marker as well as walking duration and distance
+     * Driving routes are displayed from current location marker to petrol station marker as well as driving duration and distance
+     *
+     */
     @Override
     public boolean onMarkerClick(final Marker marker) {
 
