@@ -1,4 +1,4 @@
-# CarparkApp
+# Carpark-App
 
 A simple Android application that searches for carparks near an input location, and provides directions from a selected carpark
 to the input location.
